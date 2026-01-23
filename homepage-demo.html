@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KicksList | Premium Sneaker Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Inline all CSS for demo */
+        .kl-homepage {
+            --kl-font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+            --kl-font-body: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+            --kl-bg-primary: #fafaf9;
+            --kl-bg-secondary: #ffffff;
+            --kl-bg-tertiary: #f5f4f2;
+            --kl-bg-accent: #f0efed;
+            --kl-bg-dark: #1a1917;
+            --kl-text-primary: #1a1917;
+            --kl-text-secondary: #57534e;
+            --kl-text-tertiary: #a8a29e;
+            --kl-text-muted: #d6d3d1;
+            --kl-text-inverse: #fafaf9;
+            --kl-border-light: #e7e5e4;
+            --kl-border-medium: #d6d3d1;
+            --kl-border-dark: #a8a29e;
+            --kl-accent-gold: #b5a191;
+            --kl-accent-dark: #292524;
+            --kl-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --kl-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --kl-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+            --kl-shadow-xl: 0 24px 80px rgba(0, 0, 0, 0.12);
+            --kl-transition-fast: 150ms ease;
+            --kl-transition-base: 250ms ease;
+            --kl-transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            --kl-transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .kl-homepage {
+            background: var(--kl-bg-primary);
+            min-height: 100vh;
+            font-family: var(--kl-font-body);
+            color: var(--kl-text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Announcement */
+        .kl-announcement {
+            background: var(--kl-bg-dark);
+            color: var(--kl-text-inverse);
+            text-align: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.7rem;
+            font-weight: 400;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .kl-announcement-sep { margin: 0 0.75rem; opacity: 0.4; }
+
+        /* Navigation */
+        .kl-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--kl-bg-secondary);
+            border-bottom: 1px solid var(--kl-border-light);
+            transition: all var(--kl-transition-base);
+        }
+        .kl-nav.scrolled { box-shadow: var(--kl-shadow-md); }
+        .kl-nav-inner {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1.25rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        @media (max-width: 768px) { .kl-nav-inner { padding: 1rem 1.5rem; } }
+        .kl-nav-left { display: flex; align-items: center; gap: 3.5rem; }
+        .kl-logo {
+            font-family: var(--kl-font-display);
+            font-size: 1.75rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            color: var(--kl-text-primary);
+            text-decoration: none;
+            transition: opacity var(--kl-transition-fast);
+        }
+        .kl-logo:hover { opacity: 0.7; }
+        .kl-nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        @media (max-width: 900px) { .kl-nav-links { display: none; } }
+        .kl-nav-links a {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--kl-text-secondary);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color var(--kl-transition-fast);
+        }
+        .kl-nav-links a:hover { color: var(--kl-text-primary); }
+        .kl-nav-right { display: flex; align-items: center; gap: 1.25rem; }
+        .kl-nav-icon-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: opacity var(--kl-transition-fast);
+            position: relative;
+        }
+        .kl-nav-icon-btn:hover { opacity: 0.6; }
+        .kl-nav-icon-btn svg { width: 22px; height: 22px; color: var(--kl-text-primary); }
+        .kl-cart-btn { position: relative; }
+        .kl-cart-count {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            background: var(--kl-text-primary);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 600;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .kl-sell-btn {
+            padding: 0.7rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--kl-text-primary);
+            color: var(--kl-text-primary);
+            font-family: var(--kl-font-body);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all var(--kl-transition-base);
+        }
+        .kl-sell-btn:hover { background: var(--kl-text-primary); color: white; }
+        @media (max-width: 640px) { .kl-sell-btn { display: none; } }
+
+        /* Search Overlay */
+        .kl-search-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--kl-transition-base);
+        }
+        .kl-search-overlay.open { opacity: 1; visibility: visible; }
+        .kl-search-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        .kl-search-container {
+            position: relative;
+            z-index: 1;
+            background: var(--kl-bg-secondary);
+            padding: 2rem 3rem;
+            transform: translateY(-100%);
+            transition: transform var(--kl-transition-slow);
+        }
+        .kl-search-overlay.open .kl-search-container { transform: translateY(0); }
+        .kl-search-form {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .kl-search-icon {
+            position: absolute;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            color: var(--kl-text-tertiary);
+        }
+        .kl-search-input {
+            flex: 1;
+            padding: 1rem 3rem;
+            font-family: var(--kl-font-body);
+            font-size: 1.25rem;
+            border: none;
+            border-bottom: 1px solid var(--kl-border-medium);
+            background: transparent;
+            color: var(--kl-text-primary);
+            transition: border-color var(--kl-transition-fast);
+        }
+        .kl-search-input:focus { outline: none; border-bottom-color: var(--kl-text-primary); }
+        .kl-search-input::placeholder { color: var(--kl-text-tertiary); }
+        .kl-search-close {
+            position: absolute;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        .kl-search-close svg { width: 24px; height: 24px; color: var(--kl-text-secondary); transition: color var(--kl-transition-fast); }
+        .kl-search-close:hover svg { color: var(--kl-text-primary); }
+        .kl-search-suggestions { max-width: 800px; margin: 1.5rem auto 0; }
+        .kl-search-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--kl-text-tertiary);
+            margin-bottom: 1rem;
+        }
+        .kl-search-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .kl-search-tag {
+            padding: 0.5rem 1rem;
+            background: var(--kl-bg-tertiary);
+            border: 1px solid var(--kl-border-light);
+            font-family: var(--kl-font-body);
+            font-size: 0.8rem;
+            color: var(--kl-text-secondary);
+            cursor: pointer;
+            transition: all var(--kl-transition-fast);
+        }
+        .kl-search-tag:hover { border-color: var(--kl-text-primary); color: var(--kl-text-primary); }
+
+        /* Hero */
+        .kl-hero {
+            position: relative;
+            min-height: 85vh;
+            background: var(--kl-bg-secondary);
+            overflow: hidden;
+        }
+        .kl-hero-slides { position: relative; height: 85vh; }
+        .kl-hero-slide {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 0 6rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 800ms ease;
+        }
+        .kl-hero-slide.active { opacity: 1; visibility: visible; }
+        @media (max-width: 1024px) {
+            .kl-hero-slide { grid-template-columns: 1fr; padding: 2rem; text-align: center; }
+        }
+        .kl-hero-content { max-width: 500px; }
+        @media (max-width: 1024px) { .kl-hero-content { max-width: 100%; order: 2; } }
+        .kl-hero-eyebrow {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--kl-accent-gold);
+            margin-bottom: 1rem;
+        }
+        .kl-hero-title {
+            font-family: var(--kl-font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 400;
+            line-height: 1.1;
+            color: var(--kl-text-primary);
+            margin: 0 0 1rem;
+        }
+        .kl-hero-subtitle {
+            font-size: 1rem;
+            color: var(--kl-text-secondary);
+            margin-bottom: 2rem;
+        }
+        .kl-hero-actions { display: flex; align-items: center; gap: 2rem; }
+        @media (max-width: 1024px) { .kl-hero-actions { justify-content: center; } }
+        .kl-hero-price {
+            font-family: var(--kl-font-display);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--kl-text-primary);
+        }
+        .kl-hero-image { display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        @media (max-width: 1024px) { .kl-hero-image { order: 1; max-height: 50vh; } }
+        .kl-hero-image img {
+            max-width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+            animation: hero-float 6s ease-in-out infinite;
+        }
+        @keyframes hero-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .kl-hero-slide.active .kl-hero-image img {
+            animation: hero-enter 800ms ease-out forwards, hero-float 6s ease-in-out 800ms infinite;
+        }
+        @keyframes hero-enter {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .kl-hero-nav {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.75rem;
+        }
+        .kl-hero-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--kl-border-medium);
+            border: none;
+            cursor: pointer;
+            transition: all var(--kl-transition-base);
+        }
+        .kl-hero-dot:hover { background: var(--kl-text-tertiary); }
+        .kl-hero-dot.active { background: var(--kl-text-primary); transform: scale(1.25); }
+        .kl-hero-scroll {
+            position: absolute;
+            bottom: 3rem;
+            right: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--kl-text-tertiary);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            animation: scroll-bounce 2s ease-in-out infinite;
+        }
+        @keyframes scroll-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+        .kl-hero-scroll svg { width: 16px; height: 16px; }
+        @media (max-width: 768px) { .kl-hero-scroll { display: none; } }
+
+        /* Buttons */
+        .kl-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2.5rem;
+            font-family: var(--kl-font-body);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all var(--kl-transition-base);
+        }
+        .kl-btn-primary { background: var(--kl-text-primary); color: white; }
+        .kl-btn-primary:hover { background: var(--kl-accent-dark); }
+        .kl-btn-light { background: white; color: var(--kl-text-primary); }
+        .kl-btn-light:hover { background: var(--kl-bg-tertiary); }
+        .kl-btn-outline-light {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .kl-btn-outline-light:hover { background: white; color: var(--kl-text-primary); }
+
+        /* Categories */
+        .kl-categories {
+            background: var(--kl-bg-secondary);
+            border-bottom: 1px solid var(--kl-border-light);
+            padding: 1rem 0;
+            overflow-x: auto;
+        }
+        .kl-categories-inner {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0 2rem;
+            min-width: max-content;
+        }
+        .kl-category-btn {
+            padding: 0.6rem 1.25rem;
+            background: transparent;
+            border: 1px solid transparent;
+            font-family: var(--kl-font-body);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--kl-text-secondary);
+            cursor: pointer;
+            transition: all var(--kl-transition-fast);
+            white-space: nowrap;
+        }
+        .kl-category-btn:hover { color: var(--kl-text-primary); border-color: var(--kl-border-light); }
+        .kl-category-btn.active {
+            color: var(--kl-text-primary);
+            border-color: var(--kl-text-primary);
+            background: var(--kl-bg-tertiary);
+        }
+
+        /* Sections */
+        .kl-section { padding: 5rem 3rem; }
+        @media (max-width: 768px) { .kl-section { padding: 3rem 1.5rem; } }
+        .kl-section-header {
+            max-width: 1400px;
+            margin: 0 auto 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--kl-border-light);
+        }
+        .kl-section-eyebrow {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--kl-accent-gold);
+            margin-bottom: 0.5rem;
+        }
+        .kl-section-title {
+            font-family: var(--kl-font-display);
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 400;
+            color: var(--kl-text-primary);
+            margin: 0;
+        }
+        .kl-section-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--kl-text-tertiary);
+            text-decoration: none;
+            transition: color var(--kl-transition-fast);
+        }
+        .kl-section-link:hover { color: var(--kl-text-primary); }
+        .kl-section-link svg { width: 16px; height: 16px; transition: transform var(--kl-transition-fast); }
+        .kl-section-link:hover svg { transform: translateX(4px); }
+
+        /* Product Grid */
+        .kl-product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        @media (max-width: 1200px) { .kl-product-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 900px) { .kl-product-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 500px) { .kl-product-grid { grid-template-columns: 1fr; } }
+
+        /* Product Card */
+        .kl-product-card {
+            background: var(--kl-bg-secondary);
+            border: 1px solid var(--kl-border-light);
+            cursor: pointer;
+            transition: all var(--kl-transition-base);
+            position: relative;
+            animation: card-enter 600ms ease-out backwards;
+        }
+        @keyframes card-enter {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .kl-product-card:hover { box-shadow: var(--kl-shadow-lg); transform: translateY(-4px); }
+        .kl-product-card:hover .kl-product-image img { transform: scale(1.05); }
+        .kl-product-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+        .kl-product-badge.new { background: var(--kl-text-primary); color: white; }
+        .kl-product-badge.sold-out { background: var(--kl-bg-accent); color: var(--kl-text-tertiary); }
+        .kl-product-wishlist {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 1px solid var(--kl-border-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all var(--kl-transition-base);
+            z-index: 2;
+        }
+        .kl-product-card:hover .kl-product-wishlist { opacity: 1; }
+        .kl-product-wishlist:hover { background: var(--kl-text-primary); border-color: var(--kl-text-primary); }
+        .kl-product-wishlist svg { width: 16px; height: 16px; color: var(--kl-text-primary); transition: color var(--kl-transition-fast); }
+        .kl-product-wishlist:hover svg { color: white; }
+        .kl-product-image {
+            aspect-ratio: 1;
+            background: var(--kl-bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            overflow: hidden;
+        }
+        .kl-product-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform var(--kl-transition-slow);
+        }
+        .kl-product-info { padding: 1.25rem; border-top: 1px solid var(--kl-border-light); }
+        .kl-product-brand {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--kl-text-tertiary);
+            margin: 0 0 0.4rem;
+        }
+        .kl-product-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--kl-text-primary);
+            margin: 0 0 0.75rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .kl-product-price-row { display: flex; align-items: baseline; gap: 0.5rem; }
+        .kl-product-price {
+            font-family: var(--kl-font-display);
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--kl-text-primary);
+        }
+        .kl-product-retail {
+            font-size: 0.8rem;
+            color: var(--kl-text-tertiary);
+            text-decoration: line-through;
+        }
+
+        /* Editorial */
+        .kl-editorial {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+            background: var(--kl-bg-dark);
+        }
+        @media (max-width: 900px) { .kl-editorial { grid-template-columns: 1fr; min-height: auto; } }
+        .kl-editorial-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 5rem;
+            color: var(--kl-text-inverse);
+        }
+        @media (max-width: 900px) { .kl-editorial-content { padding: 3rem 2rem; text-align: center; align-items: center; } }
+        .kl-editorial-eyebrow {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--kl-accent-gold);
+            margin-bottom: 1rem;
+        }
+        .kl-editorial-title {
+            font-family: var(--kl-font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            line-height: 1.15;
+            margin: 0 0 1.5rem;
+        }
+        .kl-editorial-title em { font-style: italic; }
+        .kl-editorial-desc {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 400px;
+            margin-bottom: 2rem;
+        }
+        .kl-editorial-images {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            overflow: hidden;
+        }
+        .kl-editorial-img {
+            position: absolute;
+            background: var(--kl-bg-tertiary);
+            padding: 1rem;
+            transition: transform var(--kl-transition-slow);
+        }
+        .kl-editorial-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .kl-editorial-img-1 { width: 280px; height: 280px; top: 15%; left: 10%; transform: rotate(-5deg); z-index: 2; }
+        .kl-editorial-img-2 { width: 260px; height: 260px; bottom: 15%; right: 10%; transform: rotate(5deg); z-index: 1; }
+        .kl-editorial:hover .kl-editorial-img-1 { transform: rotate(-3deg) translateY(-10px); }
+        .kl-editorial:hover .kl-editorial-img-2 { transform: rotate(3deg) translateY(10px); }
+        @media (max-width: 900px) {
+            .kl-editorial-images { height: 400px; }
+            .kl-editorial-img-1, .kl-editorial-img-2 { width: 200px; height: 200px; }
+            .kl-editorial-img-1 { top: 10%; left: 5%; }
+            .kl-editorial-img-2 { bottom: 10%; right: 5%; }
+        }
+
+        /* Trending */
+        .kl-trending { background: var(--kl-bg-secondary); }
+        .kl-trending-grid { display: flex; flex-direction: column; gap: 0; max-width: 1400px; margin: 0 auto; }
+        .kl-trending-card {
+            display: grid;
+            grid-template-columns: auto 100px 1fr auto;
+            gap: 2rem;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--kl-border-light);
+            cursor: pointer;
+            transition: all var(--kl-transition-fast);
+        }
+        .kl-trending-card:hover {
+            background: var(--kl-bg-tertiary);
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            margin-left: -1.5rem;
+            margin-right: -1.5rem;
+        }
+        @media (max-width: 768px) { .kl-trending-card { grid-template-columns: auto 80px 1fr auto; gap: 1rem; } }
+        @media (max-width: 500px) { .kl-trending-card { grid-template-columns: 60px 1fr auto; } .kl-trending-rank { display: none; } }
+        .kl-trending-rank {
+            font-family: var(--kl-font-display);
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--kl-text-muted);
+            width: 50px;
+            text-align: center;
+        }
+        .kl-trending-image {
+            width: 100px;
+            height: 100px;
+            background: var(--kl-bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+        @media (max-width: 768px) { .kl-trending-image { width: 80px; height: 80px; } }
+        @media (max-width: 500px) { .kl-trending-image { width: 60px; height: 60px; } }
+        .kl-trending-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .kl-trending-info { min-width: 0; }
+        .kl-trending-brand {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--kl-text-tertiary);
+            margin: 0 0 0.25rem;
+        }
+        .kl-trending-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--kl-text-primary);
+            margin: 0 0 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        @media (max-width: 768px) {
+            .kl-trending-name {
+                font-size: 0.8rem;
+                white-space: normal;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+        }
+        .kl-trending-price {
+            font-family: var(--kl-font-display);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--kl-text-secondary);
+        }
+        .kl-trending-arrow {
+            width: 20px;
+            height: 20px;
+            color: var(--kl-text-muted);
+            transition: all var(--kl-transition-fast);
+        }
+        .kl-trending-card:hover .kl-trending-arrow { color: var(--kl-text-primary); transform: translateX(4px); }
+
+        /* Brands */
+        .kl-brands { padding: 4rem 3rem; background: var(--kl-bg-tertiary); text-align: center; }
+        .kl-brands-label {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--kl-text-tertiary);
+            margin-bottom: 2rem;
+        }
+        .kl-brands-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; max-width: 800px; margin: 0 auto; }
+        .kl-brand-btn {
+            padding: 1rem 2rem;
+            background: var(--kl-bg-secondary);
+            border: 1px solid var(--kl-border-light);
+            font-family: var(--kl-font-body);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: var(--kl-text-primary);
+            cursor: pointer;
+            transition: all var(--kl-transition-base);
+        }
+        .kl-brand-btn:hover { background: var(--kl-text-primary); color: white; border-color: var(--kl-text-primary); }
+
+        /* Sell CTA */
+        .kl-sell-cta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--kl-bg-dark);
+            min-height: 500px;
+        }
+        @media (max-width: 900px) { .kl-sell-cta { grid-template-columns: 1fr; } }
+        .kl-sell-cta-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 5rem;
+            color: var(--kl-text-inverse);
+        }
+        @media (max-width: 900px) { .kl-sell-cta-content { padding: 3rem 2rem; text-align: center; align-items: center; } }
+        .kl-sell-cta-eyebrow {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--kl-accent-gold);
+            margin-bottom: 1rem;
+        }
+        .kl-sell-cta-title {
+            font-family: var(--kl-font-display);
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 400;
+            line-height: 1.15;
+            margin: 0 0 1.25rem;
+        }
+        .kl-sell-cta-desc {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 380px;
+            margin-bottom: 2rem;
+        }
+        .kl-sell-cta-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        @media (max-width: 900px) { .kl-sell-cta-visual { flex-wrap: wrap; padding: 2rem; } }
+        .kl-sell-cta-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            text-align: center;
+            transition: all var(--kl-transition-base);
+        }
+        .kl-sell-cta-card:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-4px); }
+        .kl-sell-cta-num {
+            display: block;
+            font-family: var(--kl-font-display);
+            font-size: 2rem;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        .kl-sell-cta-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Trust */
+        .kl-trust {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            padding: 4rem 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        @media (max-width: 1024px) { .kl-trust { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .kl-trust { grid-template-columns: 1fr; padding: 3rem 1.5rem; } }
+        .kl-trust-item { display: flex; align-items: flex-start; gap: 1rem; }
+        .kl-trust-item svg { width: 24px; height: 24px; color: var(--kl-accent-gold); flex-shrink: 0; margin-top: 2px; }
+        .kl-trust-item h4 { font-size: 0.85rem; font-weight: 600; color: var(--kl-text-primary); margin: 0 0 0.25rem; }
+        .kl-trust-item p { font-size: 0.8rem; color: var(--kl-text-secondary); margin: 0; }
+
+        /* Footer */
+        .kl-footer { background: var(--kl-bg-secondary); border-top: 1px solid var(--kl-border-light); }
+        .kl-footer-main {
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            gap: 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 3rem;
+        }
+        @media (max-width: 900px) { .kl-footer-main { grid-template-columns: 1fr; gap: 3rem; padding: 3rem 1.5rem; } }
+        .kl-footer-brand { max-width: 300px; }
+        @media (max-width: 900px) { .kl-footer-brand { max-width: 100%; text-align: center; } }
+        .kl-footer-brand .kl-logo { display: inline-block; font-size: 1.5rem; margin-bottom: 1rem; }
+        .kl-footer-brand p { font-size: 0.85rem; color: var(--kl-text-secondary); line-height: 1.6; margin: 0 0 1.5rem; }
+        .kl-footer-socials { display: flex; gap: 0.75rem; }
+        @media (max-width: 900px) { .kl-footer-socials { justify-content: center; } }
+        .kl-footer-socials a {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--kl-border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--kl-transition-base);
+        }
+        .kl-footer-socials a:hover { background: var(--kl-text-primary); border-color: var(--kl-text-primary); }
+        .kl-footer-socials svg { width: 18px; height: 18px; color: var(--kl-text-secondary); transition: color var(--kl-transition-fast); }
+        .kl-footer-socials a:hover svg { color: white; }
+        .kl-footer-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+        @media (max-width: 768px) { .kl-footer-links { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 500px) { .kl-footer-links { grid-template-columns: 1fr; text-align: center; } }
+        .kl-footer-col h5 {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--kl-text-primary);
+            margin: 0 0 1.25rem;
+        }
+        .kl-footer-col ul { list-style: none; margin: 0; padding: 0; }
+        .kl-footer-col li { margin-bottom: 0.6rem; }
+        .kl-footer-col a { font-size: 0.85rem; color: var(--kl-text-secondary); text-decoration: none; transition: color var(--kl-transition-fast); }
+        .kl-footer-col a:hover { color: var(--kl-text-primary); }
+        .kl-footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 3rem;
+            border-top: 1px solid var(--kl-border-light);
+        }
+        @media (max-width: 768px) { .kl-footer-bottom { flex-direction: column; gap: 1rem; text-align: center; padding: 1.5rem; } }
+        .kl-footer-bottom p { font-size: 0.8rem; color: var(--kl-text-tertiary); margin: 0; }
+        .kl-footer-legal { display: flex; gap: 2rem; }
+        .kl-footer-legal a { font-size: 0.8rem; color: var(--kl-text-tertiary); text-decoration: none; transition: color var(--kl-transition-fast); }
+        .kl-footer-legal a:hover { color: var(--kl-text-primary); }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Homepage Component (inline for demo)
+        const Homepage = ({
+            featuredProducts = [],
+            newDrops = [],
+            trending = [],
+            categories = [],
+            cartCount = 0,
+            onProductClick,
+            onCategoryClick,
+            onSearch,
+            onCartClick,
+            onSellClick,
+        }) => {
+            const [activeHeroSlide, setActiveHeroSlide] = useState(0);
+            const [searchOpen, setSearchOpen] = useState(false);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [activeCategory, setActiveCategory] = useState('all');
+            const [isScrolled, setIsScrolled] = useState(false);
+            const searchInputRef = useRef(null);
+
+            useEffect(() => {
+                if (featuredProducts.length <= 1) return;
+                const timer = setInterval(() => {
+                    setActiveHeroSlide((prev) => (prev + 1) % featuredProducts.length);
+                }, 6000);
+                return () => clearInterval(timer);
+            }, [featuredProducts.length]);
+
+            useEffect(() => {
+                const handleScroll = () => setIsScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            useEffect(() => {
+                if (searchOpen && searchInputRef.current) searchInputRef.current.focus();
+            }, [searchOpen]);
+
+            const handleSearchSubmit = (e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                    onSearch?.(searchQuery);
+                    setSearchOpen(false);
+                    setSearchQuery('');
+                }
+            };
+
+            const handleCategorySelect = (categoryId) => {
+                setActiveCategory(categoryId);
+                onCategoryClick?.(categoryId);
+            };
+
+            return (
+                <div className="kl-homepage">
+                    {/* Announcement Bar */}
+                    <div className="kl-announcement">
+                        <span>Complimentary Shipping on Orders Over $300</span>
+                        <span className="kl-announcement-sep">·</span>
+                        <span>Every Pair Authenticated</span>
+                    </div>
+
+                    {/* Navigation */}
+                    <nav className={`kl-nav ${isScrolled ? 'scrolled' : ''}`}>
+                        <div className="kl-nav-inner">
+                            <div className="kl-nav-left">
+                                <a href="/" className="kl-logo">KicksList</a>
+                                <ul className="kl-nav-links">
+                                    <li><a href="/shop">Shop</a></li>
+                                    <li><a href="/new">New Arrivals</a></li>
+                                    <li><a href="/brands">Brands</a></li>
+                                    <li><a href="/about">About</a></li>
+                                </ul>
+                            </div>
+                            <div className="kl-nav-right">
+                                <button className="kl-nav-icon-btn" onClick={() => setSearchOpen(true)} aria-label="Search">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                                    </svg>
+                                </button>
+                                <a href="/account" className="kl-nav-icon-btn" aria-label="Account">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                </a>
+                                <button className="kl-nav-icon-btn kl-cart-btn" onClick={onCartClick} aria-label="Shopping bag">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                        <line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                                    </svg>
+                                    {cartCount > 0 && <span className="kl-cart-count">{cartCount}</span>}
+                                </button>
+                                <button className="kl-sell-btn" onClick={onSellClick}>Sell</button>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Search Overlay */}
+                    <div className={`kl-search-overlay ${searchOpen ? 'open' : ''}`}>
+                        <div className="kl-search-container">
+                            <form onSubmit={handleSearchSubmit} className="kl-search-form">
+                                <svg className="kl-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                                </svg>
+                                <input
+                                    ref={searchInputRef}
+                                    type="text"
+                                    placeholder="Search sneakers, brands, styles..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="kl-search-input"
+                                />
+                                <button type="button" className="kl-search-close" onClick={() => { setSearchOpen(false); setSearchQuery(''); }}>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                </button>
+                            </form>
+                            <div className="kl-search-suggestions">
+                                <p className="kl-search-label">Popular Searches</p>
+                                <div className="kl-search-tags">
+                                    {['Jordan 4', 'Travis Scott', 'Dunk Low', 'Yeezy 350', 'New Balance 550'].map((tag) => (
+                                        <button key={tag} className="kl-search-tag" onClick={() => { setSearchQuery(tag); onSearch?.(tag); setSearchOpen(false); }}>
+                                            {tag}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="kl-search-backdrop" onClick={() => setSearchOpen(false)} />
+                    </div>
+
+                    {/* Hero */}
+                    <section className="kl-hero">
+                        <div className="kl-hero-slides">
+                            {featuredProducts.map((product, idx) => (
+                                <div key={product.id} className={`kl-hero-slide ${idx === activeHeroSlide ? 'active' : ''}`}>
+                                    <div className="kl-hero-content">
+                                        <p className="kl-hero-eyebrow">{product.badge || 'Featured'}</p>
+                                        <h1 className="kl-hero-title">{product.name}</h1>
+                                        <p className="kl-hero-subtitle">{product.tagline || product.brand}</p>
+                                        <div className="kl-hero-actions">
+                                            <button className="kl-btn kl-btn-primary" onClick={() => onProductClick?.(product.id)}>Shop Now</button>
+                                            <span className="kl-hero-price">${product.price?.toLocaleString()}</span>
+                                        </div>
+                                    </div>
+                                    <div className="kl-hero-image">
+                                        <img src={product.images?.[0] || product.image} alt={product.name} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        {featuredProducts.length > 1 && (
+                            <div className="kl-hero-nav">
+                                {featuredProducts.map((_, idx) => (
+                                    <button key={idx} className={`kl-hero-dot ${idx === activeHeroSlide ? 'active' : ''}`} onClick={() => setActiveHeroSlide(idx)} aria-label={`Go to slide ${idx + 1}`} />
+                                ))}
+                            </div>
+                        )}
+                        <div className="kl-hero-scroll">
+                            <span>Scroll to explore</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                        </div>
+                    </section>
+
+                    {/* Categories */}
+                    <section className="kl-categories">
+                        <div className="kl-categories-inner">
+                            <button className={`kl-category-btn ${activeCategory === 'all' ? 'active' : ''}`} onClick={() => handleCategorySelect('all')}>All</button>
+                            {categories.map((cat) => (
+                                <button key={cat.id} className={`kl-category-btn ${activeCategory === cat.id ? 'active' : ''}`} onClick={() => handleCategorySelect(cat.id)}>{cat.name}</button>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Featured Drops */}
+                    <section className="kl-section kl-drops">
+                        <div className="kl-section-header">
+                            <div className="kl-section-title-group">
+                                <p className="kl-section-eyebrow">Just Listed</p>
+                                <h2 className="kl-section-title">Featured Drops</h2>
+                            </div>
+                            <a href="/new" className="kl-section-link">
+                                View All
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                            </a>
+                        </div>
+                        <div className="kl-product-grid">
+                            {newDrops.slice(0, 4).map((product, idx) => (
+                                <article key={product.id} className="kl-product-card" style={{ animationDelay: `${idx * 100}ms` }} onClick={() => onProductClick?.(product.id)}>
+                                    {product.badge && <span className={`kl-product-badge ${product.badge.toLowerCase().replace(' ', '-')}`}>{product.badge}</span>}
+                                    <button className="kl-product-wishlist" aria-label="Add to wishlist" onClick={(e) => e.stopPropagation()}>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                                    </button>
+                                    <div className="kl-product-image"><img src={product.images?.[0] || product.image} alt={product.name} /></div>
+                                    <div className="kl-product-info">
+                                        <p className="kl-product-brand">{product.brand}</p>
+                                        <h3 className="kl-product-name">{product.name}</h3>
+                                        <div className="kl-product-price-row">
+                                            <span className="kl-product-price">${product.price?.toLocaleString()}</span>
+                                            {product.retail && product.retail < product.price && <span className="kl-product-retail">${product.retail?.toLocaleString()}</span>}
+                                        </div>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Editorial */}
+                    <section className="kl-editorial">
+                        <div className="kl-editorial-content">
+                            <p className="kl-editorial-eyebrow">The Edit</p>
+                            <h2 className="kl-editorial-title">Icons of<br /><em>Collaboration</em></h2>
+                            <p className="kl-editorial-desc">Explore the most coveted collaborations in sneaker history—from Travis Scott to Off-White.</p>
+                            <a href="/collections/collaborations" className="kl-btn kl-btn-outline-light">Discover More</a>
+                        </div>
+                        <div className="kl-editorial-images">
+                            <div className="kl-editorial-img kl-editorial-img-1">
+                                <img src="https://images.stockx.com/images/Nike-Air-Max-1-Travis-Scott-Wheat-Product.jpg" alt="Travis Scott" />
+                            </div>
+                            <div className="kl-editorial-img kl-editorial-img-2">
+                                <img src="https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Lost-and-Found-Product.jpg" alt="Jordan" />
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Trending */}
+                    <section className="kl-section kl-trending">
+                        <div className="kl-section-header">
+                            <div className="kl-section-title-group">
+                                <p className="kl-section-eyebrow">Most Wanted</p>
+                                <h2 className="kl-section-title">Trending Now</h2>
+                            </div>
+                            <a href="/trending" className="kl-section-link">
+                                View All
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                            </a>
+                        </div>
+                        <div className="kl-trending-grid">
+                            {trending.slice(0, 6).map((product, idx) => (
+                                <article key={product.id} className="kl-trending-card" onClick={() => onProductClick?.(product.id)}>
+                                    <span className="kl-trending-rank">{String(idx + 1).padStart(2, '0')}</span>
+                                    <div className="kl-trending-image"><img src={product.images?.[0] || product.image} alt={product.name} /></div>
+                                    <div className="kl-trending-info">
+                                        <p className="kl-trending-brand">{product.brand}</p>
+                                        <h3 className="kl-trending-name">{product.name}</h3>
+                                        <span className="kl-trending-price">${product.price?.toLocaleString()}</span>
+                                    </div>
+                                    <svg className="kl-trending-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                                </article>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Brands */}
+                    <section className="kl-brands">
+                        <p className="kl-brands-label">Shop by Brand</p>
+                        <div className="kl-brands-grid">
+                            {['Nike', 'Jordan', 'Adidas', 'New Balance', 'Yeezy', 'Asics'].map((brand) => (
+                                <button key={brand} className="kl-brand-btn" onClick={() => handleCategorySelect(brand.toLowerCase())}>{brand}</button>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Sell CTA */}
+                    <section className="kl-sell-cta">
+                        <div className="kl-sell-cta-content">
+                            <p className="kl-sell-cta-eyebrow">For Sellers</p>
+                            <h2 className="kl-sell-cta-title">Turn Your Collection<br />Into Currency</h2>
+                            <p className="kl-sell-cta-desc">List in minutes. We handle authentication, secure payment, and premium shipping.</p>
+                            <button className="kl-btn kl-btn-light" onClick={onSellClick}>Start Selling</button>
+                        </div>
+                        <div className="kl-sell-cta-visual">
+                            <div className="kl-sell-cta-card">
+                                <div className="kl-sell-cta-stat"><span className="kl-sell-cta-num">$50M+</span><span className="kl-sell-cta-label">Paid to Sellers</span></div>
+                            </div>
+                            <div className="kl-sell-cta-card">
+                                <div className="kl-sell-cta-stat"><span className="kl-sell-cta-num">100%</span><span className="kl-sell-cta-label">Authenticated</span></div>
+                            </div>
+                            <div className="kl-sell-cta-card">
+                                <div className="kl-sell-cta-stat"><span className="kl-sell-cta-num">3 Days</span><span className="kl-sell-cta-label">Avg. Payout Time</span></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Trust */}
+                    <section className="kl-trust">
+                        <div className="kl-trust-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                            <div><h4>Authenticity Guaranteed</h4><p>Every sneaker verified by our expert team</p></div>
+                        </div>
+                        <div className="kl-trust-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                            <div><h4>Premium Shipping</h4><p>Complimentary on orders over $300</p></div>
+                        </div>
+                        <div className="kl-trust-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            <div><h4>Easy Returns</h4><p>Hassle-free returns within 14 days</p></div>
+                        </div>
+                        <div className="kl-trust-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                            <div><h4>Secure Payments</h4><p>Protected by industry-leading encryption</p></div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="kl-footer">
+                        <div className="kl-footer-main">
+                            <div className="kl-footer-brand">
+                                <a href="/" className="kl-logo">KicksList</a>
+                                <p>The trusted marketplace for authentic sneakers. Buy with confidence. Sell with ease.</p>
+                                <div className="kl-footer-socials">
+                                    <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                                    <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+                                    <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+                                </div>
+                            </div>
+                            <div className="kl-footer-links">
+                                <div className="kl-footer-col">
+                                    <h5>Shop</h5>
+                                    <ul><li><a href="/new">New Arrivals</a></li><li><a href="/brands">Brands</a></li><li><a href="/trending">Trending</a></li><li><a href="/under-retail">Under Retail</a></li></ul>
+                                </div>
+                                <div className="kl-footer-col">
+                                    <h5>Sell</h5>
+                                    <ul><li><a href="/sell">How to Sell</a></li><li><a href="/sell/guide">Seller Guide</a></li><li><a href="/sell/pricing">Pricing</a></li><li><a href="/sell/shipping">Shipping</a></li></ul>
+                                </div>
+                                <div className="kl-footer-col">
+                                    <h5>Help</h5>
+                                    <ul><li><a href="/faq">FAQ</a></li><li><a href="/contact">Contact</a></li><li><a href="/returns">Returns</a></li><li><a href="/size-guide">Size Guide</a></li></ul>
+                                </div>
+                                <div className="kl-footer-col">
+                                    <h5>Company</h5>
+                                    <ul><li><a href="/about">About Us</a></li><li><a href="/authentication">Authentication</a></li><li><a href="/careers">Careers</a></li><li><a href="/press">Press</a></li></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="kl-footer-bottom">
+                            <p>&copy; 2025 KicksList. All rights reserved.</p>
+                            <div className="kl-footer-legal"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        // Sample Data
+        const featuredProducts = [
+            {
+                id: 1,
+                name: "Air Jordan 4 Retro 'Red Thunder'",
+                brand: "Jordan",
+                badge: "Editor's Pick",
+                tagline: "The thunder returns in crimson.",
+                price: 245,
+                image: "https://images.stockx.com/images/Air-Jordan-4-Retro-Red-Thunder-Product.jpg",
+            },
+            {
+                id: 2,
+                name: "Nike Air Max 1 Travis Scott 'Wheat'",
+                brand: "Nike",
+                badge: "Collaboration",
+                tagline: "Cactus Jack meets Air Max.",
+                price: 310,
+                image: "https://images.stockx.com/images/Nike-Air-Max-1-Travis-Scott-Wheat-Product.jpg",
+            },
+            {
+                id: 4,
+                name: "Air Jordan 1 High OG 'Chicago Lost & Found'",
+                brand: "Jordan",
+                badge: "Iconic",
+                tagline: "A piece of history, rediscovered.",
+                price: 320,
+                image: "https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Lost-and-Found-Product.jpg",
+            },
+        ];
+
+        const newDrops = [
+            { id: 2, name: "Nike Air Max 1 Travis Scott 'Wheat'", brand: "Nike", price: 310, retail: 160, badge: "New", image: "https://images.stockx.com/images/Nike-Air-Max-1-Travis-Scott-Wheat-Product.jpg" },
+            { id: 6, name: "New Balance 550 'White Green'", brand: "New Balance", price: 135, retail: 120, badge: "New", image: "https://images.stockx.com/images/New-Balance-550-White-Green-Product.jpg" },
+            { id: 4, name: "Air Jordan 1 High OG 'Chicago Lost & Found'", brand: "Jordan", price: 320, retail: 180, image: "https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Lost-and-Found-Product.jpg" },
+            { id: 7, name: "Nike SB Dunk Low 'Orange Lobster'", brand: "Nike", price: 485, retail: 130, image: "https://images.stockx.com/images/Nike-SB-Dunk-Low-Concepts-Orange-Lobster-Product.jpg" },
+        ];
+
+        const trending = [
+            { id: 4, name: "Air Jordan 1 High OG 'Chicago Lost & Found'", brand: "Jordan", price: 320, image: "https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Lost-and-Found-Product.jpg" },
+            { id: 5, name: "Nike Dunk Low 'Panda'", brand: "Nike", price: 115, image: "https://images.stockx.com/images/Nike-Dunk-Low-Retro-White-Black-2021-Product.jpg" },
+            { id: 1, name: "Air Jordan 4 Retro 'Red Thunder'", brand: "Jordan", price: 245, image: "https://images.stockx.com/images/Air-Jordan-4-Retro-Red-Thunder-Product.jpg" },
+            { id: 3, name: "Yeezy Boost 350 V2 'Onyx'", brand: "Adidas", price: 275, image: "https://images.stockx.com/images/adidas-Yeezy-Boost-350-V2-Onyx-Product.jpg" },
+            { id: 2, name: "Nike Air Max 1 Travis Scott 'Wheat'", brand: "Nike", price: 310, image: "https://images.stockx.com/images/Nike-Air-Max-1-Travis-Scott-Wheat-Product.jpg" },
+            { id: 8, name: "Air Jordan 11 Retro 'Cherry'", brand: "Jordan", price: 235, image: "https://images.stockx.com/images/Air-Jordan-11-Retro-Cherry-2022-Product.jpg" },
+        ];
+
+        const categories = [
+            { id: 'jordan', name: 'Jordan' },
+            { id: 'nike', name: 'Nike' },
+            { id: 'adidas', name: 'Adidas' },
+            { id: 'new-balance', name: 'New Balance' },
+            { id: 'yeezy', name: 'Yeezy' },
+            { id: 'dunk', name: 'Dunk' },
+        ];
+
+        // App
+        const App = () => {
+            return (
+                <Homepage
+                    featuredProducts={featuredProducts}
+                    newDrops={newDrops}
+                    trending={trending}
+                    categories={categories}
+                    cartCount={2}
+                    onProductClick={(id) => {
+                        console.log('Navigate to product:', id);
+                        window.location.href = `product-detail-demo.html?id=${id}`;
+                    }}
+                    onCategoryClick={(cat) => console.log('Filter by:', cat)}
+                    onSearch={(q) => console.log('Search:', q)}
+                    onCartClick={() => alert('Cart drawer would open')}
+                    onSellClick={() => alert('Sell modal would open')}
+                />
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
