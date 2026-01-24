@@ -1,692 +1,899 @@
 /**
  * KicksList Product Database
- * Comprehensive sneaker data with accurate information
+ * Curated collection with verified, working images
  */
 
 const products = [
+  // === JORDAN BRAND ===
   {
     id: 1,
-    name: "Air Jordan 4 Retro 'Red Thunder'",
+    name: "Air Jordan 4 Retro 'Military Black'",
     brand: "Jordan",
-    model: "Air Jordan 4 Retro",
-    styleId: "CT8527-016",
-    colorway: "Black/White-Red",
     category: "jordan",
-    price: 245,
+    price: 225,
     retail: 190,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-01-15",
-    description: "The Air Jordan 4 Retro 'Red Thunder' draws inspiration from the original 'Thunder' colorway from 2006. This iteration features a black nubuck upper with bold Crimson red accents on the eyelets, heel tab, and Jumpman branding on the tongue. The shoe maintains the iconic AJ4 design elements including the mesh panels, visible Air unit in the heel, and signature wing eyelets. A white midsole provides contrast while the black outsole completes the striking look. Released in January 2022, this colorway quickly became a fan favorite for its bold take on a classic silhouette.",
-    images: [
-      "https://images.stockx.com/images/Air-Jordan-4-Retro-Red-Thunder-Product.jpg",
-      "https://images.stockx.com/360/Air-Jordan-4-Retro-Red-Thunder/Images/Air-Jordan-4-Retro-Red-Thunder/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Air-Jordan-4-Retro-Red-Thunder/Images/Air-Jordan-4-Retro-Red-Thunder/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Air-Jordan-4-Retro-Red-Thunder/Images/Air-Jordan-4-Retro-Red-Thunder/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Air-Jordan-4-Retro-Red-Thunder/Images/Air-Jordan-4-Retro-Red-Thunder/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "7", available: true },
-      { size: "7.5", available: true },
-      { size: "8", available: true },
-      { size: "8.5", available: false },
-      { size: "9", available: true },
-      { size: "9.5", available: true },
-      { size: "10", available: true },
-      { size: "10.5", available: false },
-      { size: "11", available: true },
-      { size: "11.5", available: false },
-      { size: "12", available: true },
-      { size: "13", available: true }
-    ],
-    inStock: true,
-    badge: null,
-    featured: true,
-    trending: true,
-    tags: ["retro", "thunder", "crimson", "nubuck"]
+    releaseDate: "2022-05-21",
+    description: "Clean white leather upper with black and neutral grey accents. One of the most versatile Jordan 4 colorways ever released.",
+    images: ["https://images.stockx.com/images/Air-Jordan-4-Retro-Military-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
   },
   {
     id: 2,
-    name: "Nike Air Max 1 Travis Scott 'Wheat'",
-    brand: "Nike",
-    model: "Air Max 1",
-    styleId: "DO9392-700",
-    colorway: "Wheat/Wheat-Lemon Drop",
-    category: "nike",
-    price: 310,
-    retail: 160,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-12-15",
-    description: "The Nike Air Max 1 Travis Scott 'Wheat' is a collaboration between Nike and Travis Scott's Cactus Jack label. This outdoor-inspired design features a premium construction with reversed Swooshes, a hallmark of Travis Scott collaborations. The upper combines wheat-toned suede, canvas, and mesh materials with a utilitarian aesthetic. Multiple lace options and removable patches allow for customization. The shoe features a visible Air unit in the heel and a rugged outsole pattern inspired by outdoor footwear. This release represents the evolution of the Air Max 1 silhouette through Scott's creative vision.",
-    images: [
-      "https://images.stockx.com/images/Nike-Air-Max-1-Travis-Scott-Wheat-Product.jpg",
-      "https://images.stockx.com/360/Nike-Air-Max-1-Travis-Scott-Wheat/Images/Nike-Air-Max-1-Travis-Scott-Wheat/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Nike-Air-Max-1-Travis-Scott-Wheat/Images/Nike-Air-Max-1-Travis-Scott-Wheat/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Nike-Air-Max-1-Travis-Scott-Wheat/Images/Nike-Air-Max-1-Travis-Scott-Wheat/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Nike-Air-Max-1-Travis-Scott-Wheat/Images/Nike-Air-Max-1-Travis-Scott-Wheat/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "7", available: false },
-      { size: "7.5", available: false },
-      { size: "8", available: true },
-      { size: "8.5", available: true },
-      { size: "9", available: true },
-      { size: "9.5", available: false },
-      { size: "10", available: true },
-      { size: "10.5", available: true },
-      { size: "11", available: false },
-      { size: "11.5", available: false },
-      { size: "12", available: true },
-      { size: "13", available: false }
-    ],
-    inStock: true,
-    badge: "New",
-    featured: true,
-    trending: true,
-    tags: ["travis scott", "cactus jack", "collaboration", "wheat"]
-  },
-  {
-    id: 3,
-    name: "Yeezy Boost 350 V2 'Onyx'",
-    brand: "Adidas",
-    model: "Yeezy Boost 350 V2",
-    styleId: "HQ4540",
-    colorway: "Onyx/Onyx/Onyx",
-    category: "yeezy",
-    price: 275,
-    retail: 230,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-04-09",
-    description: "The Adidas Yeezy Boost 350 V2 'Onyx' presents Kanye West's iconic silhouette in a sleek all-black colorway. The shoe features a Primeknit upper in a tonal black finish with the signature side stripe seamlessly integrated into the design. The full-length Boost midsole provides exceptional comfort and energy return, while the rubber outsole ensures durability and traction. The sock-like construction offers a snug, comfortable fit. This monochromatic colorway represents the versatility of the 350 V2, making it suitable for any outfit while maintaining the distinctive Yeezy aesthetic.",
-    images: [
-      "https://images.stockx.com/images/adidas-Yeezy-Boost-350-V2-Onyx-Product.jpg",
-      "https://images.stockx.com/360/adidas-Yeezy-Boost-350-V2-Onyx/Images/adidas-Yeezy-Boost-350-V2-Onyx/Lv2/img01.jpg",
-      "https://images.stockx.com/360/adidas-Yeezy-Boost-350-V2-Onyx/Images/adidas-Yeezy-Boost-350-V2-Onyx/Lv2/img06.jpg",
-      "https://images.stockx.com/360/adidas-Yeezy-Boost-350-V2-Onyx/Images/adidas-Yeezy-Boost-350-V2-Onyx/Lv2/img12.jpg",
-      "https://images.stockx.com/360/adidas-Yeezy-Boost-350-V2-Onyx/Images/adidas-Yeezy-Boost-350-V2-Onyx/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "4", available: true },
-      { size: "5", available: true },
-      { size: "6", available: true },
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true },
-      { size: "13", available: true },
-      { size: "14", available: false }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: true,
-    tags: ["yeezy", "kanye", "boost", "primeknit", "black"]
-  },
-  {
-    id: 4,
-    name: "Air Jordan 1 Retro High OG 'Chicago Lost & Found'",
-    brand: "Jordan",
-    model: "Air Jordan 1 Retro High OG",
-    styleId: "DZ5485-612",
-    colorway: "Varsity Red/Black-Sail-Muslin",
-    category: "jordan",
-    price: 320,
-    retail: 180,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-11-19",
-    description: "The Air Jordan 1 Retro High OG 'Chicago Lost & Found' reimagines the iconic Chicago colorway with vintage-inspired details. The shoe tells a story of discovering a forgotten pair in the back of a store decades later. Premium leather in varsity red and white features intentional cracking and aging, while the sail midsole and muslin inner lining add to the vintage aesthetic. The packaging includes aged paper wrapping and a mismatched box to complete the nostalgic experience. This release celebrates the heritage of the Air Jordan 1 while acknowledging the thrill of finding deadstock sneakers from the past.",
-    images: [
-      "https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Lost-and-Found-Product.jpg",
-      "https://images.stockx.com/360/Air-Jordan-1-Retro-High-OG-Lost-and-Found/Images/Air-Jordan-1-Retro-High-OG-Lost-and-Found/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Air-Jordan-1-Retro-High-OG-Lost-and-Found/Images/Air-Jordan-1-Retro-High-OG-Lost-and-Found/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Air-Jordan-1-Retro-High-OG-Lost-and-Found/Images/Air-Jordan-1-Retro-High-OG-Lost-and-Found/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Air-Jordan-1-Retro-High-OG-Lost-and-Found/Images/Air-Jordan-1-Retro-High-OG-Lost-and-Found/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "7", available: false },
-      { size: "7.5", available: false },
-      { size: "8", available: false },
-      { size: "8.5", available: true },
-      { size: "9", available: true },
-      { size: "9.5", available: true },
-      { size: "10", available: true },
-      { size: "10.5", available: true },
-      { size: "11", available: true },
-      { size: "11.5", available: false },
-      { size: "12", available: true },
-      { size: "13", available: false }
-    ],
-    inStock: true,
-    badge: null,
-    featured: true,
-    trending: true,
-    tags: ["chicago", "og", "vintage", "lost and found", "iconic"]
-  },
-  {
-    id: 5,
-    name: "Nike Dunk Low Retro 'Panda'",
-    brand: "Nike",
-    model: "Dunk Low Retro",
-    styleId: "DD1391-100",
-    colorway: "White/Black-White",
-    category: "dunk",
-    price: 115,
-    retail: 110,
-    condition: "New",
-    releaseYear: 2021,
-    releaseDate: "2021-03-10",
-    description: "The Nike Dunk Low Retro 'Panda' has become one of the most sought-after sneakers in recent years. The simple yet striking black and white colorway features a white leather base with black leather overlays, creating the 'Panda' nickname. Originally designed as a basketball shoe in 1985, the Dunk has transcended its athletic roots to become a streetwear staple. The padded collar provides comfort, while the rubber cupsole ensures durability. This colorway's versatility and clean aesthetic have made it a modern classic that pairs effortlessly with any outfit.",
-    images: [
-      "https://images.stockx.com/images/Nike-Dunk-Low-Retro-White-Black-2021-Product.jpg",
-      "https://images.stockx.com/360/Nike-Dunk-Low-Retro-White-Black-2021/Images/Nike-Dunk-Low-Retro-White-Black-2021/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Nike-Dunk-Low-Retro-White-Black-2021/Images/Nike-Dunk-Low-Retro-White-Black-2021/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Nike-Dunk-Low-Retro-White-Black-2021/Images/Nike-Dunk-Low-Retro-White-Black-2021/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Nike-Dunk-Low-Retro-White-Black-2021/Images/Nike-Dunk-Low-Retro-White-Black-2021/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "6", available: true },
-      { size: "6.5", available: true },
-      { size: "7", available: true },
-      { size: "7.5", available: true },
-      { size: "8", available: true },
-      { size: "8.5", available: true },
-      { size: "9", available: true },
-      { size: "9.5", available: true },
-      { size: "10", available: true },
-      { size: "10.5", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true },
-      { size: "13", available: true }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: true,
-    tags: ["panda", "black white", "classic", "versatile"]
-  },
-  {
-    id: 6,
-    name: "New Balance 550 'White Green'",
-    brand: "New Balance",
-    model: "550",
-    styleId: "BB550WT1",
-    colorway: "White/Green",
-    category: "new balance",
-    price: 135,
-    retail: 120,
-    condition: "New",
-    releaseYear: 2021,
-    releaseDate: "2021-03-25",
-    description: "The New Balance 550 'White Green' brings back a basketball silhouette from the archives that originally debuted in 1989. This retro model features a leather upper in clean white with forest green accents on the 'N' logo, heel, and outsole. The shoe's chunky aesthetic and vintage basketball styling have resonated with modern sneaker enthusiasts, making the 550 one of New Balance's most popular recent releases. The ENCAP midsole technology provides cushioning and stability, while the rubber outsole delivers reliable traction. This colorway exemplifies the 550's ability to bridge heritage design with contemporary style.",
-    images: [
-      "https://images.stockx.com/images/New-Balance-550-White-Green-Product.jpg",
-      "https://images.stockx.com/360/New-Balance-550-White-Green/Images/New-Balance-550-White-Green/Lv2/img01.jpg",
-      "https://images.stockx.com/360/New-Balance-550-White-Green/Images/New-Balance-550-White-Green/Lv2/img06.jpg",
-      "https://images.stockx.com/360/New-Balance-550-White-Green/Images/New-Balance-550-White-Green/Lv2/img12.jpg",
-      "https://images.stockx.com/360/New-Balance-550-White-Green/Images/New-Balance-550-White-Green/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "6", available: true },
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: false },
-      { size: "13", available: false }
-    ],
-    inStock: true,
-    badge: "New",
-    featured: false,
-    trending: false,
-    tags: ["retro", "basketball", "green", "classic"]
-  },
-  {
-    id: 7,
-    name: "Nike SB Dunk Low 'Orange Lobster'",
-    brand: "Nike",
-    model: "SB Dunk Low",
-    styleId: "FD8776-800",
-    colorway: "Orange Frost/Orange Frost-Electro Orange",
-    category: "dunk",
-    price: 485,
-    retail: 130,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-12-02",
-    description: "The Nike SB Dunk Low 'Orange Lobster' continues Concepts' legendary Lobster Dunk series. This iteration features a vibrant orange colorway inspired by rare orange lobsters found in nature. The upper combines orange suede and leather with speckled detailing reminiscent of a lobster shell. True to the series tradition, the shoe includes a hidden lobster graphic on the sockliner and comes with special packaging that pays homage to New England seafood culture. The collaboration between Nike SB and Concepts has produced some of the most coveted Dunks in history, and the Orange Lobster maintains that prestigious legacy.",
-    images: [
-      "https://images.stockx.com/images/Nike-SB-Dunk-Low-Concepts-Orange-Lobster-Product.jpg",
-      "https://images.stockx.com/360/Nike-SB-Dunk-Low-Concepts-Orange-Lobster/Images/Nike-SB-Dunk-Low-Concepts-Orange-Lobster/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Nike-SB-Dunk-Low-Concepts-Orange-Lobster/Images/Nike-SB-Dunk-Low-Concepts-Orange-Lobster/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Nike-SB-Dunk-Low-Concepts-Orange-Lobster/Images/Nike-SB-Dunk-Low-Concepts-Orange-Lobster/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Nike-SB-Dunk-Low-Concepts-Orange-Lobster/Images/Nike-SB-Dunk-Low-Concepts-Orange-Lobster/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "7", available: false },
-      { size: "8", available: false },
-      { size: "9", available: true },
-      { size: "9.5", available: false },
-      { size: "10", available: true },
-      { size: "10.5", available: false },
-      { size: "11", available: false },
-      { size: "12", available: false }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: false,
-    tags: ["concepts", "lobster", "collaboration", "sb"]
-  },
-  {
-    id: 8,
-    name: "Air Jordan 11 Retro 'Cherry'",
-    brand: "Jordan",
-    model: "Air Jordan 11 Retro",
-    styleId: "CT8012-116",
-    colorway: "White/Varsity Red-Black",
-    category: "jordan",
-    price: 235,
-    retail: 225,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-12-10",
-    description: "The Air Jordan 11 Retro 'Cherry' brings back a beloved colorway for the holiday season. The shoe features a white ballistic mesh upper with patent leather mudguard in matching white, while varsity red accents appear on the Jumpman logo, outsole, and inner lining. The iconic carbon fiber spring plate in the midsole provides stability, and the full-length Air unit delivers responsive cushioning. Originally worn by Michael Jordan during the 1995-96 season, the Air Jordan 11 is considered one of the most influential sneaker designs in history. The Cherry colorway adds a festive touch while maintaining the silhouette's elegant aesthetic.",
-    images: [
-      "https://images.stockx.com/images/Air-Jordan-11-Retro-Cherry-2022-Product.jpg",
-      "https://images.stockx.com/360/Air-Jordan-11-Retro-Cherry-2022/Images/Air-Jordan-11-Retro-Cherry-2022/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Air-Jordan-11-Retro-Cherry-2022/Images/Air-Jordan-11-Retro-Cherry-2022/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Air-Jordan-11-Retro-Cherry-2022/Images/Air-Jordan-11-Retro-Cherry-2022/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Air-Jordan-11-Retro-Cherry-2022/Images/Air-Jordan-11-Retro-Cherry-2022/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true },
-      { size: "13", available: true },
-      { size: "14", available: false }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: true,
-    tags: ["cherry", "holiday", "patent leather", "iconic"]
-  },
-  {
-    id: 9,
-    name: "Nike Air Force 1 Low '07 'White'",
-    brand: "Nike",
-    model: "Air Force 1 Low '07",
-    styleId: "315122-111",
-    colorway: "White/White",
-    category: "nike",
-    price: 115,
-    retail: 115,
-    condition: "New",
-    releaseYear: 2023,
-    releaseDate: "2023-01-01",
-    description: "The Nike Air Force 1 Low '07 'White' is the quintessential sneaker that has remained a staple in footwear culture since its debut in 1982. Designed by Bruce Kilgore, it was the first basketball shoe to feature Nike Air technology. The all-white leather upper delivers a clean, timeless look that has made it one of the best-selling sneakers of all time. The perforated toe box provides breathability, while the thick rubber cupsole offers durability and the classic AF1 aesthetic. From hip-hop culture to high fashion, the white-on-white Air Force 1 transcends trends and generations.",
-    images: [
-      "https://images.stockx.com/images/Nike-Air-Force-1-Low-07-White-Product.jpg",
-      "https://images.stockx.com/360/Nike-Air-Force-1-Low-07-White/Images/Nike-Air-Force-1-Low-07-White/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Nike-Air-Force-1-Low-07-White/Images/Nike-Air-Force-1-Low-07-White/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Nike-Air-Force-1-Low-07-White/Images/Nike-Air-Force-1-Low-07-White/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Nike-Air-Force-1-Low-07-White/Images/Nike-Air-Force-1-Low-07-White/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "6", available: true },
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true },
-      { size: "13", available: true },
-      { size: "14", available: true },
-      { size: "15", available: true }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: true,
-    tags: ["classic", "white", "essential", "iconic"]
-  },
-  {
-    id: 10,
-    name: "Adidas Samba OG 'White Black Gum'",
-    brand: "Adidas",
-    model: "Samba OG",
-    styleId: "B75806",
-    colorway: "Cloud White/Core Black/Clear Granite",
-    category: "adidas",
-    price: 100,
-    retail: 100,
-    condition: "New",
-    releaseYear: 2023,
-    releaseDate: "2023-01-01",
-    description: "The Adidas Samba OG 'White Black Gum' is a timeless classic that has transitioned from the soccer pitch to street style icon. Originally designed in 1950 for soccer training on frozen pitches, the Samba features a full-grain leather upper with the iconic serrated 3-Stripes in black. The T-toe design and gold Samba logo on the tongue pay homage to its heritage. The gum rubber outsole provides excellent traction and adds a vintage aesthetic. This colorway represents the Samba at its purest form, embodying decades of cultural significance while remaining relevant in contemporary fashion.",
-    images: [
-      "https://images.stockx.com/images/adidas-Samba-OG-Cloud-White-Core-Black-Product.jpg",
-      "https://images.stockx.com/360/adidas-Samba-OG-Cloud-White-Core-Black/Images/adidas-Samba-OG-Cloud-White-Core-Black/Lv2/img01.jpg",
-      "https://images.stockx.com/360/adidas-Samba-OG-Cloud-White-Core-Black/Images/adidas-Samba-OG-Cloud-White-Core-Black/Lv2/img06.jpg",
-      "https://images.stockx.com/360/adidas-Samba-OG-Cloud-White-Core-Black/Images/adidas-Samba-OG-Cloud-White-Core-Black/Lv2/img12.jpg",
-      "https://images.stockx.com/360/adidas-Samba-OG-Cloud-White-Core-Black/Images/adidas-Samba-OG-Cloud-White-Core-Black/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "6", available: true },
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true },
-      { size: "13", available: false }
-    ],
-    inStock: true,
-    badge: "New",
-    featured: false,
-    trending: true,
-    tags: ["samba", "classic", "gum sole", "soccer"]
-  },
-  {
-    id: 11,
     name: "Air Jordan 3 Retro 'White Cement Reimagined'",
     brand: "Jordan",
-    model: "Air Jordan 3 Retro",
-    styleId: "DN3707-100",
-    colorway: "Summit White/Fire Red-Black-Cement Grey",
     category: "jordan",
     price: 250,
     retail: 200,
-    condition: "New",
-    releaseYear: 2023,
     releaseDate: "2023-03-11",
-    description: "The Air Jordan 3 Retro 'White Cement Reimagined' celebrates the iconic silhouette designed by Tinker Hatfield in 1988. This version stays true to the original with its white tumbled leather upper, elephant print overlays, and visible Air unit in the heel. The 'Reimagined' treatment features premium materials and a vintage aesthetic with a slightly aged midsole. The shoe includes the iconic Jumpman logo on the tongue, Fire Red accents, and the distinctive elephant print that made the AJ3 revolutionary. This release marks a return to the roots of one of the most important sneakers in Jordan history.",
-    images: [
-      "https://images.stockx.com/images/Air-Jordan-3-Retro-White-Cement-Reimagined-Product.jpg",
-      "https://images.stockx.com/360/Air-Jordan-3-Retro-White-Cement-Reimagined/Images/Air-Jordan-3-Retro-White-Cement-Reimagined/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Air-Jordan-3-Retro-White-Cement-Reimagined/Images/Air-Jordan-3-Retro-White-Cement-Reimagined/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Air-Jordan-3-Retro-White-Cement-Reimagined/Images/Air-Jordan-3-Retro-White-Cement-Reimagined/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Air-Jordan-3-Retro-White-Cement-Reimagined/Images/Air-Jordan-3-Retro-White-Cement-Reimagined/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true },
-      { size: "13", available: false }
-    ],
-    inStock: true,
-    badge: null,
-    featured: true,
-    trending: true,
-    tags: ["white cement", "elephant print", "tinker hatfield", "iconic"]
+    description: "The legendary White Cement colorway returns with premium materials and the iconic elephant print that defined a generation.",
+    images: ["https://images.stockx.com/images/Air-Jordan-3-Retro-White-Cement-Reimagined-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 3,
+    name: "Air Jordan 11 Retro 'Cherry'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 235,
+    retail: 225,
+    releaseDate: "2022-12-10",
+    description: "Holiday release featuring white patent leather upper with varsity red accents and icy translucent outsole.",
+    images: ["https://images.stockx.com/images/Air-Jordan-11-Retro-Cherry-2022-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 4,
+    name: "Air Jordan 1 Retro High OG 'University Blue'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 280,
+    retail: 170,
+    releaseDate: "2021-03-06",
+    description: "Paying homage to Michael Jordan's alma mater UNC with white leather and powder blue overlays.",
+    images: ["https://images.stockx.com/images/Air-Jordan-1-Retro-High-White-University-Blue-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 5,
+    name: "Air Jordan 4 Retro 'Bred Reimagined'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 275,
+    retail: 200,
+    releaseDate: "2024-02-17",
+    description: "The classic Black/Red colorway returns with premium nubuck leather and updated materials for the modern era.",
+    images: ["https://images.stockx.com/images/Air-Jordan-4-Retro-Bred-Reimagined-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 6,
+    name: "Air Jordan 1 Retro High OG 'Royal Reimagined'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 195,
+    retail: 180,
+    releaseDate: "2024-10-26",
+    description: "The iconic Royal Blue colorway gets a premium reimagining with buttery soft leather and gold details.",
+    images: ["https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Royal-Reimagined-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 7,
+    name: "Air Jordan 12 Retro 'Playoffs'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 245,
+    retail: 200,
+    releaseDate: "2022-03-12",
+    description: "Black tumbled leather upper with red and white accents. A classic colorway MJ wore during the playoffs.",
+    images: ["https://images.stockx.com/images/Air-Jordan-12-Retro-Playoffs-2022-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 8,
+    name: "Air Jordan 4 Retro 'Thunder'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 285,
+    retail: 190,
+    releaseDate: "2023-05-13",
+    description: "Black nubuck upper with vibrant Tour Yellow accents on the midsole, laces, and Jumpman logo.",
+    images: ["https://images.stockx.com/images/Air-Jordan-4-Retro-Thunder-2023-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 9,
+    name: "Air Jordan 11 Retro 'Cool Grey'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 260,
+    retail: 225,
+    releaseDate: "2021-12-11",
+    description: "Medium grey patent leather mudguard with matching grey mesh upper. An instant classic since 2001.",
+    images: ["https://images.stockx.com/images/Air-Jordan-11-Retro-Cool-Grey-2021-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 10,
+    name: "Air Jordan 4 Retro 'Red Thunder'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 245,
+    retail: 190,
+    releaseDate: "2022-01-15",
+    description: "Black nubuck upper with bold Crimson red accents. Inspired by the original 'Thunder' colorway from 2006.",
+    images: ["https://images.stockx.com/images/Air-Jordan-4-Retro-Red-Thunder-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 11,
+    name: "Air Jordan 1 Retro High OG 'Heritage'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 175,
+    retail: 170,
+    releaseDate: "2022-04-09",
+    description: "White leather base with red overlays and black accents. A clean, wearable Chicago-adjacent colorway.",
+    images: ["https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Heritage-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
   },
   {
     id: 12,
-    name: "Nike Dunk Low 'Grey Fog'",
-    brand: "Nike",
-    model: "Dunk Low",
-    styleId: "DD1391-103",
-    colorway: "White/Grey Fog",
-    category: "dunk",
-    price: 130,
-    retail: 110,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-01-14",
-    description: "The Nike Dunk Low 'Grey Fog' offers a subtle, sophisticated take on the classic silhouette. The shoe features a white leather base with soft grey overlays, creating a versatile colorway that works with any wardrobe. The muted color palette gives the shoe a premium, understated appearance. The padded collar provides comfort for all-day wear, while the rubber cupsole delivers durability and the classic Dunk aesthetic. This colorway represents the refined side of Dunk culture, appealing to those who prefer subtle elegance over bold statements.",
-    images: [
-      "https://images.stockx.com/images/Nike-Dunk-Low-Grey-Fog-Product.jpg",
-      "https://images.stockx.com/360/Nike-Dunk-Low-Grey-Fog/Images/Nike-Dunk-Low-Grey-Fog/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Nike-Dunk-Low-Grey-Fog/Images/Nike-Dunk-Low-Grey-Fog/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Nike-Dunk-Low-Grey-Fog/Images/Nike-Dunk-Low-Grey-Fog/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Nike-Dunk-Low-Grey-Fog/Images/Nike-Dunk-Low-Grey-Fog/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "6", available: true },
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: false,
-    tags: ["grey", "minimal", "versatile", "clean"]
+    name: "Air Jordan 1 Mid 'Banned'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 145,
+    retail: 125,
+    releaseDate: "2022-09-01",
+    description: "The iconic Black/Red colorway in mid-top form. Accessible Bred for all.",
+    images: ["https://images.stockx.com/images/Air-Jordan-1-Mid-Banned-2020-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
   },
   {
     id: 13,
-    name: "New Balance 2002R 'Protection Pack Rain Cloud'",
-    brand: "New Balance",
-    model: "2002R",
-    styleId: "M2002RDA",
-    colorway: "Rain Cloud/Phantom",
-    category: "new balance",
-    price: 165,
-    retail: 150,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-04-01",
-    description: "The New Balance 2002R 'Protection Pack Rain Cloud' showcases the brand's commitment to comfort and style. Part of the popular Protection Pack series, this colorway features a grey suede and mesh upper with a deconstructed, worn-in aesthetic. The ABZORB midsole cushioning provides exceptional comfort, while the N-ERGY technology in the heel absorbs impact. The shoe's vintage running silhouette combined with premium materials has made the 2002R a favorite among sneaker enthusiasts. The Rain Cloud colorway offers a versatile, neutral option that complements the shoe's premium construction.",
-    images: [
-      "https://images.stockx.com/images/New-Balance-2002R-Protection-Pack-Rain-Cloud-Product.jpg",
-      "https://images.stockx.com/360/New-Balance-2002R-Protection-Pack-Rain-Cloud/Images/New-Balance-2002R-Protection-Pack-Rain-Cloud/Lv2/img01.jpg",
-      "https://images.stockx.com/360/New-Balance-2002R-Protection-Pack-Rain-Cloud/Images/New-Balance-2002R-Protection-Pack-Rain-Cloud/Lv2/img06.jpg",
-      "https://images.stockx.com/360/New-Balance-2002R-Protection-Pack-Rain-Cloud/Images/New-Balance-2002R-Protection-Pack-Rain-Cloud/Lv2/img12.jpg",
-      "https://images.stockx.com/360/New-Balance-2002R-Protection-Pack-Rain-Cloud/Images/New-Balance-2002R-Protection-Pack-Rain-Cloud/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: false,
-    tags: ["protection pack", "comfort", "vintage", "runner"]
+    name: "Air Jordan 4 Retro 'Infrared'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 230,
+    retail: 200,
+    releaseDate: "2022-06-25",
+    description: "Dark grey nubuck upper with infrared accents on the midsole and heel tab.",
+    images: ["https://images.stockx.com/images/Air-Jordan-4-Retro-Infrared-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
   },
   {
     id: 14,
-    name: "Air Jordan 1 Low 'Mocha'",
+    name: "Air Jordan 3 Retro 'Muslin'",
     brand: "Jordan",
-    model: "Air Jordan 1 Low",
-    styleId: "DC0774-200",
-    colorway: "Mocha/White-Black",
     category: "jordan",
-    price: 150,
-    retail: 110,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-09-01",
-    description: "The Air Jordan 1 Low 'Mocha' delivers the popular colorway in a low-top silhouette. The shoe features a white leather base with mocha brown overlays and black accents on the Swoosh and collar. This colorway draws inspiration from the highly coveted Air Jordan 1 High 'Travis Scott' while offering a more accessible price point and everyday wearability. The low-cut design provides ankle mobility while maintaining the classic AJ1 aesthetic. Premium leather construction ensures durability, making this a versatile option for Jordan enthusiasts.",
-    images: [
-      "https://images.stockx.com/images/Air-Jordan-1-Low-Mocha-Product.jpg",
-      "https://images.stockx.com/360/Air-Jordan-1-Low-Mocha/Images/Air-Jordan-1-Low-Mocha/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Air-Jordan-1-Low-Mocha/Images/Air-Jordan-1-Low-Mocha/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Air-Jordan-1-Low-Mocha/Images/Air-Jordan-1-Low-Mocha/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Air-Jordan-1-Low-Mocha/Images/Air-Jordan-1-Low-Mocha/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true },
-      { size: "13", available: false }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: false,
-    tags: ["mocha", "low top", "brown", "versatile"]
+    price: 195,
+    retail: 200,
+    releaseDate: "2023-04-15",
+    description: "Off-white canvas upper with grey elephant print. Premium vintage aesthetic.",
+    images: ["https://images.stockx.com/images/Air-Jordan-3-Retro-Muslin-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
   },
   {
     id: 15,
-    name: "Yeezy Slide 'Onyx'",
-    brand: "Adidas",
-    model: "Yeezy Slide",
-    styleId: "HQ6448",
-    colorway: "Onyx/Onyx/Onyx",
-    category: "yeezy",
-    price: 130,
-    retail: 70,
-    condition: "New",
-    releaseYear: 2022,
-    releaseDate: "2022-03-14",
-    description: "The Yeezy Slide 'Onyx' showcases Kanye West's minimalist design philosophy in a comfortable slide silhouette. The one-piece EVA foam construction features a ridged upper and footbed that conforms to the foot over time. The all-black colorway maintains the clean, monochromatic aesthetic that has become synonymous with the Yeezy brand. Despite its simple appearance, the Yeezy Slide has become one of the most sought-after casual footwear options, blending comfort with the distinctive Yeezy aesthetic. The lightweight construction makes it perfect for everyday wear.",
-    images: [
-      "https://images.stockx.com/images/adidas-Yeezy-Slide-Onyx-Product.jpg",
-      "https://images.stockx.com/360/adidas-Yeezy-Slide-Onyx/Images/adidas-Yeezy-Slide-Onyx/Lv2/img01.jpg",
-      "https://images.stockx.com/360/adidas-Yeezy-Slide-Onyx/Images/adidas-Yeezy-Slide-Onyx/Lv2/img06.jpg",
-      "https://images.stockx.com/360/adidas-Yeezy-Slide-Onyx/Images/adidas-Yeezy-Slide-Onyx/Lv2/img12.jpg",
-      "https://images.stockx.com/360/adidas-Yeezy-Slide-Onyx/Images/adidas-Yeezy-Slide-Onyx/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "5", available: true },
-      { size: "6", available: true },
-      { size: "7", available: true },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: true },
-      { size: "13", available: true }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: true,
-    tags: ["slide", "comfort", "casual", "black"]
+    name: "Air Jordan 4 Retro 'Black Cat'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 350,
+    retail: 190,
+    releaseDate: "2020-01-22",
+    description: "Triple black colorway with nubuck upper. A stealthy tribute to MJ's 'Black Cat' nickname.",
+    images: ["https://images.stockx.com/images/Air-Jordan-4-Retro-Black-Cat-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
   },
   {
     id: 16,
-    name: "Nike Air Max 90 'Infrared' (2020)",
+    name: "Air Jordan 4 Retro x Off-White 'Sail'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 1400,
+    retail: 200,
+    releaseDate: "2020-07-25",
+    description: "Virgil Abloh deconstructs the AJ4 with translucent panels and exposed Air unit.",
+    images: ["https://images.stockx.com/images/Air-Jordan-4-Retro-Off-White-Sail-W-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+
+  // === NIKE ===
+  {
+    id: 17,
+    name: "Nike Dunk Low 'Panda'",
     brand: "Nike",
-    model: "Air Max 90",
-    styleId: "CT1685-100",
-    colorway: "White/Black-Cool Grey-Infrared",
     category: "nike",
-    price: 150,
-    retail: 140,
-    condition: "New",
-    releaseYear: 2020,
-    releaseDate: "2020-01-30",
-    description: "The Nike Air Max 90 'Infrared' celebrates the 30th anniversary of Tinker Hatfield's iconic design. This 2020 release stays faithful to the original 1990 colorway with its white leather and mesh upper, grey mudguard, and signature infrared accents on the heel, Swoosh, and Air unit. The visible Air cushioning in the heel revolutionized sneaker design and remains as relevant today as it was three decades ago. The Infrared colorway is considered the definitive Air Max 90, representing the perfect balance of innovation and timeless style.",
-    images: [
-      "https://images.stockx.com/images/Nike-Air-Max-90-Infrared-2020-Product.jpg",
-      "https://images.stockx.com/360/Nike-Air-Max-90-Infrared-2020/Images/Nike-Air-Max-90-Infrared-2020/Lv2/img01.jpg",
-      "https://images.stockx.com/360/Nike-Air-Max-90-Infrared-2020/Images/Nike-Air-Max-90-Infrared-2020/Lv2/img06.jpg",
-      "https://images.stockx.com/360/Nike-Air-Max-90-Infrared-2020/Images/Nike-Air-Max-90-Infrared-2020/Lv2/img12.jpg",
-      "https://images.stockx.com/360/Nike-Air-Max-90-Infrared-2020/Images/Nike-Air-Max-90-Infrared-2020/Lv2/img18.jpg"
-    ],
-    sizes: [
-      { size: "7", available: false },
-      { size: "8", available: true },
-      { size: "9", available: true },
-      { size: "10", available: true },
-      { size: "11", available: true },
-      { size: "12", available: false }
-    ],
-    inStock: true,
-    badge: null,
-    featured: false,
-    trending: false,
-    tags: ["infrared", "og", "anniversary", "classic"]
+    price: 130,
+    retail: 110,
+    releaseDate: "2021-03-10",
+    description: "The most popular Dunk of the decade. Clean white leather base with black overlays. Simple perfection.",
+    images: ["https://images.stockx.com/images/Nike-Dunk-Low-Retro-White-Black-2021-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 18,
+    name: "Nike Dunk Low 'Grey Fog'",
+    brand: "Nike",
+    category: "nike",
+    price: 140,
+    retail: 110,
+    releaseDate: "2022-02-04",
+    description: "White leather base with wolf grey overlays. A versatile colorway perfect for everyday wear.",
+    images: ["https://images.stockx.com/images/Nike-Dunk-Low-Grey-Fog-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 19,
+    name: "Nike Dunk Low 'Georgetown'",
+    brand: "Nike",
+    category: "nike",
+    price: 145,
+    retail: 110,
+    releaseDate: "2022-03-04",
+    description: "College colors collection featuring navy blue and grey overlays on white leather.",
+    images: ["https://images.stockx.com/images/Nike-Dunk-Low-Georgetown-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 20,
+    name: "Nike Air Max 90 'Infrared'",
+    brand: "Nike",
+    category: "nike",
+    price: 145,
+    retail: 130,
+    releaseDate: "2020-01-23",
+    description: "The OG colorway that defined the Air Max 90. White mesh with grey suede and infrared accents.",
+    images: ["https://images.stockx.com/images/Nike-Air-Max-90-Infrared-2020-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 21,
+    name: "Nike SB Dunk Low 'Strangelove'",
+    brand: "Nike",
+    category: "nike",
+    price: 950,
+    retail: 110,
+    releaseDate: "2020-02-08",
+    description: "Valentine's Day release with pink velvet upper, heart-shaped swoosh, and skull embroidery.",
+    images: ["https://images.stockx.com/images/Nike-SB-Dunk-Low-StrangeLove-Skateboards-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 22,
+    name: "Nike Dunk Low 'Medium Curry'",
+    brand: "Nike",
+    category: "nike",
+    price: 155,
+    retail: 110,
+    releaseDate: "2022-02-25",
+    description: "Vintage-inspired colorway with sail white base and medium curry brown overlays.",
+    images: ["https://images.stockx.com/images/Nike-Dunk-Low-Medium-Curry-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 23,
+    name: "Nike Dunk Low 'Setsubun'",
+    brand: "Nike",
+    category: "nike",
+    price: 180,
+    retail: 120,
+    releaseDate: "2022-02-03",
+    description: "Japanese festival-inspired release with brown, tan, and green colors representing beans and demons.",
+    images: ["https://images.stockx.com/images/Nike-Dunk-Low-Setsubun-2022-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 24,
+    name: "Nike Dunk Low 'Valerian Blue'",
+    brand: "Nike",
+    category: "nike",
+    price: 145,
+    retail: 110,
+    releaseDate: "2022-03-18",
+    description: "Blue and white colorway with leather overlays. Clean everyday option.",
+    images: ["https://images.stockx.com/images/Nike-Dunk-Low-Valerian-Blue-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 25,
+    name: "Nike Dunk Low 'Team Red'",
+    brand: "Nike",
+    category: "nike",
+    price: 135,
+    retail: 110,
+    releaseDate: "2023-01-24",
+    description: "Burgundy overlays on white base. Rich wine-red tone for a premium look.",
+    images: ["https://images.stockx.com/images/Nike-Dunk-Low-Team-Red-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 26,
+    name: "Nike Dunk Low 'Rose Whisper'",
+    brand: "Nike",
+    category: "nike",
+    price: 130,
+    retail: 110,
+    releaseDate: "2022-06-21",
+    description: "Soft pink and white leather for a subtle, feminine aesthetic.",
+    images: ["https://images.stockx.com/images/Nike-Dunk-Low-Rose-Whisper-W-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 27,
+    name: "Nike Dunk High 'Syracuse'",
+    brand: "Nike",
+    category: "nike",
+    price: 140,
+    retail: 125,
+    releaseDate: "2021-08-03",
+    description: "Classic Be True To Your School colorway in orange and white high-top.",
+    images: ["https://images.stockx.com/images/Nike-Dunk-High-Syracuse-2021-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 28,
+    name: "Nike Air Max 95 'Neon'",
+    brand: "Nike",
+    category: "nike",
+    price: 195,
+    retail: 185,
+    releaseDate: "2023-04-19",
+    description: "The OG colorway that launched the AM95. Grey gradients with volt yellow accents.",
+    images: ["https://images.stockx.com/images/Nike-Air-Max-95-OG-Neon-2020-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 29,
+    name: "Nike SB Dunk Low 'Jarritos'",
+    brand: "Nike",
+    category: "nike",
+    price: 350,
+    retail: 125,
+    releaseDate: "2023-05-06",
+    description: "Collaboration with Mexican soda brand featuring bottle cap logo and vibrant green.",
+    images: ["https://images.stockx.com/images/Nike-SB-Dunk-Low-Jarritos-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 30,
+    name: "Nike SB Dunk Low 'Ben & Jerry's Chunky Dunky'",
+    brand: "Nike",
+    category: "nike",
+    price: 1100,
+    retail: 100,
+    releaseDate: "2020-05-23",
+    description: "Ice cream collab with cow print, tie-dye swoosh, and dripping green accents.",
+    images: ["https://images.stockx.com/images/Nike-SB-Dunk-Low-Ben-Jerrys-Chunky-Dunky-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 31,
+    name: "Nike Air Max 1 'Travis Scott Baroque Brown'",
+    brand: "Nike",
+    category: "nike",
+    price: 385,
+    retail: 160,
+    releaseDate: "2022-05-26",
+    description: "Cactus Jack takes on the Air Max 1 with brown tones and backwards Swoosh.",
+    images: ["https://images.stockx.com/images/Nike-Air-Max-1-Travis-Scott-Baroque-Brown-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+
+  // === YEEZY / ADIDAS ===
+  {
+    id: 32,
+    name: "Adidas Yeezy Boost 350 V2 'Zebra'",
+    brand: "Adidas",
+    category: "yeezy",
+    price: 260,
+    retail: 220,
+    releaseDate: "2022-04-09",
+    description: "White Primeknit with black stripes and red SPLY-350 text. One of the most coveted Yeezys.",
+    images: ["https://images.stockx.com/images/adidas-Yeezy-Boost-350-V2-Zebra-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 33,
+    name: "Adidas Yeezy Boost 350 V2 'Beluga Reflective'",
+    brand: "Adidas",
+    category: "yeezy",
+    price: 280,
+    retail: 230,
+    releaseDate: "2021-12-18",
+    description: "The iconic orange stripe returns on grey Primeknit upper with reflective threads throughout.",
+    images: ["https://images.stockx.com/images/adidas-Yeezy-Boost-350-V2-Beluga-Reflective-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 34,
+    name: "Adidas Yeezy Boost 350 V2 'Onyx'",
+    brand: "Adidas",
+    category: "yeezy",
+    price: 250,
+    retail: 230,
+    releaseDate: "2022-04-09",
+    description: "Triple black colorway with dark grey Primeknit and black Boost midsole. Stealth mode activated.",
+    images: ["https://images.stockx.com/images/adidas-Yeezy-Boost-350-V2-Onyx-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 35,
+    name: "Adidas Yeezy Foam Runner 'Onyx'",
+    brand: "Adidas",
+    category: "yeezy",
+    price: 165,
+    retail: 90,
+    releaseDate: "2022-06-08",
+    description: "Futuristic all-black foam clog. Made with algae-based EVA for a sustainable approach.",
+    images: ["https://images.stockx.com/images/adidas-Yeezy-Foam-RNNR-Onyx-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 36,
+    name: "Adidas Samba OG 'Cloud White'",
+    brand: "Adidas",
+    category: "adidas",
+    price: 120,
+    retail: 100,
+    releaseDate: "2023-01-01",
+    description: "The classic indoor soccer shoe that became a streetwear icon. White leather with black stripes.",
+    images: ["https://images.stockx.com/images/adidas-Samba-OG-Cloud-White-Core-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 37,
+    name: "Adidas Campus 00s 'Core Black'",
+    brand: "Adidas",
+    category: "adidas",
+    price: 110,
+    retail: 100,
+    releaseDate: "2023-01-01",
+    description: "Y2K-inspired revival with chunkier sole and premium suede upper in classic black.",
+    images: ["https://images.stockx.com/images/adidas-Campus-00s-Core-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+
+  // === NEW BALANCE ===
+  {
+    id: 38,
+    name: "New Balance 550 'White Green'",
+    brand: "New Balance",
+    category: "new-balance",
+    price: 145,
+    retail: 130,
+    releaseDate: "2021-03-12",
+    description: "Retro basketball shoe from 1989. White leather with green accents on heel and N logo.",
+    images: ["https://images.stockx.com/images/New-Balance-550-White-Green-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 39,
+    name: "New Balance 1906R 'Silver Metallic'",
+    brand: "New Balance",
+    category: "new-balance",
+    price: 160,
+    retail: 150,
+    releaseDate: "2023-04-27",
+    description: "Futuristic runner with silver mesh upper and ABZORB cushioning. Early 2000s vibes.",
+    images: ["https://images.stockx.com/images/New-Balance-1906R-Silver-Metallic-Sea-Salt-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 40,
+    name: "New Balance 530 'White Silver Navy'",
+    brand: "New Balance",
+    category: "new-balance",
+    price: 115,
+    retail: 100,
+    releaseDate: "2023-01-01",
+    description: "90s running silhouette with white mesh, silver accents, and ABZORB midsole.",
+    images: ["https://images.stockx.com/images/New-Balance-530-White-Silver-Navy-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+
+  // === OTHER BRANDS ===
+  {
+    id: 41,
+    name: "ASICS Gel-1130 'White/Pure Silver'",
+    brand: "ASICS",
+    category: "other",
+    price: 130,
+    retail: 120,
+    releaseDate: "2023-05-01",
+    description: "2000s-era runner with silver accents and layered mesh upper. Gel cushioning in heel.",
+    images: ["https://images.stockx.com/images/ASICS-Gel-1130-White-Pure-Silver-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 42,
+    name: "Vans Old Skool 'Black/White'",
+    brand: "Vans",
+    category: "other",
+    price: 70,
+    retail: 70,
+    releaseDate: "2023-01-01",
+    description: "The iconic side stripe skate shoe. Canvas and suede upper with vulcanized sole.",
+    images: ["https://images.stockx.com/images/Vans-Old-Skool-Black-White-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 43,
+    name: "Reebok Club C 85 'Chalk/Green'",
+    brand: "Reebok",
+    category: "other",
+    price: 85,
+    retail: 80,
+    releaseDate: "2023-01-01",
+    description: "Clean tennis shoe from 1985. Soft garment leather with green accents.",
+    images: ["https://images.stockx.com/images/Reebok-Club-C-85-Vintage-Chalk-Green-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  // === NEW ADDITIONS ===
+  // --- ADIDAS ---
+  {
+    id: 44,
+    name: "Adidas Samba OG 'Cloud White'",
+    brand: "Adidas",
+    category: "adidas",
+    price: 120,
+    retail: 100,
+    releaseDate: "2024-01-15",
+    description: "The iconic Samba returns in a clean Cloud White and Core Black colorway. Premium leather upper with the signature gum sole that started it all.",
+    images: ["https://images.stockx.com/images/adidas-Samba-OG-Cloud-White-Core-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 45,
+    name: "Adidas Campus 00s 'Core Black'",
+    brand: "Adidas",
+    category: "adidas",
+    price: 115,
+    retail: 100,
+    releaseDate: "2023-09-01",
+    description: "A modern reimagining of the classic Campus silhouette from the 2000s. Suede upper with contrasting white stripes and thick rubber sole.",
+    images: ["https://images.stockx.com/images/adidas-Campus-00s-Core-Black-Cloud-White-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 46,
+    name: "Adidas Campus 00s 'Grey White'",
+    brand: "Adidas",
+    category: "adidas",
+    price: 110,
+    retail: 100,
+    releaseDate: "2023-11-01",
+    description: "The Campus 00s in a versatile grey suede colorway. Features the chunky sole and premium construction that made this silhouette a modern classic.",
+    images: ["https://images.stockx.com/images/adidas-Campus-00s-Grey-White-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 47,
+    name: "Adidas Gazelle Indoor 'Blue Fusion'",
+    brand: "Adidas",
+    category: "adidas",
+    price: 130,
+    retail: 110,
+    releaseDate: "2024-02-01",
+    description: "The Gazelle Indoor brings retro handball court style with a Blue Fusion suede upper and classic gum outsole.",
+    images: ["https://images.stockx.com/images/adidas-Gazelle-Indoor-Blue-Fusion-Gum-W-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 48,
+    name: "Adidas Handball Spezial 'Light Blue'",
+    brand: "Adidas",
+    category: "adidas",
+    price: 125,
+    retail: 100,
+    releaseDate: "2024-03-01",
+    description: "The Handball Spezial continues its resurgence with this light blue suede colorway. A terrace culture icon with timeless appeal.",
+    images: ["https://images.stockx.com/images/adidas-Handball-Spezial-Light-Blue-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  // --- NEW BALANCE ---
+  {
+    id: 49,
+    name: "New Balance 2002R 'Rain Cloud'",
+    brand: "New Balance",
+    category: "new-balance",
+    price: 175,
+    retail: 150,
+    releaseDate: "2023-06-15",
+    description: "Part of the Protection Pack, the 2002R Rain Cloud features a tonal grey suede and mesh upper with ABZORB cushioning.",
+    images: ["https://images.stockx.com/images/New-Balance-2002R-Rain-Cloud-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 50,
+    name: "New Balance 990v6 'Grey'",
+    brand: "New Balance",
+    category: "new-balance",
+    price: 220,
+    retail: 200,
+    releaseDate: "2024-01-01",
+    description: "The latest iteration of the iconic 990 series. Made in USA with premium pigskin suede and FuelCell midsole technology.",
+    images: ["https://images.stockx.com/images/New-Balance-990v6-Grey-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 51,
+    name: "New Balance 530 'White Silver Navy'",
+    brand: "New Balance",
+    category: "new-balance",
+    price: 110,
+    retail: 100,
+    releaseDate: "2023-08-01",
+    description: "The 530 brings retro running style from the early 2000s. Mesh and synthetic upper with ABZORB cushioning in a clean white colorway.",
+    images: ["https://images.stockx.com/images/New-Balance-530-White-Silver-Navy-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 52,
+    name: "New Balance 574 'Classic Grey'",
+    brand: "New Balance",
+    category: "new-balance",
+    price: 95,
+    retail: 90,
+    releaseDate: "2023-01-01",
+    description: "The quintessential New Balance silhouette in its signature grey. Suede and mesh upper with ENCAP midsole technology.",
+    images: ["https://images.stockx.com/images/New-Balance-574-Classic-Grey-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  // --- YEEZY ---
+  {
+    id: 53,
+    name: "Adidas Yeezy Foam RNNR 'Onyx'",
+    brand: "Yeezy",
+    category: "yeezy",
+    price: 145,
+    retail: 90,
+    releaseDate: "2023-09-01",
+    description: "The futuristic Foam RNNR in stealthy Onyx black. Made from algae-based foam for a sustainable, comfortable, and distinctive silhouette.",
+    images: ["https://images.stockx.com/images/adidas-Yeezy-Foam-RNNR-Onyx-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  // --- NIKE ---
+  {
+    id: 54,
+    name: "Nike Air Max Plus 'Black Volt'",
+    brand: "Nike",
+    category: "nike",
+    price: 185,
+    retail: 175,
+    releaseDate: "2024-01-15",
+    description: "The Air Max Plus with its distinctive gradient upper in Black and Volt. Features visible Tuned Air cushioning for maximum comfort.",
+    images: ["https://images.stockx.com/images/Nike-Air-Max-Plus-Black-Volt-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 55,
+    name: "Nike Air Max 90 'Triple White'",
+    brand: "Nike",
+    category: "nike",
+    price: 135,
+    retail: 130,
+    releaseDate: "2023-01-01",
+    description: "The legendary Air Max 90 in an all-white colorway. A timeless classic that never goes out of style.",
+    images: ["https://images.stockx.com/images/Nike-Air-Max-90-Triple-White-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 56,
+    name: "Nike Blazer Mid '77 Vintage 'White Black'",
+    brand: "Nike",
+    category: "nike",
+    price: 115,
+    retail: 105,
+    releaseDate: "2023-06-01",
+    description: "The iconic basketball shoe from 1977, reimagined with a vintage aesthetic. Premium leather upper with exposed foam on the tongue.",
+    images: ["https://images.stockx.com/images/Nike-Blazer-Mid-77-Vintage-White-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  {
+    id: 57,
+    name: "Nike SB Dunk Low 'Court Purple'",
+    brand: "Nike",
+    category: "nike",
+    price: 175,
+    retail: 110,
+    releaseDate: "2021-03-01",
+    description: "A coveted SB Dunk Low colorway featuring Court Purple and white leather. Clean and classic skateboarding style.",
+    images: ["https://images.stockx.com/images/Nike-SB-Dunk-Low-Court-Purple-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  // --- JORDAN ---
+  {
+    id: 58,
+    name: "Air Jordan 6 Retro 'Black Infrared' (2019)",
+    brand: "Jordan",
+    category: "jordan",
+    price: 265,
+    retail: 200,
+    releaseDate: "2019-02-16",
+    description: "The iconic colorway Michael Jordan wore when he won his first championship. Black nubuck upper with infrared accents and visible Air unit.",
+    images: ["https://images.stockx.com/images/Air-Jordan-6-Retro-Black-Infrared-2019-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 59,
+    name: "Air Jordan 1 Low 'Bred Toe'",
+    brand: "Jordan",
+    category: "jordan",
+    price: 145,
+    retail: 110,
+    releaseDate: "2023-07-01",
+    description: "The classic Bred Toe colorway on the low-top Jordan 1. Black, white, and gym red leather in a wearable silhouette.",
+    images: ["https://images.stockx.com/images/Air-Jordan-1-Low-Bred-Toe-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
+  },
+  {
+    id: 60,
+    name: "Air Jordan 3 Retro 'Fire Red' (2022)",
+    brand: "Jordan",
+    category: "jordan",
+    price: 210,
+    retail: 200,
+    releaseDate: "2022-09-10",
+    description: "The Fire Red 3s return with OG-style 'Nike Air' branding on the heel. White cement grey upper with fire red accents.",
+    images: ["https://images.stockx.com/images/Air-Jordan-3-Retro-Fire-Red-2022-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: false
+  },
+  // --- OTHER BRANDS ---
+  {
+    id: 61,
+    name: "ASICS Gel-1130 'White Clay Canyon'",
+    brand: "ASICS",
+    category: "other",
+    price: 135,
+    retail: 120,
+    releaseDate: "2024-01-01",
+    description: "The retro runner that's taken over. Originally from 2008, the Gel-1130 features GEL technology and a vintage aesthetic.",
+    images: ["https://images.stockx.com/images/ASICS-Gel-1130-White-Clay-Canyon-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: true, trending: true
+  },
+  {
+    id: 62,
+    name: "ASICS GT-2160 'White Black'",
+    brand: "ASICS",
+    category: "other",
+    price: 145,
+    retail: 130,
+    releaseDate: "2024-02-01",
+    description: "The GT-2160 brings 2000s running heritage to modern streetwear. Features GEL cushioning and the iconic ASICS stripe.",
+    images: ["https://images.stockx.com/images/ASICS-GT-2160-White-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90"],
+    inStock: true, featured: false, trending: true
   }
 ];
 
-// Categories
+// Helper function to generate vendor prices dynamically
+function generateVendorPrices(product) {
+  const { vendors, getRetailVendors, getResaleVendors } = window.KicksListVendors;
+  const vendorPrices = [];
+  const basePrice = product.price;
+  const retailPrice = product.retail;
+  const id = product.id;
+
+  const seededRandom = (seed, index) => {
+    const x = Math.sin(seed * 9999 + index * 7777) * 10000;
+    return x - Math.floor(x);
+  };
+
+  const retailVendors = getRetailVendors();
+  const resaleVendors = getResaleVendors();
+
+  retailVendors.forEach((vendor, index) => {
+    const rand = seededRandom(id, index);
+    const inStock = rand > 0.6;
+    let price = retailPrice;
+    if (rand > 0.85) {
+      price = Math.round(retailPrice * (0.85 + rand * 0.1));
+    }
+
+    const searchTerm = encodeURIComponent(product.name);
+    let url;
+    switch(vendor.id) {
+      case 'nike': url = `https://nike.com/w?q=${searchTerm}`; break;
+      case 'footlocker': url = `https://footlocker.com/search?query=${searchTerm}`; break;
+      case 'finishline': url = `https://finishline.com/store/browse/search.jsp?searchTerm=${searchTerm}`; break;
+      case 'champssports': url = `https://champssports.com/search?query=${searchTerm}`; break;
+      case 'jdsports': url = `https://jdsports.com/search/${searchTerm}`; break;
+      case 'dickssporting': url = `https://dickssportinggoods.com/search/SearchDisplay?searchTerm=${searchTerm}`; break;
+      default: url = `${vendor.url}/search?q=${searchTerm}`;
+    }
+
+    vendorPrices.push({ vendorId: vendor.id, price, url, inStock, type: 'retail' });
+  });
+
+  resaleVendors.forEach((vendor, index) => {
+    const rand = seededRandom(id, index + 100);
+    const variance = (rand - 0.5) * 0.3;
+    let price = Math.round(basePrice * (1 + variance));
+    if (vendor.id === 'flightclub') price = Math.round(price * 1.12);
+    else if (vendor.id === 'goat') price = Math.round(price * 0.97);
+    const inStock = rand > 0.1;
+
+    const searchTerm = encodeURIComponent(product.name);
+    let url;
+    switch(vendor.id) {
+      case 'stockx': url = `https://stockx.com/search?s=${searchTerm}`; break;
+      case 'goat': url = `https://goat.com/search?query=${searchTerm}`; break;
+      case 'ebay': url = `https://ebay.com/sch/i.html?_nkw=${searchTerm}`; break;
+      case 'flightclub': url = `https://flightclub.com/search?q=${searchTerm}`; break;
+      default: url = `${vendor.url}/search?q=${searchTerm}`;
+    }
+
+    vendorPrices.push({ vendorId: vendor.id, price, url, inStock, type: 'resale' });
+  });
+
+  return vendorPrices;
+}
+
+function getLowestPrice(product) {
+  const vendors = generateVendorPrices(product);
+  const inStockVendors = vendors.filter(v => v.inStock);
+  if (inStockVendors.length === 0) return null;
+  return Math.min(...inStockVendors.map(v => v.price));
+}
+
+function getHighestPrice(product) {
+  const vendors = generateVendorPrices(product);
+  const inStockVendors = vendors.filter(v => v.inStock);
+  if (inStockVendors.length === 0) return null;
+  return Math.max(...inStockVendors.map(v => v.price));
+}
+
+function getPriceRange(product) {
+  return { low: getLowestPrice(product), high: getHighestPrice(product) };
+}
+
+function getVendorCount(product) {
+  const vendors = generateVendorPrices(product);
+  return vendors.filter(v => v.inStock).length;
+}
+
+function getBestDeal(product) {
+  const vendors = generateVendorPrices(product);
+  const inStockVendors = vendors.filter(v => v.inStock);
+  if (inStockVendors.length === 0) return null;
+  return inStockVendors.reduce((min, v) => v.price < min.price ? v : min);
+}
+
+function getSavings(product) {
+  const low = getLowestPrice(product);
+  const high = getHighestPrice(product);
+  if (!low || !high) return 0;
+  return high - low;
+}
+
 const categories = [
-  { id: 'jordan', name: 'Jordan', slug: 'jordan' },
-  { id: 'nike', name: 'Nike', slug: 'nike' },
-  { id: 'adidas', name: 'Adidas', slug: 'adidas' },
-  { id: 'new-balance', name: 'New Balance', slug: 'new-balance' },
-  { id: 'yeezy', name: 'Yeezy', slug: 'yeezy' },
-  { id: 'dunk', name: 'Dunk', slug: 'dunk' }
+  { id: "all", name: "All Sneakers", count: products.length },
+  { id: "jordan", name: "Jordan", count: products.filter(p => p.category === "jordan").length },
+  { id: "nike", name: "Nike", count: products.filter(p => p.category === "nike").length },
+  { id: "yeezy", name: "Yeezy", count: products.filter(p => p.category === "yeezy").length },
+  { id: "adidas", name: "Adidas", count: products.filter(p => p.category === "adidas").length },
+  { id: "new-balance", name: "New Balance", count: products.filter(p => p.category === "new-balance").length },
+  { id: "other", name: "Other Brands", count: products.filter(p => p.category === "other").length }
 ];
 
-// Helper functions
-const getProductById = (id) => products.find(p => p.id === parseInt(id));
-
-const getProductsByCategory = (category) => {
-  if (!category || category === 'all') return products;
-  return products.filter(p =>
-    p.category.toLowerCase() === category.toLowerCase() ||
-    p.brand.toLowerCase() === category.toLowerCase()
-  );
-};
-
-const getFeaturedProducts = () => products.filter(p => p.featured);
-
-const getTrendingProducts = () => products.filter(p => p.trending);
-
-const getNewDrops = () => products.filter(p => p.badge === 'New' || p.featured);
-
-const getRelatedProducts = (productId, limit = 4) => {
+function getProductById(id) { return products.find(p => p.id === parseInt(id)); }
+function getProductsByCategory(category) { return category === "all" ? products : products.filter(p => p.category === category); }
+function searchProducts(query) {
+  const q = query.toLowerCase();
+  return products.filter(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
+}
+function getFeaturedProducts() { return products.filter(p => p.featured); }
+function getTrendingProducts() { return products.filter(p => p.trending); }
+function getNewDrops() { return [...products].sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate)).slice(0, 8); }
+function getRelatedProducts(productId, limit = 4) {
   const product = getProductById(productId);
   if (!product) return [];
-
-  return products
-    .filter(p => p.id !== productId && (p.brand === product.brand || p.category === product.category))
-    .slice(0, limit);
-};
-
-const searchProducts = (query) => {
-  const q = query.toLowerCase();
-  return products.filter(p =>
-    p.name.toLowerCase().includes(q) ||
-    p.brand.toLowerCase().includes(q) ||
-    p.model.toLowerCase().includes(q) ||
-    p.styleId.toLowerCase().includes(q) ||
-    p.tags.some(tag => tag.toLowerCase().includes(q))
-  );
-};
-
-// Export for use in browser
-if (typeof window !== 'undefined') {
-  window.KicksListData = {
-    products,
-    categories,
-    getProductById,
-    getProductsByCategory,
-    getFeaturedProducts,
-    getTrendingProducts,
-    getNewDrops,
-    getRelatedProducts,
-    searchProducts
-  };
+  return products.filter(p => p.id !== productId && p.category === product.category).slice(0, limit);
 }
 
-// Export for Node.js
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    products,
-    categories,
-    getProductById,
-    getProductsByCategory,
-    getFeaturedProducts,
-    getTrendingProducts,
-    getNewDrops,
-    getRelatedProducts,
-    searchProducts
-  };
-}
+window.KicksListData = {
+  products, categories, getProductById, getProductsByCategory, searchProducts,
+  getFeaturedProducts, getTrendingProducts, getNewDrops, getRelatedProducts,
+  generateVendorPrices, getLowestPrice, getHighestPrice, getPriceRange,
+  getVendorCount, getBestDeal, getSavings
+};

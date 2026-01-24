@@ -1,0 +1,1200 @@
+/**
+ * KicksList - Premium Sneaker Price Comparison
+ * Full React Application
+ */
+
+const { useState, useEffect, useRef, useCallback, createContext, useContext } = React;
+
+// ============================================
+// App Context
+// ============================================
+const AppContext = createContext();
+
+const useApp = () => useContext(AppContext);
+
+// ============================================
+// Router (Simple hash-based)
+// ============================================
+const useRouter = () => {
+  const [route, setRoute] = useState({ page: 'home', params: {} });
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1) || '/';
+      const [path, query] = hash.split('?');
+      const params = {};
+
+      if (query) {
+        query.split('&').forEach(param => {
+          const [key, value] = param.split('=');
+          params[key] = decodeURIComponent(value);
+        });
+      }
+
+      if (path === '/' || path === '') {
+        setRoute({ page: 'home', params });
+      } else if (path.startsWith('/product/')) {
+        const id = path.split('/')[2];
+        setRoute({ page: 'product', params: { id, ...params } });
+      } else if (path.startsWith('/shop')) {
+        setRoute({ page: 'shop', params });
+      } else if (path.startsWith('/category/')) {
+        const category = path.split('/')[2];
+        setRoute({ page: 'shop', params: { category, ...params } });
+      } else if (path.startsWith('/search')) {
+        setRoute({ page: 'shop', params });
+      } else if (path === '/about') {
+        setRoute({ page: 'about', params });
+      } else if (path === '/brands') {
+        setRoute({ page: 'brands', params });
+      } else {
+        setRoute({ page: 'home', params });
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const navigate = useCallback((path) => {
+    window.location.hash = path;
+    window.scrollTo(0, 0);
+  }, []);
+
+  return { route, navigate };
+};
+
+// ============================================
+// App Provider (Cart removed)
+// ============================================
+const AppProvider = ({ children }) => {
+  const router = useRouter();
+  const [wishlist, setWishlist] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const toggleWishlist = useCallback((productId) => {
+    setWishlist(prev =>
+      prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  }, []);
+
+  return (
+    <AppContext.Provider value={{
+      ...router,
+      wishlist,
+      toggleWishlist,
+      searchQuery,
+      setSearchQuery
+    }}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+// ============================================
+// Trust Rating Component
+// ============================================
+const TrustRating = ({ rating, showCount = false, count = 0, size = 'md' }) => {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+  const sizeClasses = {
+    sm: 'kl-trust-rating-sm',
+    md: 'kl-trust-rating-md',
+    lg: 'kl-trust-rating-lg'
+  };
+
+  return (
+    <div className={`kl-trust-rating ${sizeClasses[size]}`}>
+      <div className="kl-trust-stars">
+        {[...Array(fullStars)].map((_, i) => (
+          <svg key={`full-${i}`} viewBox="0 0 24 24" fill="currentColor" className="kl-star kl-star-full">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        ))}
+        {hasHalfStar && (
+          <svg viewBox="0 0 24 24" className="kl-star kl-star-half">
+            <defs>
+              <linearGradient id="halfGradient">
+                <stop offset="50%" stopColor="currentColor"/>
+                <stop offset="50%" stopColor="#e7e5e4"/>
+              </linearGradient>
+            </defs>
+            <path fill="url(#halfGradient)" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        )}
+        {[...Array(emptyStars)].map((_, i) => (
+          <svg key={`empty-${i}`} viewBox="0 0 24 24" fill="#e7e5e4" className="kl-star kl-star-empty">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        ))}
+      </div>
+      <span className="kl-trust-rating-value">{rating.toFixed(1)}</span>
+      {showCount && count > 0 && (
+        <span className="kl-trust-count">({count.toLocaleString()} reviews)</span>
+      )}
+    </div>
+  );
+};
+
+// ============================================
+// Price Range Component
+// ============================================
+const PriceRange = ({ product, showVendorCount = true, showSavings = false }) => {
+  const { getLowestPrice, getHighestPrice, getVendorCount, getSavings } = window.KicksListData;
+
+  const lowPrice = getLowestPrice(product);
+  const highPrice = getHighestPrice(product);
+  const vendorCount = getVendorCount(product);
+  const savings = getSavings(product);
+
+  if (!lowPrice) {
+    return <span className="kl-price-range kl-out-of-stock">Out of Stock</span>;
+  }
+
+  return (
+    <div className="kl-price-range">
+      <span className="kl-price-from">from</span>
+      <span className="kl-price-low">${lowPrice.toLocaleString()}</span>
+      {highPrice !== lowPrice && (
+        <>
+          <span className="kl-price-sep">-</span>
+          <span className="kl-price-high">${highPrice.toLocaleString()}</span>
+        </>
+      )}
+      {showVendorCount && vendorCount > 0 && (
+        <span className="kl-vendor-count">{vendorCount} vendors</span>
+      )}
+      {showSavings && savings > 0 && (
+        <span className="kl-savings-badge">Save up to ${savings}</span>
+      )}
+    </div>
+  );
+};
+
+// ============================================
+// Vendor Comparison Table
+// ============================================
+const VendorComparisonTable = ({ product }) => {
+  const { generateVendorPrices, getBestDeal } = window.KicksListData;
+  const { vendors: vendorData, getVendorById } = window.KicksListVendors;
+
+  const vendorPrices = generateVendorPrices(product);
+  const bestDeal = getBestDeal(product);
+
+  // Separate retail and resale vendors
+  const retailVendors = vendorPrices.filter(v => v.type === 'retail');
+  const resaleVendors = vendorPrices.filter(v => v.type === 'resale');
+
+  // Sort each group: in-stock by price (lowest first), then out-of-stock
+  const sortVendors = (vendors) => {
+    const inStock = vendors.filter(v => v.inStock).sort((a, b) => a.price - b.price);
+    const outOfStock = vendors.filter(v => !v.inStock);
+    return [...inStock, ...outOfStock];
+  };
+
+  const sortedRetail = sortVendors(retailVendors);
+  const sortedResale = sortVendors(resaleVendors);
+
+  const VendorRow = ({ vendorPrice, showRetailBadge = false }) => {
+    const vendor = getVendorById(vendorPrice.vendorId);
+    const isBestDeal = bestDeal && vendorPrice.vendorId === bestDeal.vendorId && vendorPrice.inStock;
+
+    return (
+      <div
+        className={`kl-comparison-row ${!vendorPrice.inStock ? 'out-of-stock' : ''} ${isBestDeal ? 'kl-best-deal' : ''}`}
+      >
+        <div className="kl-comparison-vendor">
+          <span className="kl-vendor-name" style={{ color: vendor.color }}>{vendor.name}</span>
+          {isBestDeal && <span className="kl-best-deal-badge">Best Price</span>}
+          {showRetailBadge && vendorPrice.inStock && <span className="kl-retail-badge">Retail</span>}
+        </div>
+        <div className="kl-comparison-rating">
+          <TrustRating rating={vendor.trustRating} size="sm" />
+          <span className="kl-vendor-reviews">({vendor.trustCount.toLocaleString()})</span>
+        </div>
+        <div className="kl-comparison-price">
+          {vendorPrice.inStock ? (
+            <span className="kl-vendor-price">${vendorPrice.price.toLocaleString()}</span>
+          ) : (
+            <span className="kl-vendor-oos">Out of Stock</span>
+          )}
+        </div>
+        <div className="kl-comparison-action">
+          {vendorPrice.inStock ? (
+            <a
+              href={vendorPrice.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="kl-btn kl-btn-shop"
+              style={{ '--vendor-color': vendor.color }}
+            >
+              Shop at {vendor.name}
+            </a>
+          ) : (
+            <button className="kl-btn kl-btn-notify-vendor" disabled>
+              Notify Me
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="kl-vendor-comparison">
+      {/* Retail Section */}
+      <div className="kl-comparison-section">
+        <h3 className="kl-comparison-title">
+          <span>Retail Stores</span>
+          <span className="kl-comparison-subtitle">Official retailers · MSRP pricing</span>
+        </h3>
+        <div className="kl-comparison-table">
+          {sortedRetail.map((vendorPrice) => (
+            <VendorRow key={vendorPrice.vendorId} vendorPrice={vendorPrice} showRetailBadge={true} />
+          ))}
+        </div>
+      </div>
+
+      {/* Resale Section */}
+      <div className="kl-comparison-section">
+        <h3 className="kl-comparison-title">
+          <span>Resale Marketplaces</span>
+          <span className="kl-comparison-subtitle">Authenticated · Market pricing</span>
+        </h3>
+        <div className="kl-comparison-table">
+          {sortedResale.map((vendorPrice) => (
+            <VendorRow key={vendorPrice.vendorId} vendorPrice={vendorPrice} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// Navigation Component (Cart removed)
+// ============================================
+const Navigation = () => {
+  const { navigate, searchQuery, setSearchQuery } = useApp();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (searchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [searchOpen]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setSearchOpen(false);
+    }
+  };
+
+  const popularSearches = ['Jordan 4', 'Travis Scott', 'Dunk Low', 'Yeezy 350', 'New Balance 550'];
+
+  return (
+    <>
+      <div className="kl-announcement">
+        <span>Compare Prices From 10+ Retailers & Marketplaces</span>
+        <span className="kl-announcement-sep">·</span>
+        <span>Find The Best Deal</span>
+      </div>
+
+      <nav className={`kl-nav ${isScrolled ? 'scrolled' : ''}`}>
+        <div className="kl-nav-inner">
+          <div className="kl-nav-left">
+            <a href="#/" className="kl-logo" onClick={(e) => { e.preventDefault(); navigate('/'); }}>KicksList</a>
+            <ul className="kl-nav-links">
+              <li><a href="#/shop" onClick={(e) => { e.preventDefault(); navigate('/shop'); }}>Browse</a></li>
+              <li><a href="#/brands" onClick={(e) => { e.preventDefault(); navigate('/brands'); }}>Brands</a></li>
+              <li><a href="#/about" onClick={(e) => { e.preventDefault(); navigate('/about'); }}>About</a></li>
+            </ul>
+          </div>
+
+          <div className="kl-nav-right">
+            <button className="kl-nav-icon-btn" onClick={() => setSearchOpen(true)} aria-label="Search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Search Overlay */}
+      <div className={`kl-search-overlay ${searchOpen ? 'open' : ''}`}>
+        <div className="kl-search-container">
+          <form onSubmit={handleSearch} className="kl-search-form">
+            <svg className="kl-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search sneakers, brands, styles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="kl-search-input"
+            />
+            <button type="button" className="kl-search-close" onClick={() => setSearchOpen(false)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </form>
+          <div className="kl-search-suggestions">
+            <p className="kl-search-label">Popular Searches</p>
+            <div className="kl-search-tags">
+              {popularSearches.map((tag) => (
+                <button
+                  key={tag}
+                  className="kl-search-tag"
+                  onClick={() => {
+                    setSearchQuery(tag);
+                    navigate(`/search?q=${encodeURIComponent(tag)}`);
+                    setSearchOpen(false);
+                  }}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="kl-search-backdrop" onClick={() => setSearchOpen(false)} />
+      </div>
+    </>
+  );
+};
+
+// ============================================
+// Product Card (Updated with PriceRange)
+// ============================================
+const ProductCard = ({ product, index = 0 }) => {
+  const { navigate, wishlist, toggleWishlist } = useApp();
+  const { getVendorCount } = window.KicksListData;
+  const isWishlisted = wishlist.includes(product.id);
+  const vendorCount = getVendorCount(product);
+
+  return (
+    <article
+      className="kl-product-card"
+      style={{ animationDelay: `${index * 50}ms` }}
+    >
+      {product.badge && (
+        <span className={`kl-product-badge ${product.badge.toLowerCase().replace(' ', '-')}`}>
+          {product.badge}
+        </span>
+      )}
+      <button
+        className={`kl-product-wishlist ${isWishlisted ? 'active' : ''}`}
+        onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
+        aria-label="Add to wishlist"
+      >
+        <svg viewBox="0 0 24 24" fill={isWishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+      <div className="kl-product-image" onClick={() => navigate(`/product/${product.id}`)}>
+        <img
+          src={product.images[0]}
+          alt={product.name}
+          onError={(e) => { e.target.src = 'https://via.placeholder.com/400x400/f5f4f2/a8a29e?text=Image+Coming+Soon'; }}
+        />
+      </div>
+      <div className="kl-product-info" onClick={() => navigate(`/product/${product.id}`)}>
+        <p className="kl-product-brand">{product.brand}</p>
+        <h3 className="kl-product-name">{product.name}</h3>
+        <PriceRange product={product} showVendorCount={false} />
+        <a className="kl-compare-link" onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.id}`); }}>
+          Compare {vendorCount} Prices →
+        </a>
+      </div>
+    </article>
+  );
+};
+
+// ============================================
+// Homepage
+// ============================================
+const Homepage = () => {
+  const { navigate } = useApp();
+  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
+  const [activeCategory, setActiveCategory] = useState('all');
+
+  const { products, categories, getFeaturedProducts, getTrendingProducts, getNewDrops, getLowestPrice } = window.KicksListData;
+  const featuredProducts = getFeaturedProducts();
+  const trendingProducts = getTrendingProducts();
+  const newDrops = getNewDrops();
+
+  // Only cycle through the 3 displayed slides
+  const heroSlideCount = Math.min(featuredProducts.length, 3);
+
+  useEffect(() => {
+    if (heroSlideCount <= 1) return;
+    const timer = setInterval(() => {
+      setActiveHeroSlide((prev) => (prev + 1) % heroSlideCount);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [heroSlideCount]);
+
+  return (
+    <main className="kl-homepage-content">
+      {/* Hero */}
+      <section className="kl-hero">
+        <div className="kl-hero-slides">
+          {featuredProducts.slice(0, 3).map((product, idx) => (
+            <div key={product.id} className={`kl-hero-slide ${idx === activeHeroSlide ? 'active' : ''}`}>
+              <div className="kl-hero-content">
+                <p className="kl-hero-eyebrow">{product.featured ? "Editor's Pick" : 'Featured'}</p>
+                <h1 className="kl-hero-title">{product.name}</h1>
+                <p className="kl-hero-subtitle">{product.brand}</p>
+                <div className="kl-hero-actions">
+                  <button className="kl-btn kl-btn-primary" onClick={() => navigate(`/product/${product.id}`)}>
+                    Compare Prices
+                  </button>
+                  <span className="kl-hero-price">from ${getLowestPrice(product)?.toLocaleString()}</span>
+                </div>
+              </div>
+              <div className="kl-hero-image">
+                <img
+                  src={product.images[0]}
+                  alt={product.name}
+                  onError={(e) => { e.target.src = 'https://via.placeholder.com/600x600/f5f4f2/a8a29e?text=Image+Coming+Soon'; }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        {featuredProducts.length > 1 && (
+          <div className="kl-hero-nav">
+            {featuredProducts.slice(0, 3).map((_, idx) => (
+              <button
+                key={idx}
+                className={`kl-hero-dot ${idx === activeHeroSlide ? 'active' : ''}`}
+                onClick={() => setActiveHeroSlide(idx)}
+              />
+            ))}
+          </div>
+        )}
+        <div className="kl-hero-scroll">
+          <span>Scroll to explore</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M12 5v14M19 12l-7 7-7-7"/>
+          </svg>
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section className="kl-categories">
+        <div className="kl-categories-inner">
+          <button
+            className={`kl-category-btn ${activeCategory === 'all' ? 'active' : ''}`}
+            onClick={() => { setActiveCategory('all'); navigate('/shop'); }}
+          >
+            All
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              className={`kl-category-btn ${activeCategory === cat.id ? 'active' : ''}`}
+              onClick={() => { setActiveCategory(cat.id); navigate(`/category/${cat.id}`); }}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Drops */}
+      <section className="kl-section">
+        <div className="kl-section-header">
+          <div className="kl-section-title-group">
+            <p className="kl-section-eyebrow">Just Listed</p>
+            <h2 className="kl-section-title">Featured Drops</h2>
+          </div>
+          <a href="#/shop?filter=new" className="kl-section-link" onClick={(e) => { e.preventDefault(); navigate('/shop?filter=new'); }}>
+            View All
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+        </div>
+        <div className="kl-product-grid">
+          {newDrops.slice(0, 4).map((product, idx) => (
+            <ProductCard key={product.id} product={product} index={idx} />
+          ))}
+        </div>
+      </section>
+
+      {/* Editorial */}
+      <section className="kl-editorial">
+        <div className="kl-editorial-content">
+          <p className="kl-editorial-eyebrow">The Edit</p>
+          <h2 className="kl-editorial-title">Icons of<br /><em>Collaboration</em></h2>
+          <p className="kl-editorial-desc">Explore the most coveted collaborations in sneaker history—from Travis Scott to Off-White.</p>
+          <button className="kl-btn kl-btn-outline-light" onClick={() => navigate('/search?q=travis')}>
+            Discover More
+          </button>
+        </div>
+        <div className="kl-editorial-images">
+          <div className="kl-editorial-img kl-editorial-img-1">
+            <img src={products[1].images[0]} alt="Travis Scott" onError={(e) => { e.target.src = 'https://via.placeholder.com/400x400/f5f4f2/a8a29e?text='; }} />
+          </div>
+          <div className="kl-editorial-img kl-editorial-img-2">
+            <img src={products[3].images[0]} alt="Jordan" onError={(e) => { e.target.src = 'https://via.placeholder.com/400x400/f5f4f2/a8a29e?text='; }} />
+          </div>
+        </div>
+      </section>
+
+      {/* Trending */}
+      <section className="kl-section kl-trending">
+        <div className="kl-section-header">
+          <div className="kl-section-title-group">
+            <p className="kl-section-eyebrow">Most Wanted</p>
+            <h2 className="kl-section-title">Trending Now</h2>
+          </div>
+          <a href="#/shop" className="kl-section-link" onClick={(e) => { e.preventDefault(); navigate('/shop'); }}>
+            View All
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+        </div>
+        <div className="kl-trending-grid">
+          {trendingProducts.slice(0, 6).map((product, idx) => (
+            <article key={product.id} className="kl-trending-card" onClick={() => navigate(`/product/${product.id}`)}>
+              <span className="kl-trending-rank">{String(idx + 1).padStart(2, '0')}</span>
+              <div className="kl-trending-image">
+                <img src={product.images[0]} alt={product.name} onError={(e) => { e.target.src = 'https://via.placeholder.com/200x200/f5f4f2/a8a29e?text='; }} />
+              </div>
+              <div className="kl-trending-info">
+                <p className="kl-trending-brand">{product.brand}</p>
+                <h3 className="kl-trending-name">{product.name}</h3>
+                <span className="kl-trending-price">from ${getLowestPrice(product)?.toLocaleString()}</span>
+              </div>
+              <svg className="kl-trending-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Brands */}
+      <section className="kl-brands">
+        <p className="kl-brands-label">Shop by Brand</p>
+        <div className="kl-brands-grid">
+          {['Nike', 'Jordan', 'Adidas', 'New Balance', 'Yeezy', 'Asics'].map((brand) => (
+            <button key={brand} className="kl-brand-btn" onClick={() => navigate(`/category/${brand.toLowerCase()}`)}>
+              {brand}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Trust */}
+      <section className="kl-trust">
+        <div className="kl-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>
+          </svg>
+          <div><h4>All Vendors Verified</h4><p>Every vendor is authenticated and trusted</p></div>
+        </div>
+        <div className="kl-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <div><h4>Real-Time Prices</h4><p>Live pricing from 10+ stores & marketplaces</p></div>
+        </div>
+        <div className="kl-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <div><h4>Trust Ratings</h4><p>See vendor reviews before you buy</p></div>
+        </div>
+        <div className="kl-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+          <div><h4>Secure Shopping</h4><p>Buy directly from trusted vendors</p></div>
+        </div>
+      </section>
+    </main>
+  );
+};
+
+// ============================================
+// Shop Page
+// ============================================
+const ShopPage = () => {
+  const { route, navigate, searchQuery } = useApp();
+  const { products, categories, getProductsByCategory, searchProducts, getLowestPrice } = window.KicksListData;
+
+  const [sortBy, setSortBy] = useState('newest');
+  const [activeCategory, setActiveCategory] = useState(route.params.category || 'all');
+
+  const queryParam = route.params.q || searchQuery;
+
+  let filteredProducts = queryParam
+    ? searchProducts(queryParam)
+    : getProductsByCategory(activeCategory);
+
+  // Sort
+  if (sortBy === 'price-low') {
+    filteredProducts = [...filteredProducts].sort((a, b) => (getLowestPrice(a) || 0) - (getLowestPrice(b) || 0));
+  } else if (sortBy === 'price-high') {
+    filteredProducts = [...filteredProducts].sort((a, b) => (getLowestPrice(b) || 0) - (getLowestPrice(a) || 0));
+  } else if (sortBy === 'newest') {
+    filteredProducts = [...filteredProducts].sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+  }
+
+  useEffect(() => {
+    setActiveCategory(route.params.category || 'all');
+  }, [route.params.category]);
+
+  return (
+    <main className="kl-shop-page">
+      <div className="kl-shop-header">
+        <div className="kl-shop-header-inner">
+          <div>
+            <nav className="kl-breadcrumb">
+              <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
+              <span className="kl-breadcrumb-sep">/</span>
+              <span className="kl-breadcrumb-current">
+                {queryParam ? `Search: "${queryParam}"` : activeCategory === 'all' ? 'All Sneakers' : categories.find(c => c.id === activeCategory)?.name || 'Shop'}
+              </span>
+            </nav>
+            <h1 className="kl-shop-title">
+              {queryParam ? `Results for "${queryParam}"` : activeCategory === 'all' ? 'All Sneakers' : categories.find(c => c.id === activeCategory)?.name || 'Shop'}
+            </h1>
+            <p className="kl-shop-count">{filteredProducts.length} Products</p>
+          </div>
+          <div className="kl-shop-sort">
+            <label>Sort by:</label>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="newest">Newest</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="kl-shop-content">
+        <aside className="kl-shop-filters">
+          <div className="kl-filter-section">
+            <h3 className="kl-filter-title">Categories</h3>
+            <div className="kl-filter-options">
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  className={`kl-filter-btn ${activeCategory === cat.id ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveCategory(cat.id);
+                    navigate(cat.id === 'all' ? '/shop' : `/category/${cat.id}`);
+                  }}
+                >
+                  {cat.name}
+                  <span className="kl-filter-count">{cat.count}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        <div className="kl-shop-products">
+          {filteredProducts.length === 0 ? (
+            <div className="kl-shop-empty">
+              <p>No sneakers found matching your criteria.</p>
+              <button className="kl-btn kl-btn-primary" onClick={() => navigate('/shop')}>View All Products</button>
+            </div>
+          ) : (
+            <div className="kl-product-grid">
+              {filteredProducts.map((product, idx) => (
+                <ProductCard key={product.id} product={product} index={idx} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+};
+
+// ============================================
+// Product Detail Page (Updated)
+// ============================================
+const ProductDetailPage = () => {
+  const { route, navigate, wishlist, toggleWishlist } = useApp();
+  const { getProductById, getRelatedProducts, getLowestPrice, getHighestPrice, getSavings, getVendorCount } = window.KicksListData;
+
+  const productId = parseInt(route.params.id);
+  const product = getProductById(productId);
+  const relatedProducts = getRelatedProducts(productId, 4);
+
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  const isWishlisted = wishlist.includes(productId);
+
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [productId]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!lightboxOpen) return;
+      if (e.key === 'Escape') setLightboxOpen(false);
+      if (e.key === 'ArrowRight') setSelectedImage((prev) => (prev + 1) % product.images.length);
+      if (e.key === 'ArrowLeft') setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxOpen, product?.images?.length]);
+
+  if (!product) {
+    return (
+      <main className="kl-error-page">
+        <h1>Product Not Found</h1>
+        <p>The sneaker you're looking for doesn't exist.</p>
+        <button className="kl-btn kl-btn-primary" onClick={() => navigate('/shop')}>Browse All Sneakers</button>
+      </main>
+    );
+  }
+
+  const lowestPrice = getLowestPrice(product);
+  const highestPrice = getHighestPrice(product);
+  const savings = getSavings(product);
+  const vendorCount = getVendorCount(product);
+
+  const handleImageHover = (e) => {
+    if (!isZoomed) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPosition({ x, y });
+  };
+
+  return (
+    <main className="kl-product-detail">
+      <nav className="kl-breadcrumb">
+        <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
+        <span className="kl-breadcrumb-sep">/</span>
+        <a href={`#/category/${product.category}`} onClick={(e) => { e.preventDefault(); navigate(`/category/${product.category}`); }}>{product.brand}</a>
+        <span className="kl-breadcrumb-sep">/</span>
+        <span className="kl-breadcrumb-current">{product.name}</span>
+      </nav>
+
+      <div className="kl-product-main">
+        {/* Gallery */}
+        <div className="kl-gallery">
+          <div className="kl-gallery-thumbnails">
+            {product.images.map((img, idx) => (
+              <button
+                key={idx}
+                className={`kl-thumbnail ${selectedImage === idx ? 'active' : ''}`}
+                onClick={() => setSelectedImage(idx)}
+              >
+                <img src={img} alt={`View ${idx + 1}`} onError={(e) => { e.target.src = 'https://via.placeholder.com/100x100/f5f4f2/a8a29e?text='; }} />
+              </button>
+            ))}
+          </div>
+          <div
+            className={`kl-main-image ${isZoomed ? 'zoomed' : ''}`}
+            onMouseEnter={() => setIsZoomed(true)}
+            onMouseLeave={() => setIsZoomed(false)}
+            onMouseMove={handleImageHover}
+            onClick={() => setLightboxOpen(true)}
+          >
+            <div
+              className="kl-image-container"
+              style={isZoomed ? {
+                backgroundImage: `url(${product.images[selectedImage]})`,
+                backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+              } : {}}
+            >
+              <img src={product.images[selectedImage]} alt={product.name} className={isZoomed ? 'hidden' : ''} onError={(e) => { e.target.src = 'https://via.placeholder.com/600x600/f5f4f2/a8a29e?text=Image+Coming+Soon'; }} />
+            </div>
+            <button className="kl-expand-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+                <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+              </svg>
+            </button>
+            <div className="kl-image-counter">{selectedImage + 1} / {product.images.length}</div>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="kl-product-info-panel">
+          <div className="kl-info-header">
+            <p className="kl-detail-brand">{product.brand}</p>
+            <h1 className="kl-detail-name">{product.name}</h1>
+            <p className="kl-detail-style">{product.category?.toUpperCase()}</p>
+          </div>
+
+          <div className="kl-price-block">
+            <div className="kl-price-row">
+              <span className="kl-price-current">
+                {lowestPrice ? `from $${lowestPrice.toLocaleString()}` : 'Out of Stock'}
+              </span>
+              {highestPrice && highestPrice !== lowestPrice && (
+                <span className="kl-price-retail">to ${highestPrice.toLocaleString()}</span>
+              )}
+            </div>
+            <div className="kl-price-meta">
+              {savings > 0 && (
+                <p className="kl-price-note kl-price-savings">Save up to ${savings.toLocaleString()} by comparing</p>
+              )}
+              <p className="kl-vendor-count-note">{vendorCount} vendors available</p>
+            </div>
+          </div>
+
+          {/* Vendor Comparison Table */}
+          <VendorComparisonTable product={product} />
+
+          <div className="kl-wishlist-action">
+            <button className={`kl-wishlist-btn-large ${isWishlisted ? 'active' : ''}`} onClick={() => toggleWishlist(productId)}>
+              <svg viewBox="0 0 24 24" fill={isWishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              {isWishlisted ? 'Saved to Wishlist' : 'Add to Wishlist'}
+            </button>
+          </div>
+
+          <div className="kl-trust-badges">
+            <div className="kl-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg><span>All Vendors Verified</span></div>
+            <div className="kl-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Real-Time Prices</span></div>
+            <div className="kl-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span>Secure Checkout</span></div>
+          </div>
+
+          <div className="kl-specs">
+            <h3 className="kl-specs-title">Product Details</h3>
+            <dl className="kl-specs-list">
+              <div className="kl-spec-row"><dt>Brand</dt><dd>{product.brand}</dd></div>
+              <div className="kl-spec-row"><dt>Release Date</dt><dd>{new Date(product.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</dd></div>
+              <div className="kl-spec-row"><dt>Retail Price</dt><dd>${product.retail?.toLocaleString()}</dd></div>
+            </dl>
+          </div>
+
+          <div className="kl-description">
+            <h3 className="kl-description-title">About This Sneaker</h3>
+            <p className="kl-description-text">{product.description}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Related */}
+      {relatedProducts.length > 0 && (
+        <section className="kl-related">
+          <div className="kl-section-header">
+            <h2 className="kl-section-title">You May Also Like</h2>
+            <a href="#/shop" className="kl-section-link" onClick={(e) => { e.preventDefault(); navigate('/shop'); }}>
+              View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+          <div className="kl-product-grid">
+            {relatedProducts.map((p, idx) => <ProductCard key={p.id} product={p} index={idx} />)}
+          </div>
+        </section>
+      )}
+
+      {/* Lightbox */}
+      {lightboxOpen && (
+        <div className="kl-lightbox" onClick={() => setLightboxOpen(false)}>
+          <button className="kl-lightbox-close" onClick={() => setLightboxOpen(false)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <button className="kl-lightbox-nav prev" onClick={(e) => { e.stopPropagation(); setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length); }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div className="kl-lightbox-content" onClick={(e) => e.stopPropagation()}>
+            <img src={product.images[selectedImage]} alt={product.name} onError={(e) => { e.target.src = 'https://via.placeholder.com/800x800/f5f4f2/a8a29e?text=Image+Coming+Soon'; }} />
+          </div>
+          <button className="kl-lightbox-nav next" onClick={(e) => { e.stopPropagation(); setSelectedImage((prev) => (prev + 1) % product.images.length); }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <div className="kl-lightbox-thumbnails">
+            {product.images.map((img, idx) => (
+              <button key={idx} className={`kl-lightbox-thumb ${selectedImage === idx ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setSelectedImage(idx); }}>
+                <img src={img} alt={`View ${idx + 1}`} onError={(e) => { e.target.src = 'https://via.placeholder.com/100x100/f5f4f2/a8a29e?text='; }} />
+              </button>
+            ))}
+          </div>
+          <div className="kl-lightbox-counter">{selectedImage + 1} / {product.images.length}</div>
+        </div>
+      )}
+    </main>
+  );
+};
+
+// ============================================
+// About Page (Updated)
+// ============================================
+const AboutPage = () => {
+  const { navigate } = useApp();
+
+  return (
+    <main className="kl-about-page">
+      <section className="kl-about-hero">
+        <h1>Compare Prices From<br /><em>Trusted Vendors</em></h1>
+        <p>KicksList aggregates real-time prices from the top sneaker marketplaces, helping you find the best deal on authentic footwear. Every vendor is verified and trusted.</p>
+      </section>
+
+      <section className="kl-about-values">
+        <div className="kl-about-value">
+          <span className="kl-about-value-num">01</span>
+          <h3>Real-Time Comparison</h3>
+          <p>We aggregate prices from Nike, Foot Locker, StockX, GOAT, eBay, Flight Club, and more so you can see all your options in one place and make informed decisions.</p>
+        </div>
+        <div className="kl-about-value">
+          <span className="kl-about-value-num">02</span>
+          <h3>Trusted Vendors Only</h3>
+          <p>Every vendor in our comparison network is verified and has a proven track record of authenticity and customer satisfaction.</p>
+        </div>
+        <div className="kl-about-value">
+          <span className="kl-about-value-num">03</span>
+          <h3>Save Money</h3>
+          <p>Prices can vary by hundreds of dollars across vendors. We help you find the best deal every time you shop.</p>
+        </div>
+      </section>
+
+      <section className="kl-about-stats">
+        <div className="kl-about-stat"><span>10+</span><p>Trusted Vendors</p></div>
+        <div className="kl-about-stat"><span>43</span><p>Sneakers Listed</p></div>
+        <div className="kl-about-stat"><span>500K+</span><p>Reviews Aggregated</p></div>
+        <div className="kl-about-stat"><span>100%</span><p>Verified Vendors</p></div>
+      </section>
+
+      <section className="kl-about-cta">
+        <h2>Ready to Start?</h2>
+        <div className="kl-about-cta-btns">
+          <button className="kl-btn kl-btn-primary" onClick={() => navigate('/shop')}>Compare Prices</button>
+        </div>
+      </section>
+    </main>
+  );
+};
+
+// ============================================
+// Brands Page
+// ============================================
+const BrandsPage = () => {
+  const { navigate } = useApp();
+  const { getProductsByCategory } = window.KicksListData;
+
+  const brandsInfo = {
+    jordan: {
+      description: 'Air Jordan is a line of basketball shoes produced by Nike, created for Hall of Fame former basketball player Michael Jordan. The brand has transcended sports to become a cultural icon, with each numbered silhouette telling its own story. From the original Air Jordan 1 that was banned by the NBA to the revolutionary Air Jordan 11 worn during the "Flu Game," Jordan Brand represents the pinnacle of sneaker culture.',
+      founded: '1984',
+      headquarters: 'Beaverton, Oregon',
+      highlights: ['Most collected sneaker brand', 'Retro releases highly sought after', 'Collaboration culture pioneer']
+    },
+    nike: {
+      description: 'Nike, Inc. is the world\'s largest supplier of athletic shoes and apparel. Known for groundbreaking innovation like Air Max, React, and ZoomX technologies, Nike continues to push the boundaries of performance and style. From the iconic Dunk to the revolutionary Air Force 1, Nike\'s sneaker lineup defines casual and athletic footwear.',
+      founded: '1964',
+      headquarters: 'Beaverton, Oregon',
+      highlights: ['Air Max technology pioneer', 'Dunk resurgence leader', 'Sustainable Move to Zero initiative']
+    },
+    yeezy: {
+      description: 'Yeezy is a fashion collaboration between Adidas and designer Kanye West. Known for its distinctive Boost cushioning and futuristic aesthetic, Yeezy revolutionized the sneaker industry with limited releases and unprecedented demand. The Yeezy Boost 350 became one of the most influential sneaker designs of the 2010s.',
+      founded: '2015',
+      headquarters: 'Portland, Oregon',
+      highlights: ['Boost technology integration', 'Limited release strategy', 'Distinctive earth-tone colorways']
+    },
+    adidas: {
+      description: 'Adidas is a German multinational corporation that designs and manufactures shoes, clothing and accessories. With iconic silhouettes like the Samba, Superstar, and Stan Smith, Adidas has influenced street culture for decades. The brand\'s collaborations with designers and artists continue to push creative boundaries.',
+      founded: '1949',
+      headquarters: 'Herzogenaurach, Germany',
+      highlights: ['Three Stripes heritage', 'Samba revival phenomenon', 'Sustainable Futurecraft innovations']
+    },
+    'new-balance': {
+      description: 'New Balance is an American multinational corporation known for its commitment to domestic manufacturing and quality craftsmanship. The brand has experienced a major resurgence with models like the 550, 2002R, and collaborations with high-end designers. Known as the "dad shoe" brand turned fashion favorite.',
+      founded: '1906',
+      headquarters: 'Boston, Massachusetts',
+      highlights: ['Made in USA craftsmanship', '550 basketball revival', 'Designer collaboration leader']
+    }
+  };
+
+  const brandIds = ['jordan', 'nike', 'yeezy', 'adidas', 'new-balance'];
+
+  return (
+    <main className="kl-brands-page">
+      <section className="kl-brands-hero">
+        <h1>Our <em>Brands</em></h1>
+        <p>Explore the iconic sneaker brands we track. Compare prices across all major retailers and resale marketplaces.</p>
+      </section>
+
+      <section className="kl-brands-grid">
+        {brandIds.map((brandId, idx) => {
+          const products = getProductsByCategory(brandId);
+          const productCount = products.length;
+          const info = brandsInfo[brandId];
+          const brandName = brandId === 'new-balance' ? 'New Balance' : brandId.charAt(0).toUpperCase() + brandId.slice(1);
+          const featuredImage = products[0]?.images[0] || '';
+
+          return (
+            <article key={brandId} className="kl-brand-card" style={{ animationDelay: `${idx * 100}ms` }}>
+              <div className="kl-brand-image">
+                {featuredImage && <img src={featuredImage} alt={brandName} />}
+              </div>
+              <div className="kl-brand-content">
+                <div className="kl-brand-header">
+                  <h2>{brandName}</h2>
+                  <span className="kl-brand-count">{productCount} Products</span>
+                </div>
+                <div className="kl-brand-meta">
+                  <span>Est. {info.founded}</span>
+                  <span>{info.headquarters}</span>
+                </div>
+                <p className="kl-brand-description">{info.description}</p>
+                <ul className="kl-brand-highlights">
+                  {info.highlights.map((highlight, i) => (
+                    <li key={i}>{highlight}</li>
+                  ))}
+                </ul>
+                <button className="kl-btn kl-btn-outline" onClick={() => navigate(`/category/${brandId}`)}>
+                  Browse {brandName}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </button>
+              </div>
+            </article>
+          );
+        })}
+      </section>
+    </main>
+  );
+};
+
+// ============================================
+// Footer (Updated with Vendors)
+// ============================================
+const Footer = () => {
+  const { navigate } = useApp();
+  const { vendors } = window.KicksListVendors;
+
+  return (
+    <footer className="kl-footer">
+      <div className="kl-footer-main">
+        <div className="kl-footer-brand">
+          <a href="#/" className="kl-logo" onClick={(e) => { e.preventDefault(); navigate('/'); }}>KicksList</a>
+          <p>Compare prices from trusted vendors. Find the best deal on authentic sneakers.</p>
+          <div className="kl-footer-socials">
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+            <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5 0-.28-.03-.56-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          </div>
+        </div>
+        <div className="kl-footer-links">
+          <div className="kl-footer-col">
+            <h5>Brands</h5>
+            <ul>
+              <li><a href="#/category/jordan" onClick={(e) => { e.preventDefault(); navigate('/category/jordan'); }}>Jordan</a></li>
+              <li><a href="#/category/nike" onClick={(e) => { e.preventDefault(); navigate('/category/nike'); }}>Nike</a></li>
+              <li><a href="#/category/yeezy" onClick={(e) => { e.preventDefault(); navigate('/category/yeezy'); }}>Yeezy</a></li>
+              <li><a href="#/category/adidas" onClick={(e) => { e.preventDefault(); navigate('/category/adidas'); }}>Adidas</a></li>
+              <li><a href="#/category/new-balance" onClick={(e) => { e.preventDefault(); navigate('/category/new-balance'); }}>New Balance</a></li>
+            </ul>
+          </div>
+          <div className="kl-footer-col">
+            <h5>Vendors</h5>
+            <ul>
+              {vendors.filter(v => v.type === 'retail').slice(0, 3).map(vendor => (
+                <li key={vendor.id}>
+                  <a href={vendor.url} target="_blank" rel="noopener noreferrer">{vendor.name}</a>
+                </li>
+              ))}
+              {vendors.filter(v => v.type === 'resale').slice(0, 2).map(vendor => (
+                <li key={vendor.id}>
+                  <a href={vendor.url} target="_blank" rel="noopener noreferrer">{vendor.name}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="kl-footer-col">
+            <h5>Company</h5>
+            <ul>
+              <li><a href="#/about" onClick={(e) => { e.preventDefault(); navigate('/about'); }}>About Us</a></li>
+              <li><a href="#/brands" onClick={(e) => { e.preventDefault(); navigate('/brands'); }}>Our Brands</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="kl-footer-bottom">
+        <p>© 2025 KicksList. All rights reserved.</p>
+        <div className="kl-footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+// ============================================
+// Main App (Cart Drawer removed)
+// ============================================
+const App = () => {
+  const { route } = useApp();
+
+  let PageComponent;
+  switch (route.page) {
+    case 'product':
+      PageComponent = ProductDetailPage;
+      break;
+    case 'shop':
+      PageComponent = ShopPage;
+      break;
+    case 'about':
+      PageComponent = AboutPage;
+      break;
+    case 'brands':
+      PageComponent = BrandsPage;
+      break;
+    default:
+      PageComponent = Homepage;
+  }
+
+  return (
+    <div className="kl-app">
+      <Navigation />
+      <PageComponent />
+      <Footer />
+    </div>
+  );
+};
+
+// ============================================
+// Root
+// ============================================
+const Root = () => (
+  <AppProvider>
+    <App />
+  </AppProvider>
+);
+
+// Render
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<Root />);
