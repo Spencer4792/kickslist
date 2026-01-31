@@ -1782,6 +1782,107 @@ a {
   margin-left: 0.5rem;
 }
 
+/* Price Filter */
+.kl-price-custom {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--kl-border-light);
+}
+
+.kl-price-custom-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--kl-text-secondary);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.kl-price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.kl-price-input-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background: var(--kl-bg-secondary);
+  border: 1px solid var(--kl-border-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.kl-price-input-prefix {
+  padding: 0.5rem 0 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--kl-text-tertiary);
+}
+
+.kl-price-input {
+  width: 100%;
+  padding: 0.5rem 0.5rem 0.5rem 0.25rem;
+  border: none;
+  background: transparent;
+  font-size: 0.85rem;
+  color: var(--kl-text-primary);
+  outline: none;
+}
+
+.kl-price-input::placeholder {
+  color: var(--kl-text-tertiary);
+}
+
+.kl-price-input-wrap:focus-within {
+  border-color: var(--kl-text-secondary);
+}
+
+.kl-price-input-sep {
+  font-size: 0.8rem;
+  color: var(--kl-text-tertiary);
+}
+
+.kl-btn-apply {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--kl-text-inverse);
+  background: var(--kl-bg-dark);
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--kl-transition-fast);
+}
+
+.kl-btn-apply:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.kl-btn-apply:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.kl-clear-filters {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--kl-text-secondary);
+  background: transparent;
+  border: 1px solid var(--kl-border-medium);
+  cursor: pointer;
+  transition: all var(--kl-transition-fast);
+}
+
+.kl-clear-filters:hover {
+  color: var(--kl-text-primary);
+  border-color: var(--kl-text-primary);
+}
+
 .kl-shop-products {
   min-height: 400px;
 }
@@ -2602,6 +2703,91 @@ a {
 }
 
 /* ========================================
+   Legal Pages (Terms & Privacy)
+======================================== */
+.kl-legal-page {
+  background: var(--kl-bg-secondary);
+  min-height: 80vh;
+}
+
+.kl-legal-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem;
+}
+
+.kl-legal-page h1 {
+  font-family: var(--kl-font-display);
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: var(--kl-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.kl-legal-updated {
+  font-size: 0.85rem;
+  color: var(--kl-text-tertiary);
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--kl-border-light);
+}
+
+.kl-legal-section {
+  margin-bottom: 2.5rem;
+}
+
+.kl-legal-section h2 {
+  font-family: var(--kl-font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--kl-text-primary);
+  margin-bottom: 1rem;
+}
+
+.kl-legal-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--kl-text-primary);
+  margin: 1.5rem 0 0.75rem;
+}
+
+.kl-legal-section p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--kl-text-secondary);
+  margin-bottom: 1rem;
+}
+
+.kl-legal-section ul {
+  margin: 1rem 0 1rem 1.5rem;
+  color: var(--kl-text-secondary);
+}
+
+.kl-legal-section li {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.kl-legal-section strong {
+  color: var(--kl-text-primary);
+}
+
+@media (max-width: 640px) {
+  .kl-legal-container {
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .kl-legal-page h1 {
+    font-size: 2rem;
+  }
+
+  .kl-legal-section h2 {
+    font-size: 1.25rem;
+  }
+}
+
+/* ========================================
    Footer
 ======================================== */
 .kl-footer {
@@ -3318,20 +3504,23 @@ a {
 }
 
 .kl-brand-image {
-  aspect-ratio: 3/2;
+  aspect-ratio: 4/3;
   overflow: hidden;
-  background: var(--kl-bg-tertiary);
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .kl-brand-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
   transition: transform var(--kl-transition-slow);
 }
 
 .kl-brand-card:hover .kl-brand-image img {
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .kl-brand-content {
@@ -3428,7 +3617,7 @@ a {
   .kl-brand-image {
     aspect-ratio: 16/9;
   }
-  
+
   .kl-brand-content {
     padding: 1.5rem;
   }

@@ -47,6 +47,10 @@ const useRouter = () => {
         setRoute({ page: 'about', params });
       } else if (path === '/brands') {
         setRoute({ page: 'brands', params });
+      } else if (path === '/terms') {
+        setRoute({ page: 'terms', params });
+      } else if (path === '/privacy') {
+        setRoute({ page: 'privacy', params });
       } else {
         setRoute({ page: 'home', params });
       }
@@ -616,13 +620,42 @@ const ShopPage = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [activeCategory, setActiveCategory] = useState(route.params.category || 'all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [priceRange, setPriceRange] = useState('all');
+  const [customMin, setCustomMin] = useState('');
+  const [customMax, setCustomMax] = useState('');
   const productsPerPage = 20;
+
+  // Price range presets
+  const priceRanges = [
+    { id: 'all', label: 'All Prices', min: 0, max: Infinity },
+    { id: 'under-100', label: 'Under $100', min: 0, max: 99 },
+    { id: '100-150', label: '$100 - $150', min: 100, max: 150 },
+    { id: '150-200', label: '$150 - $200', min: 150, max: 200 },
+    { id: '200-300', label: '$200 - $300', min: 200, max: 300 },
+    { id: 'over-300', label: '$300+', min: 300, max: Infinity },
+  ];
 
   const queryParam = route.params.q || searchQuery;
 
   let filteredProducts = queryParam
     ? searchProducts(queryParam)
     : getProductsByCategory(activeCategory);
+
+  // Apply price filter
+  const activeRange = priceRanges.find(r => r.id === priceRange);
+  if (priceRange === 'custom' && (customMin || customMax)) {
+    const min = customMin ? parseInt(customMin) : 0;
+    const max = customMax ? parseInt(customMax) : Infinity;
+    filteredProducts = filteredProducts.filter(p => {
+      const price = p.retail || 0;
+      return price >= min && price <= max;
+    });
+  } else if (activeRange && priceRange !== 'all') {
+    filteredProducts = filteredProducts.filter(p => {
+      const price = p.retail || 0;
+      return price >= activeRange.min && price <= activeRange.max;
+    });
+  }
 
   // Sort by retail price
   if (sortBy === 'price-low') {
@@ -638,16 +671,32 @@ const ShopPage = () => {
   const startIndex = (currentPage - 1) * productsPerPage;
   const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
 
-  // Reset to page 1 when category or search changes
+  // Reset to page 1 when filters change
   useEffect(() => {
     setActiveCategory(route.params.category || 'all');
     setCurrentPage(1);
   }, [route.params.category, queryParam]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [priceRange, customMin, customMax]);
+
   // Scroll to top when page changes
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePriceRangeChange = (rangeId) => {
+    setPriceRange(rangeId);
+    if (rangeId !== 'custom') {
+      setCustomMin('');
+      setCustomMax('');
+    }
+  };
+
+  const handleCustomPriceApply = () => {
+    setPriceRange('custom');
   };
 
   return (
@@ -698,6 +747,67 @@ const ShopPage = () => {
               ))}
             </div>
           </div>
+
+          <div className="kl-filter-section">
+            <h3 className="kl-filter-title">Price Range</h3>
+            <div className="kl-filter-options">
+              {priceRanges.map(range => (
+                <button
+                  key={range.id}
+                  className={`kl-filter-btn ${priceRange === range.id ? 'active' : ''}`}
+                  onClick={() => handlePriceRangeChange(range.id)}
+                >
+                  {range.label}
+                </button>
+              ))}
+            </div>
+            <div className="kl-price-custom">
+              <p className="kl-price-custom-label">Custom Range</p>
+              <div className="kl-price-inputs">
+                <div className="kl-price-input-wrap">
+                  <span className="kl-price-input-prefix">$</span>
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={customMin}
+                    onChange={(e) => setCustomMin(e.target.value)}
+                    className="kl-price-input"
+                  />
+                </div>
+                <span className="kl-price-input-sep">to</span>
+                <div className="kl-price-input-wrap">
+                  <span className="kl-price-input-prefix">$</span>
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={customMax}
+                    onChange={(e) => setCustomMax(e.target.value)}
+                    className="kl-price-input"
+                  />
+                </div>
+              </div>
+              <button
+                className="kl-btn kl-btn-apply"
+                onClick={handleCustomPriceApply}
+                disabled={!customMin && !customMax}
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+
+          {(priceRange !== 'all' || activeCategory !== 'all') && (
+            <button
+              className="kl-clear-filters"
+              onClick={() => {
+                handlePriceRangeChange('all');
+                setActiveCategory('all');
+                navigate('/shop');
+              }}
+            >
+              Clear All Filters
+            </button>
+          )}
         </aside>
 
         <div className="kl-shop-products">
@@ -1054,43 +1164,57 @@ const BrandsPage = () => {
       description: 'Air Jordan is a line of basketball shoes produced by Nike, created for Hall of Fame former basketball player Michael Jordan. The brand has transcended sports to become a cultural icon, with each numbered silhouette telling its own story. From the original Air Jordan 1 that was banned by the NBA to the revolutionary Air Jordan 11 worn during the "Flu Game," Jordan Brand represents the pinnacle of sneaker culture.',
       founded: '1984',
       headquarters: 'Beaverton, Oregon',
-      highlights: ['Most collected sneaker brand', 'Retro releases highly sought after', 'Collaboration culture pioneer']
+      highlights: ['Most collected sneaker brand', 'Retro releases highly sought after', 'Collaboration culture pioneer'],
+      featuredImage: 'https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Chicago-Reimagined-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
+      featuredShoe: 'Air Jordan 1 "Chicago"'
     },
     nike: {
       description: 'Nike, Inc. is the world\'s largest supplier of athletic shoes and apparel. Known for groundbreaking innovation like Air Max, React, and ZoomX technologies, Nike continues to push the boundaries of performance and style. From the iconic Dunk to the revolutionary Air Force 1, Nike\'s sneaker lineup defines casual and athletic footwear.',
       founded: '1964',
       headquarters: 'Beaverton, Oregon',
-      highlights: ['Air Max technology pioneer', 'Dunk resurgence leader', 'Sustainable Move to Zero initiative']
+      highlights: ['Air Max technology pioneer', 'Dunk resurgence leader', 'Sustainable Move to Zero initiative'],
+      featuredImage: 'https://images.stockx.com/images/Nike-Dunk-Low-Retro-White-Black-2021-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
+      featuredShoe: 'Nike Dunk Low "Panda"'
     },
     yeezy: {
       description: 'Yeezy is a fashion collaboration between Adidas and designer Kanye West. Known for its distinctive Boost cushioning and futuristic aesthetic, Yeezy revolutionized the sneaker industry with limited releases and unprecedented demand. The Yeezy Boost 350 became one of the most influential sneaker designs of the 2010s.',
       founded: '2015',
       headquarters: 'Portland, Oregon',
-      highlights: ['Boost technology integration', 'Limited release strategy', 'Distinctive earth-tone colorways']
+      highlights: ['Boost technology integration', 'Limited release strategy', 'Distinctive earth-tone colorways'],
+      featuredImage: 'https://images.stockx.com/images/adidas-Yeezy-Boost-350-V2-Zebra-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
+      featuredShoe: 'Yeezy Boost 350 V2 "Zebra"'
     },
     adidas: {
       description: 'Adidas is a German multinational corporation that designs and manufactures shoes, clothing and accessories. With iconic silhouettes like the Samba, Superstar, and Stan Smith, Adidas has influenced street culture for decades. The brand\'s collaborations with designers and artists continue to push creative boundaries.',
       founded: '1949',
       headquarters: 'Herzogenaurach, Germany',
-      highlights: ['Three Stripes heritage', 'Samba revival phenomenon', 'Sustainable Futurecraft innovations']
+      highlights: ['Three Stripes heritage', 'Samba revival phenomenon', 'Sustainable Futurecraft innovations'],
+      featuredImage: 'https://images.stockx.com/images/adidas-Samba-OG-Cloud-White-Core-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
+      featuredShoe: 'Adidas Samba OG'
     },
     'new-balance': {
       description: 'New Balance is an American multinational corporation known for its commitment to domestic manufacturing and quality craftsmanship. The brand has experienced a major resurgence with models like the 550, 2002R, and collaborations with high-end designers. Known as the "dad shoe" brand turned fashion favorite.',
       founded: '1906',
       headquarters: 'Boston, Massachusetts',
-      highlights: ['Made in USA craftsmanship', '550 basketball revival', 'Designer collaboration leader']
+      highlights: ['Made in USA craftsmanship', '550 basketball revival', 'Designer collaboration leader'],
+      featuredImage: 'https://images.stockx.com/images/New-Balance-550-White-Green-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
+      featuredShoe: 'New Balance 550'
     },
     ugg: {
       description: 'UGG is an American footwear company best known for its sheepskin boots. Founded in Southern California, UGG has grown from a surf culture staple to a global fashion phenomenon. The brand\'s cozy boots and slippers have become essential comfort footwear, with collaborations and new silhouettes keeping it relevant in streetwear.',
       founded: '1978',
       headquarters: 'Goleta, California',
-      highlights: ['Iconic sheepskin boots', 'Tasman slipper phenomenon', 'High-fashion collaborations']
+      highlights: ['Iconic sheepskin boots', 'Tasman slipper phenomenon', 'High-fashion collaborations'],
+      featuredImage: 'https://images.stockx.com/images/UGG-Classic-Short-II-Boot-Chestnut-W-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
+      featuredShoe: 'UGG Classic Boot'
     },
     crocs: {
       description: 'Crocs is an American footwear company known for its foam clog shoes. Once considered purely functional, Crocs has undergone a massive cultural revival through celebrity endorsements and high-profile collaborations. The brand\'s customizable Jibbitz charms and bold colorways have made it a streetwear staple.',
       founded: '2002',
       headquarters: 'Broomfield, Colorado',
-      highlights: ['Classic Clog icon', 'Celebrity collaborations', 'Jibbitz customization culture']
+      highlights: ['Classic Clog icon', 'Celebrity collaborations', 'Jibbitz customization culture'],
+      featuredImage: 'https://images.stockx.com/images/Crocs-Classic-Clog-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
+      featuredShoe: 'Crocs Classic Clog'
     }
   };
 
@@ -1110,12 +1234,11 @@ const BrandsPage = () => {
           const info = brandsInfo[brandId];
           const brandNameMap = { 'new-balance': 'New Balance', 'ugg': 'UGG', 'crocs': 'Crocs' };
           const brandName = brandNameMap[brandId] || brandId.charAt(0).toUpperCase() + brandId.slice(1);
-          const featuredImage = products[0]?.images[0] || '';
 
           return (
             <article key={brandId} className="kl-brand-card" style={{ animationDelay: `${idx * 100}ms` }}>
               <div className="kl-brand-image">
-                {featuredImage && <img src={featuredImage} alt={brandName} />}
+                <img src={info.featuredImage} alt={brandName} />
               </div>
               <div className="kl-brand-content">
                 <div className="kl-brand-header">
@@ -1143,6 +1266,253 @@ const BrandsPage = () => {
           );
         })}
       </section>
+    </main>
+  );
+};
+
+// ============================================
+// Terms of Service Page
+// ============================================
+const TermsPage = () => {
+  const { navigate } = useApp();
+
+  return (
+    <main className="kl-legal-page">
+      <div className="kl-legal-container">
+        <nav className="kl-breadcrumb">
+          <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
+          <span className="kl-breadcrumb-sep">/</span>
+          <span className="kl-breadcrumb-current">Terms of Service</span>
+        </nav>
+
+        <h1>Terms of Service</h1>
+        <p className="kl-legal-updated">Last Updated: January 30, 2026</p>
+
+        <section className="kl-legal-section">
+          <h2>1. Acceptance of Terms</h2>
+          <p>Welcome to KicksList. By accessing or using our website (the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use our Service.</p>
+          <p>We reserve the right to modify these Terms at any time. Your continued use of the Service following any changes constitutes acceptance of those changes.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>2. Description of Service</h2>
+          <p>KicksList is a sneaker discovery and price comparison platform. We aggregate product information and pricing from third-party retailers and resale marketplaces to help users find and compare sneakers.</p>
+          <p><strong>Important:</strong> KicksList does not sell products directly. We are an affiliate and referral service that connects users with third-party vendors. All purchases are made directly through the respective retailer or marketplace websites.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>3. Affiliate Disclosure</h2>
+          <p>KicksList participates in affiliate marketing programs. This means we may earn a commission when you click on links to retailers or marketplaces on our site and make a purchase. This comes at no additional cost to you.</p>
+          <p>Our affiliate relationships do not influence our product listings or the information we display. We strive to provide accurate and unbiased information to help you make informed purchasing decisions.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>4. Product Information and Pricing</h2>
+          <p>While we make every effort to display accurate product information and pricing, we cannot guarantee that all information on our Service is complete, current, or error-free. Product prices, availability, and descriptions are provided by third-party vendors and may change without notice.</p>
+          <p>The retail prices displayed on KicksList are for reference purposes only. Actual prices on vendor websites may vary. Always verify the final price on the vendor's website before making a purchase.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>5. Third-Party Vendors and Links</h2>
+          <p>Our Service contains links to third-party websites, including retailers and resale marketplaces. These third-party sites have their own terms of service and privacy policies, which we encourage you to review.</p>
+          <p>KicksList is not responsible for:</p>
+          <ul>
+            <li>The content, accuracy, or practices of third-party websites</li>
+            <li>Any products or services purchased from third-party vendors</li>
+            <li>Any disputes between you and third-party vendors</li>
+            <li>The authenticity, quality, or condition of products sold by third parties</li>
+            <li>Shipping, returns, refunds, or customer service provided by third parties</li>
+          </ul>
+          <p>Any transactions you conduct with third-party vendors are solely between you and that vendor.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>6. Intellectual Property</h2>
+          <p>The KicksList name, logo, and all related marks are trademarks of KicksList. All content on our Service, including text, graphics, logos, and software, is our property or the property of our licensors and is protected by intellectual property laws.</p>
+          <p>Product names, brand names, and images displayed on our Service are the trademarks and property of their respective owners. Their use on our Service does not imply any affiliation with or endorsement by those brands.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>7. User Conduct</h2>
+          <p>You agree not to:</p>
+          <ul>
+            <li>Use the Service for any unlawful purpose</li>
+            <li>Attempt to gain unauthorized access to our systems or networks</li>
+            <li>Use automated tools to scrape or collect data from our Service</li>
+            <li>Interfere with or disrupt the Service or servers</li>
+            <li>Reproduce, duplicate, or resell any part of our Service without permission</li>
+          </ul>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>8. Disclaimer of Warranties</h2>
+          <p>THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.</p>
+          <p>We do not warrant that the Service will be uninterrupted, error-free, or free of viruses or other harmful components. We do not warrant the accuracy, completeness, or usefulness of any information on the Service.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>9. Limitation of Liability</h2>
+          <p>TO THE FULLEST EXTENT PERMITTED BY LAW, KICKSLIST SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, OR OTHER INTANGIBLE LOSSES, RESULTING FROM:</p>
+          <ul>
+            <li>Your use or inability to use the Service</li>
+            <li>Any purchases made through third-party vendors linked from our Service</li>
+            <li>Unauthorized access to or alteration of your data</li>
+            <li>Any errors, inaccuracies, or omissions in our content</li>
+          </ul>
+          <p>IN NO EVENT SHALL OUR TOTAL LIABILITY EXCEED THE AMOUNT YOU PAID TO US, IF ANY, IN THE PAST TWELVE MONTHS.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>10. Indemnification</h2>
+          <p>You agree to indemnify, defend, and hold harmless KicksList and its officers, directors, employees, and agents from any claims, damages, losses, liabilities, costs, or expenses (including reasonable attorneys' fees) arising from your use of the Service or violation of these Terms.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>11. Governing Law</h2>
+          <p>These Terms shall be governed by and construed in accordance with the laws of the State of California, United States, without regard to its conflict of law provisions. Any disputes arising under these Terms shall be resolved in the state or federal courts located in California.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>12. Severability</h2>
+          <p>If any provision of these Terms is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>13. Contact Information</h2>
+          <p>If you have any questions about these Terms of Service, please contact us at:</p>
+          <p>Email: legal@kickslist.com</p>
+        </section>
+      </div>
+    </main>
+  );
+};
+
+// ============================================
+// Privacy Policy Page
+// ============================================
+const PrivacyPage = () => {
+  const { navigate } = useApp();
+
+  return (
+    <main className="kl-legal-page">
+      <div className="kl-legal-container">
+        <nav className="kl-breadcrumb">
+          <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
+          <span className="kl-breadcrumb-sep">/</span>
+          <span className="kl-breadcrumb-current">Privacy Policy</span>
+        </nav>
+
+        <h1>Privacy Policy</h1>
+        <p className="kl-legal-updated">Last Updated: January 30, 2026</p>
+
+        <section className="kl-legal-section">
+          <h2>1. Introduction</h2>
+          <p>KicksList ("we," "our," or "us") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>2. Information We Collect</h2>
+          <h3>Information You Provide</h3>
+          <p>We may collect information you voluntarily provide, such as:</p>
+          <ul>
+            <li>Email address (if you subscribe to our newsletter)</li>
+            <li>Contact information (if you reach out to us)</li>
+          </ul>
+
+          <h3>Automatically Collected Information</h3>
+          <p>When you visit our website, we may automatically collect:</p>
+          <ul>
+            <li>Device information (browser type, operating system)</li>
+            <li>IP address and general location</li>
+            <li>Pages visited and time spent on our site</li>
+            <li>Referring website or source</li>
+            <li>Clicks on affiliate links</li>
+          </ul>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>3. How We Use Your Information</h2>
+          <p>We use the information we collect to:</p>
+          <ul>
+            <li>Provide and improve our Service</li>
+            <li>Send newsletters and updates (with your consent)</li>
+            <li>Analyze website traffic and user behavior</li>
+            <li>Track affiliate link performance</li>
+            <li>Respond to your inquiries</li>
+            <li>Comply with legal obligations</li>
+          </ul>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>4. Cookies and Tracking Technologies</h2>
+          <p>We use cookies and similar tracking technologies to:</p>
+          <ul>
+            <li>Remember your preferences</li>
+            <li>Analyze site traffic through services like Google Analytics</li>
+            <li>Track affiliate referrals to our partner vendors</li>
+          </ul>
+          <p>You can control cookies through your browser settings. Note that disabling cookies may affect some functionality of our Service.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>5. Third-Party Services</h2>
+          <p>Our Service integrates with third-party services, including:</p>
+          <ul>
+            <li><strong>Affiliate Networks:</strong> When you click links to vendors like StockX, GOAT, Nike, or others, those sites may collect information according to their own privacy policies.</li>
+            <li><strong>Analytics Providers:</strong> We use analytics services to understand how users interact with our site.</li>
+          </ul>
+          <p>We encourage you to review the privacy policies of any third-party sites you visit through our Service.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>6. Data Sharing</h2>
+          <p>We do not sell your personal information. We may share information with:</p>
+          <ul>
+            <li>Service providers who assist in operating our website</li>
+            <li>Affiliate partners (limited to referral tracking)</li>
+            <li>Legal authorities when required by law</li>
+          </ul>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>7. Data Security</h2>
+          <p>We implement reasonable security measures to protect your information. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>8. Your Rights</h2>
+          <p>Depending on your location, you may have the right to:</p>
+          <ul>
+            <li>Access the personal information we hold about you</li>
+            <li>Request correction of inaccurate information</li>
+            <li>Request deletion of your information</li>
+            <li>Opt out of marketing communications</li>
+            <li>Opt out of certain data collection (e.g., cookies)</li>
+          </ul>
+          <p>To exercise these rights, please contact us using the information below.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>9. California Privacy Rights</h2>
+          <p>California residents have additional rights under the California Consumer Privacy Act (CCPA), including the right to know what personal information is collected, request deletion, and opt out of the sale of personal information. We do not sell personal information.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>10. Children's Privacy</h2>
+          <p>Our Service is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>11. Changes to This Policy</h2>
+          <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>12. Contact Us</h2>
+          <p>If you have questions about this Privacy Policy, please contact us at:</p>
+          <p>Email: privacy@kickslist.com</p>
+        </section>
+      </div>
     </main>
   );
 };
@@ -1199,8 +1569,8 @@ const Footer = () => {
             <ul>
               <li><a href="#/about" onClick={(e) => { e.preventDefault(); navigate('/about'); }}>About Us</a></li>
               <li><a href="#/brands" onClick={(e) => { e.preventDefault(); navigate('/brands'); }}>Our Brands</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms of Service</a></li>
+              <li><a href="#/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); }}>Privacy Policy</a></li>
+              <li><a href="#/terms" onClick={(e) => { e.preventDefault(); navigate('/terms'); }}>Terms of Service</a></li>
             </ul>
           </div>
         </div>
@@ -1208,8 +1578,8 @@ const Footer = () => {
       <div className="kl-footer-bottom">
         <p>© 2026 KicksList. All rights reserved.</p>
         <div className="kl-footer-legal">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
+          <a href="#/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); }}>Privacy Policy</a>
+          <a href="#/terms" onClick={(e) => { e.preventDefault(); navigate('/terms'); }}>Terms of Service</a>
         </div>
       </div>
     </footer>
@@ -1235,6 +1605,12 @@ const App = () => {
       break;
     case 'brands':
       PageComponent = BrandsPage;
+      break;
+    case 'terms':
+      PageComponent = TermsPage;
+      break;
+    case 'privacy':
+      PageComponent = PrivacyPage;
       break;
     default:
       PageComponent = Homepage;
