@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KicksList Sneaker Collector</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 { color: #111; margin-bottom: 8px; }
+    .subtitle { color: #666; margin-bottom: 24px; }
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    h2 { margin-top: 0; color: #333; font-size: 18px; }
+    .bookmarklet-link {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: grab;
+      margin: 8px 8px 8px 0;
+    }
+    .bookmarklet-link:hover { opacity: 0.9; }
+    .bookmarklet-link.bulk {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    .instructions {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .instructions ol { margin: 0; padding-left: 20px; }
+    .instructions li { margin: 8px 0; color: #444; }
+    .instructions code {
+      background: #e9ecef;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    textarea {
+      width: 100%;
+      height: 300px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      resize: vertical;
+    }
+    textarea:focus { outline: none; border-color: #667eea; }
+    .code-box {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 11px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 80px;
+      overflow-y: auto;
+      margin-bottom: 8px;
+    }
+    .btn {
+      background: #111;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-top: 12px;
+    }
+    .btn:hover { background: #333; }
+    .btn-secondary { background: #6c757d; }
+    .btn-success { background: #10b981; }
+    .btn-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .btn-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+    .btn-sm { padding: 8px 16px; font-size: 12px; }
+    .count {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin-left: 12px;
+    }
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 13px;
+    }
+    .preview-table th {
+      background: #f8f9fa;
+      text-align: left;
+      padding: 10px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .preview-table td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .preview-table tr:hover { background: #f8f9fa; }
+    .img-preview {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      border-radius: 4px;
+      background: #f0f0f0;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+    .success-msg {
+      background: #d1fae5;
+      color: #065f46;
+      padding: 8px 16px;
+      border-radius: 6px;
+      display: none;
+      margin-top: 12px;
+    }
+    .bookmarklet-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .bookmarklet-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 16px;
+      flex: 1;
+      min-width: 280px;
+    }
+    .bookmarklet-card h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+    .bookmarklet-card p {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      color: #666;
+    }
+    .bookmarklet-card.recommended {
+      border-color: #f59e0b;
+      background: #fffbeb;
+    }
+    .badge {
+      display: inline-block;
+      background: #f59e0b;
+      color: white;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 8px;
+      font-weight: 600;
+    }
+    .copy-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .copy-row .code-box {
+      flex: 1;
+      margin: 0;
+      max-height: 60px;
+    }
+  </style>
+</head>
+<body>
+  <h1>KicksList Sneaker Collector</h1>
+  <p class="subtitle">Collect sneaker data from StockX and export to CSV for import</p>
+
+  <div class="section">
+    <h2>Step 1: Install Bookmarklets</h2>
+    <p>Drag these buttons to your bookmarks bar:</p>
+
+    <div class="bookmarklet-group">
+      <div class="bookmarklet-card recommended">
+        <h3>Bulk Extractor <span class="badge">FAST</span></h3>
+        <p>Extract 20-40 sneakers at once from a StockX browse page (e.g., stockx.com/jordan)</p>
+        <a class="bookmarklet-link bulk" id="bulkBookmarkletLink" href="#">📦 Extract All Visible</a>
+        <div class="copy-row">
+          <div class="code-box" id="bulkBookmarkletCode"></div>
+          <button class="btn btn-orange btn-sm" onclick="copyBulkBookmarklet()">Copy</button>
+        </div>
+        <div class="success-msg" id="bulkCopySuccess">✓ Copied!</div>
+      </div>
+
+      <div class="bookmarklet-card">
+        <h3>Single Extractor</h3>
+        <p>Extract one sneaker from a product detail page</p>
+        <a class="bookmarklet-link" id="bookmarkletLink" href="#">📥 Extract Sneaker</a>
+        <div class="copy-row">
+          <div class="code-box" id="bookmarkletCode"></div>
+          <button class="btn btn-purple btn-sm" onclick="copyBookmarklet()">Copy</button>
+        </div>
+        <div class="success-msg" id="copySuccess">✓ Copied!</div>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <strong>How to use the Bulk Extractor (Recommended):</strong>
+      <ol>
+        <li>Go to a StockX browse page: <code>stockx.com/jordan</code>, <code>stockx.com/nike</code>, etc.</li>
+        <li>Scroll down to load more products (optional)</li>
+        <li>Click the <strong>"Extract All Visible"</strong> bookmark</li>
+        <li>All visible sneakers are copied to clipboard</li>
+        <li>Come back here and <strong>paste</strong> (Ctrl/Cmd+V) into the box below</li>
+        <li>Repeat on different pages/categories to build your collection</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Step 2: Collect Sneakers <span class="count" id="count">0 sneakers</span></h2>
+    <p>Paste extracted sneaker data here (one per line):</p>
+    <textarea id="csvData" placeholder="Paste CSV rows here... Each line is one sneaker."></textarea>
+    <div>
+      <button class="btn" onclick="preview()">Preview</button>
+      <button class="btn btn-secondary" onclick="clearData()">Clear All</button>
+      <button class="btn btn-success" onclick="download()">Download CSV</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Preview</h2>
+    <div id="previewArea">
+      <div class="empty-state">No sneakers added yet. Use the bulk extractor on StockX!</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Step 3: Import</h2>
+    <div class="instructions">
+      <ol>
+        <li>Click <strong>"Download CSV"</strong> above to save your collected sneakers</li>
+        <li>Move the file to <code>kickslist/tools/</code></li>
+        <li>Run: <code>node tools/import-products.js tools/collected-sneakers.csv --preview</code></li>
+        <li>If it looks good: <code>node tools/import-products.js tools/collected-sneakers.csv</code></li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // BULK EXTRACTOR - Extract all from browse page
+    // ==========================================
+    const bulkBookmarkletSource = `
+(function() {
+  var products = [];
+
+  // Find all product tiles - StockX uses various container classes
+  var tiles = document.querySelectorAll('[data-testid="product-tile"], a[href*="/product/"], [class*="ProductTile"], [class*="product-tile"]');
+
+  // If no tiles found, try broader selectors
+  if (tiles.length === 0) {
+    tiles = document.querySelectorAll('a[href^="/"]');
+    tiles = Array.from(tiles).filter(function(a) {
+      return a.querySelector('img[src*="stockx.com"]') && a.href.includes('/');
+    });
+  }
+
+  tiles.forEach(function(tile) {
+    try {
+      // Get link/URL for product
+      var link = tile.href || tile.querySelector('a')?.href || '';
+      if (!link.includes('stockx.com')) return;
+
+      // Get product name
+      var nameEl = tile.querySelector('p, [class*="name"], [class*="title"], h3, h4');
+      var name = nameEl ? nameEl.innerText.trim().replace(/[\\r\\n]+/g, ' ') : '';
+      if (!name || name.length < 3) return;
+
+      // Skip non-product links
+      if (name.toLowerCase().includes('sign up') || name.toLowerCase().includes('log in')) return;
+
+      // Get image
+      var imgEl = tile.querySelector('img[src*="stockx.com"], img[src*="images.stockx"]');
+      var image = imgEl ? imgEl.src.split('?')[0] + '?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90' : '';
+
+      // Get price
+      var priceEl = tile.querySelector('[class*="price"], [class*="Price"]');
+      var priceText = priceEl ? priceEl.innerText : tile.innerText;
+      var priceMatch = priceText.match(/\\$(\\d[\\d,]*)/);
+      var price = priceMatch ? priceMatch[1].replace(/,/g, '') : '0';
+
+      // Detect brand
+      var n = name.toLowerCase();
+      var brand = '';
+      var cat = 'other';
+      if (n.includes('jordan') || n.includes(' aj')) { brand = 'Jordan'; cat = 'jordan'; }
+      else if (n.includes('yeezy')) { brand = 'Yeezy'; cat = 'yeezy'; }
+      else if (n.includes('new balance')) { brand = 'New Balance'; cat = 'new-balance'; }
+      else if (n.includes('adidas') || n.includes('samba') || n.includes('gazelle') || n.includes('campus')) { brand = 'Adidas'; cat = 'adidas'; }
+      else if (n.includes('nike') || n.includes('dunk') || n.includes('air max') || n.includes('air force')) { brand = 'Nike'; cat = 'nike'; }
+
+      // Build description
+      var desc = name + (brand ? ' - ' + brand + ' sneakers.' : '');
+
+      // Escape CSV
+      function esc(v) {
+        var s = String(v || '').replace(/[\\r\\n]+/g, ' ');
+        return (s.includes(',') || s.includes('"')) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }
+
+      var csv = [esc(name), esc(brand), cat, price, price, '', esc(desc), esc(image), 'true', 'false', 'false'].join(',');
+      products.push(csv);
+    } catch(e) {}
+  });
+
+  // Remove duplicates
+  products = [...new Set(products)];
+
+  if (products.length === 0) {
+    alert('No products found on this page. Make sure you are on a StockX browse page (like stockx.com/jordan)');
+    return;
+  }
+
+  // Copy to clipboard
+  var text = products.join('\\n');
+  navigator.clipboard.writeText(text).then(function() {
+    var box = document.createElement('div');
+    box.innerHTML = '<div style="position:fixed;top:20px;right:20px;background:#f59e0b;color:white;padding:16px 24px;border-radius:8px;z-index:99999;font-family:system-ui;box-shadow:0 4px 12px rgba(0,0,0,0.3);max-width:300px"><b>' + products.length + ' Sneakers Copied!</b><br><span style="font-size:13px;opacity:0.9">Paste into the collector page</span></div>';
+    document.body.appendChild(box);
+    setTimeout(function() { box.remove(); }, 4000);
+  }).catch(function() {
+    prompt('Copy these ' + products.length + ' products:', text);
+  });
+})();
+    `.trim();
+
+    // ==========================================
+    // SINGLE EXTRACTOR - Original single product
+    // ==========================================
+    const bookmarkletSource = `
+(function() {
+  var d = document;
+  var data = {};
+
+  var h1 = d.querySelector('h1');
+  data.name = h1 ? h1.innerText.trim().replace(/[\\r\\n]+/g, ' ') : '';
+
+  var n = data.name.toLowerCase();
+  if (n.includes('jordan') || n.includes(' aj')) data.brand = 'Jordan';
+  else if (n.includes('yeezy')) data.brand = 'Yeezy';
+  else if (n.includes('new balance')) data.brand = 'New Balance';
+  else if (n.includes('adidas') || n.includes('samba') || n.includes('gazelle')) data.brand = 'Adidas';
+  else if (n.includes('nike') || n.includes('dunk') || n.includes('air max') || n.includes('air force')) data.brand = 'Nike';
+  else data.brand = '';
+
+  var cat = 'other';
+  if (data.brand === 'Jordan') cat = 'jordan';
+  else if (data.brand === 'Yeezy') cat = 'yeezy';
+  else if (data.brand === 'New Balance') cat = 'new-balance';
+  else if (data.brand === 'Adidas') cat = 'adidas';
+  else if (data.brand === 'Nike') cat = 'nike';
+
+  var img = d.querySelector('img[src*="images.stockx.com"]');
+  data.image = img ? img.src.split('?')[0] + '?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90' : '';
+
+  var text = d.body.innerText;
+  var priceMatch = text.match(/\\$([0-9,]+)/g);
+  data.price = priceMatch && priceMatch[0] ? priceMatch[0].replace(/[$,]/g, '') : '0';
+  data.retail = data.price;
+
+  var dateMatch = text.match(/Release Date[:\\s]+([A-Za-z]+ \\d{1,2}, \\d{4}|\\d{1,2}\\/\\d{1,2}\\/\\d{2,4})/i);
+  if (dateMatch) {
+    try {
+      var dt = new Date(dateMatch[1]);
+      if (!isNaN(dt)) data.releaseDate = dt.toISOString().split('T')[0];
+      else data.releaseDate = '';
+    } catch(e) { data.releaseDate = ''; }
+  } else {
+    data.releaseDate = '';
+  }
+
+  data.desc = data.name + ' - ' + data.brand + ' sneakers.';
+
+  function esc(v) {
+    var s = String(v || '').replace(/[\\r\\n]+/g, ' ');
+    return (s.includes(',') || s.includes('"')) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+  var csv = [esc(data.name), esc(data.brand), cat, data.price, data.retail, data.releaseDate, esc(data.desc), esc(data.image), 'true', 'false', 'false'].join(',');
+
+  navigator.clipboard.writeText(csv).then(function() {
+    var box = d.createElement('div');
+    box.innerHTML = '<div style="position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:16px 24px;border-radius:8px;z-index:99999;font-family:system-ui;box-shadow:0 4px 12px rgba(0,0,0,0.3)"><b>Copied!</b><br>' + data.name.substring(0,40) + '</div>';
+    d.body.appendChild(box);
+    setTimeout(function() { box.remove(); }, 3000);
+  }).catch(function() {
+    prompt('Copy this:', csv);
+  });
+})();
+    `.trim();
+
+    // Minify function
+    function minifyJS(code) {
+      return code
+        .replace(/\/\/.*$/gm, '')
+        .replace(/\s+/g, ' ')
+        .replace(/\s*([{}();,:])\s*/g, '$1')
+        .trim();
+    }
+
+    // Create bookmarklet codes
+    const bookmarkletCode = 'javascript:' + encodeURIComponent(minifyJS(bookmarkletSource));
+    const bulkBookmarkletCode = 'javascript:' + encodeURIComponent(minifyJS(bulkBookmarkletSource));
+
+    // Set the bookmarklet links
+    document.getElementById('bookmarkletLink').href = bookmarkletCode;
+    document.getElementById('bookmarkletCode').textContent = bookmarkletCode;
+    document.getElementById('bulkBookmarkletLink').href = bulkBookmarkletCode;
+    document.getElementById('bulkBookmarkletCode').textContent = bulkBookmarkletCode;
+
+    function copyBookmarklet() {
+      navigator.clipboard.writeText(bookmarkletCode).then(() => {
+        const msg = document.getElementById('copySuccess');
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 2000);
+      });
+    }
+
+    function copyBulkBookmarklet() {
+      navigator.clipboard.writeText(bulkBookmarkletCode).then(() => {
+        const msg = document.getElementById('bulkCopySuccess');
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 2000);
+      });
+    }
+
+    const header = 'name,brand,category,price,retail,releaseDate,description,images,inStock,featured,trending';
+    const textarea = document.getElementById('csvData');
+    const countEl = document.getElementById('count');
+    const previewArea = document.getElementById('previewArea');
+
+    // Load saved data
+    const saved = localStorage.getItem('kickslist_collected');
+    if (saved) {
+      textarea.value = saved;
+      updateCount();
+    }
+
+    // Save on change
+    textarea.addEventListener('input', () => {
+      localStorage.setItem('kickslist_collected', textarea.value);
+      updateCount();
+    });
+
+    function updateCount() {
+      const lines = textarea.value.trim().split('\n').filter(l => l.trim());
+      countEl.textContent = `${lines.length} sneaker${lines.length !== 1 ? 's' : ''}`;
+    }
+
+    function parseCSVLine(line) {
+      const values = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          values.push(current);
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      values.push(current);
+      return values;
+    }
+
+    function preview() {
+      const lines = textarea.value.trim().split('\n').filter(l => l.trim());
+      if (lines.length === 0) {
+        previewArea.innerHTML = '<div class="empty-state">No sneakers added yet.</div>';
+        return;
+      }
+
+      let html = `<table class="preview-table">
+        <thead><tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Brand</th>
+          <th>Category</th>
+          <th>Price</th>
+        </tr></thead><tbody>`;
+
+      lines.forEach((line, i) => {
+        const cols = parseCSVLine(line);
+        const [name, brand, category, price, retail, releaseDate, desc, image] = cols;
+        html += `<tr>
+          <td>${image ? `<img class="img-preview" src="${image}" onerror="this.style.display='none'">` : '-'}</td>
+          <td title="${name || ''}">${(name || '').substring(0, 45)}${name?.length > 45 ? '...' : ''}</td>
+          <td>${brand || '-'}</td>
+          <td>${category || '-'}</td>
+          <td>$${price || '0'}</td>
+        </tr>`;
+      });
+
+      html += '</tbody></table>';
+      previewArea.innerHTML = html;
+    }
+
+    function clearData() {
+      if (confirm('Clear all collected sneakers?')) {
+        textarea.value = '';
+        localStorage.removeItem('kickslist_collected');
+        updateCount();
+        preview();
+      }
+    }
+
+    function download() {
+      const lines = textarea.value.trim().split('\n').filter(l => l.trim());
+      if (lines.length === 0) {
+        alert('No sneakers to download!');
+        return;
+      }
+
+      const csv = header + '\n' + lines.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'collected-sneakers.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

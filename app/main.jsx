@@ -1,6 +1,6 @@
 /**
- * KicksList - Premium Sneaker Price Comparison
- * Full React Application
+ * KicksList - Sneaker Discovery & Shopping
+ * Find and shop authentic sneakers from trusted retailers
  */
 
 const { useState, useEffect, useRef, useCallback, createContext, useContext } = React;
@@ -177,7 +177,7 @@ const PriceRange = ({ product, showVendorCount = true, showSavings = false }) =>
 };
 
 // ============================================
-// Vendor Comparison Table
+// Where To Buy Section (Vendor Links)
 // ============================================
 const VendorComparisonTable = ({ product }) => {
   const { generateVendorPrices, getBestDeal } = window.KicksListData;
@@ -210,7 +210,7 @@ const VendorComparisonTable = ({ product }) => {
       >
         <div className="kl-comparison-vendor">
           <span className="kl-vendor-name" style={{ color: vendor.color }}>{vendor.name}</span>
-          {isBestDeal && <span className="kl-best-deal-badge">Best Price</span>}
+          {isBestDeal && <span className="kl-best-deal-badge">Top Pick</span>}
           {showRetailBadge && vendorPrice.inStock && <span className="kl-retail-badge">Retail</span>}
         </div>
         <div className="kl-comparison-rating">
@@ -233,7 +233,7 @@ const VendorComparisonTable = ({ product }) => {
               className="kl-btn kl-btn-shop"
               style={{ '--vendor-color': vendor.color }}
             >
-              Shop at {vendor.name}
+              View at {vendor.name}
             </a>
           ) : (
             <button className="kl-btn kl-btn-notify-vendor" disabled>
@@ -272,6 +272,11 @@ const VendorComparisonTable = ({ product }) => {
           ))}
         </div>
       </div>
+
+      {/* Affiliate Disclosure */}
+      <p className="kl-affiliate-disclosure">
+        We may earn a commission when you shop through our links. This helps support KicksList at no extra cost to you.
+      </p>
     </div>
   );
 };
@@ -310,9 +315,9 @@ const Navigation = () => {
   return (
     <>
       <div className="kl-announcement">
-        <span>Compare Prices From 10+ Retailers & Marketplaces</span>
+        <span>Discover Sneakers From 10+ Trusted Retailers</span>
         <span className="kl-announcement-sep">·</span>
-        <span>Find The Best Deal</span>
+        <span>Shop With Confidence</span>
       </div>
 
       <nav className={`kl-nav ${isScrolled ? 'scrolled' : ''}`}>
@@ -422,7 +427,7 @@ const ProductCard = ({ product, index = 0 }) => {
         <h3 className="kl-product-name">{product.name}</h3>
         <PriceRange product={product} showVendorCount={false} />
         <a className="kl-compare-link" onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.id}`); }}>
-          Compare {vendorCount} Prices →
+          Shop at {vendorCount} Stores →
         </a>
       </div>
     </article>
@@ -466,7 +471,7 @@ const Homepage = () => {
                 <p className="kl-hero-subtitle">{product.brand}</p>
                 <div className="kl-hero-actions">
                   <button className="kl-btn kl-btn-primary" onClick={() => navigate(`/product/${product.id}`)}>
-                    Compare Prices
+                    Shop Now
                   </button>
                   <span className="kl-hero-price">from ${getLowestPrice(product)?.toLocaleString()}</span>
                 </div>
@@ -951,43 +956,44 @@ const ProductDetailPage = () => {
 // ============================================
 const AboutPage = () => {
   const { navigate } = useApp();
+  const { products } = window.KicksListData;
 
   return (
     <main className="kl-about-page">
       <section className="kl-about-hero">
-        <h1>Compare Prices From<br /><em>Trusted Vendors</em></h1>
-        <p>KicksList aggregates real-time prices from the top sneaker marketplaces, helping you find the best deal on authentic footwear. Every vendor is verified and trusted.</p>
+        <h1>Discover Your Next<br /><em>Grail</em></h1>
+        <p>KicksList curates authentic sneakers from trusted retailers and resale platforms. Find your perfect pair and shop with confidence from verified vendors.</p>
       </section>
 
       <section className="kl-about-values">
         <div className="kl-about-value">
           <span className="kl-about-value-num">01</span>
-          <h3>Real-Time Comparison</h3>
-          <p>We aggregate prices from Nike, Foot Locker, StockX, GOAT, eBay, Flight Club, and more so you can see all your options in one place and make informed decisions.</p>
+          <h3>Curated Collection</h3>
+          <p>We handpick the most sought-after sneakers from Jordan, Nike, Adidas, Yeezy, New Balance, and more. Every shoe in our catalog is worth your attention.</p>
         </div>
         <div className="kl-about-value">
           <span className="kl-about-value-num">02</span>
-          <h3>Trusted Vendors Only</h3>
-          <p>Every vendor in our comparison network is verified and has a proven track record of authenticity and customer satisfaction.</p>
+          <h3>Trusted Sources</h3>
+          <p>Shop from verified retailers like Nike, Foot Locker, and authenticated marketplaces like StockX and GOAT. Every vendor has a proven track record.</p>
         </div>
         <div className="kl-about-value">
           <span className="kl-about-value-num">03</span>
-          <h3>Save Money</h3>
-          <p>Prices can vary by hundreds of dollars across vendors. We help you find the best deal every time you shop.</p>
+          <h3>Easy Discovery</h3>
+          <p>Browse by brand, style, or release date. Find exactly what you're looking for with smart filters and search. No more endless scrolling across multiple sites.</p>
         </div>
       </section>
 
       <section className="kl-about-stats">
-        <div className="kl-about-stat"><span>10+</span><p>Trusted Vendors</p></div>
-        <div className="kl-about-stat"><span>43</span><p>Sneakers Listed</p></div>
-        <div className="kl-about-stat"><span>500K+</span><p>Reviews Aggregated</p></div>
-        <div className="kl-about-stat"><span>100%</span><p>Verified Vendors</p></div>
+        <div className="kl-about-stat"><span>10+</span><p>Trusted Retailers</p></div>
+        <div className="kl-about-stat"><span>{products.length}</span><p>Sneakers Curated</p></div>
+        <div className="kl-about-stat"><span>5</span><p>Top Brands</p></div>
+        <div className="kl-about-stat"><span>100%</span><p>Authentic Sources</p></div>
       </section>
 
       <section className="kl-about-cta">
-        <h2>Ready to Start?</h2>
+        <h2>Ready to Find Your Next Pair?</h2>
         <div className="kl-about-cta-btns">
-          <button className="kl-btn kl-btn-primary" onClick={() => navigate('/shop')}>Compare Prices</button>
+          <button className="kl-btn kl-btn-primary" onClick={() => navigate('/shop')}>Browse Sneakers</button>
         </div>
       </section>
     </main>
@@ -1040,7 +1046,7 @@ const BrandsPage = () => {
     <main className="kl-brands-page">
       <section className="kl-brands-hero">
         <h1>Our <em>Brands</em></h1>
-        <p>Explore the iconic sneaker brands we track. Compare prices across all major retailers and resale marketplaces.</p>
+        <p>Explore the iconic sneaker brands we curate. Shop from trusted retailers and authenticated marketplaces.</p>
       </section>
 
       <section className="kl-brands-grid">
@@ -1098,7 +1104,7 @@ const Footer = () => {
       <div className="kl-footer-main">
         <div className="kl-footer-brand">
           <a href="#/" className="kl-logo" onClick={(e) => { e.preventDefault(); navigate('/'); }}>KicksList</a>
-          <p>Compare prices from trusted vendors. Find the best deal on authentic sneakers.</p>
+          <p>Discover and shop authentic sneakers from trusted retailers and marketplaces.</p>
           <div className="kl-footer-socials">
             <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
             <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5 0-.28-.03-.56-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>

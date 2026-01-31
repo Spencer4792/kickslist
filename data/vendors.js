@@ -1,6 +1,11 @@
 /**
  * KicksList Vendor Data
- * Trusted marketplace and retail vendors for price comparison
+ * Trusted marketplace and retail vendors
+ *
+ * To add affiliate links:
+ * 1. Sign up for affiliate programs (StockX, GOAT, Nike, Impact/CJ for retailers)
+ * 2. Replace the 'url' values with your affiliate URLs
+ * 3. Or add 'affiliateUrl' property for tracking while keeping original url
  */
 
 const vendors = [

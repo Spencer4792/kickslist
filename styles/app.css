@@ -1,9 +1,9 @@
 /**
- * KicksList - Sneaker Price Comparison
+ * KicksList - Sneaker Discovery & Shopping
  * Complete Application Styles
  *
- * Luxury aesthetic with price comparison features
- * Aggregates prices from StockX, GOAT, eBay, and Flight Club
+ * Luxury aesthetic with curated sneaker collection
+ * Shop from trusted retailers and authenticated marketplaces
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap');
@@ -2950,6 +2950,17 @@ a {
   background: var(--kl-bg-tertiary);
   border: 1px solid var(--kl-border-light);
   cursor: not-allowed;
+}
+
+/* Affiliate Disclosure */
+.kl-affiliate-disclosure {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--kl-border-light);
+  font-size: 0.75rem;
+  color: var(--kl-text-tertiary);
+  text-align: center;
+  font-style: italic;
 }
 
 /* ========================================
