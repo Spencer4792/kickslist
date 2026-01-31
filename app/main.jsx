@@ -1589,8 +1589,97 @@ const Footer = () => {
 // ============================================
 // Main App (Cart Drawer removed)
 // ============================================
+// ============================================
+// SEO Helper - Update page title and meta
+// ============================================
+const updatePageMeta = (title, description, image = null) => {
+  document.title = title;
+
+  // Update meta description
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute('content', description);
+
+  // Update OG tags
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute('content', title);
+
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.setAttribute('content', description);
+
+  if (image) {
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    if (ogImage) ogImage.setAttribute('content', image);
+
+    const twImage = document.querySelector('meta[name="twitter:image"]');
+    if (twImage) twImage.setAttribute('content', image);
+  }
+
+  // Update Twitter tags
+  const twTitle = document.querySelector('meta[name="twitter:title"]');
+  if (twTitle) twTitle.setAttribute('content', title);
+
+  const twDesc = document.querySelector('meta[name="twitter:description"]');
+  if (twDesc) twDesc.setAttribute('content', description);
+};
+
 const App = () => {
   const { route } = useApp();
+  const { getProductById, categories } = window.KicksListData;
+
+  // Update page title based on route
+  useEffect(() => {
+    const baseTitle = 'KicksList';
+    let title = baseTitle;
+    let description = 'Compare prices on 4,800+ sneakers from Jordan, Nike, Adidas, Yeezy, New Balance, and more.';
+    let image = null;
+
+    switch (route.page) {
+      case 'home':
+        title = `${baseTitle} | Discover & Shop Authentic Sneakers`;
+        break;
+      case 'product':
+        const product = getProductById(route.params.id);
+        if (product) {
+          title = `${product.name} | ${baseTitle}`;
+          description = `Shop ${product.name} from ${product.brand}. Compare prices from StockX, GOAT, and other trusted retailers. Retail: $${product.retail}.`;
+          image = product.images?.[0] || null;
+        }
+        break;
+      case 'shop':
+        if (route.params.category) {
+          const cat = categories.find(c => c.id === route.params.category);
+          title = `${cat?.name || route.params.category} Sneakers | ${baseTitle}`;
+          description = `Browse ${cat?.count || ''} ${cat?.name || route.params.category} sneakers. Compare prices from trusted retailers.`;
+        } else if (route.params.q) {
+          title = `Search: ${route.params.q} | ${baseTitle}`;
+          description = `Search results for "${route.params.q}" on KicksList. Find the best prices on authentic sneakers.`;
+        } else {
+          title = `Shop All Sneakers | ${baseTitle}`;
+          description = `Browse 4,800+ sneakers from Jordan, Nike, Adidas, Yeezy, and more. Compare prices from trusted retailers.`;
+        }
+        break;
+      case 'brands':
+        title = `Brands | ${baseTitle}`;
+        description = `Explore top sneaker brands including Jordan, Nike, Adidas, Yeezy, New Balance, UGG, and Crocs.`;
+        break;
+      case 'about':
+        title = `About Us | ${baseTitle}`;
+        description = `Learn about KicksList - your trusted source for comparing sneaker prices from verified retailers and marketplaces.`;
+        break;
+      case 'terms':
+        title = `Terms of Service | ${baseTitle}`;
+        description = `KicksList Terms of Service - read our terms and conditions for using our sneaker price comparison platform.`;
+        break;
+      case 'privacy':
+        title = `Privacy Policy | ${baseTitle}`;
+        description = `KicksList Privacy Policy - learn how we collect, use, and protect your information.`;
+        break;
+      default:
+        title = `${baseTitle} | Discover & Shop Authentic Sneakers`;
+    }
+
+    updatePageMeta(title, description, image);
+  }, [route]);
 
   let PageComponent;
   switch (route.page) {
