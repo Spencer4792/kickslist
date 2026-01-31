@@ -559,9 +559,17 @@ const Homepage = () => {
       <section className="kl-brands">
         <p className="kl-brands-label">Shop by Brand</p>
         <div className="kl-brands-grid">
-          {['Nike', 'Jordan', 'Adidas', 'New Balance', 'Yeezy', 'Asics'].map((brand) => (
-            <button key={brand} className="kl-brand-btn" onClick={() => navigate(`/category/${brand.toLowerCase()}`)}>
-              {brand}
+          {[
+            { name: 'Jordan', id: 'jordan' },
+            { name: 'Nike', id: 'nike' },
+            { name: 'Adidas', id: 'adidas' },
+            { name: 'New Balance', id: 'new-balance' },
+            { name: 'Yeezy', id: 'yeezy' },
+            { name: 'UGG', id: 'ugg' },
+            { name: 'Crocs', id: 'crocs' },
+          ].map((brand) => (
+            <button key={brand.id} className="kl-brand-btn" onClick={() => navigate(`/category/${brand.id}`)}>
+              {brand.name}
             </button>
           ))}
         </div>
@@ -1071,10 +1079,22 @@ const BrandsPage = () => {
       founded: '1906',
       headquarters: 'Boston, Massachusetts',
       highlights: ['Made in USA craftsmanship', '550 basketball revival', 'Designer collaboration leader']
+    },
+    ugg: {
+      description: 'UGG is an American footwear company best known for its sheepskin boots. Founded in Southern California, UGG has grown from a surf culture staple to a global fashion phenomenon. The brand\'s cozy boots and slippers have become essential comfort footwear, with collaborations and new silhouettes keeping it relevant in streetwear.',
+      founded: '1978',
+      headquarters: 'Goleta, California',
+      highlights: ['Iconic sheepskin boots', 'Tasman slipper phenomenon', 'High-fashion collaborations']
+    },
+    crocs: {
+      description: 'Crocs is an American footwear company known for its foam clog shoes. Once considered purely functional, Crocs has undergone a massive cultural revival through celebrity endorsements and high-profile collaborations. The brand\'s customizable Jibbitz charms and bold colorways have made it a streetwear staple.',
+      founded: '2002',
+      headquarters: 'Broomfield, Colorado',
+      highlights: ['Classic Clog icon', 'Celebrity collaborations', 'Jibbitz customization culture']
     }
   };
 
-  const brandIds = ['jordan', 'nike', 'yeezy', 'adidas', 'new-balance'];
+  const brandIds = ['jordan', 'nike', 'yeezy', 'adidas', 'new-balance', 'ugg', 'crocs'];
 
   return (
     <main className="kl-brands-page">
@@ -1088,7 +1108,8 @@ const BrandsPage = () => {
           const products = getProductsByCategory(brandId);
           const productCount = products.length;
           const info = brandsInfo[brandId];
-          const brandName = brandId === 'new-balance' ? 'New Balance' : brandId.charAt(0).toUpperCase() + brandId.slice(1);
+          const brandNameMap = { 'new-balance': 'New Balance', 'ugg': 'UGG', 'crocs': 'Crocs' };
+          const brandName = brandNameMap[brandId] || brandId.charAt(0).toUpperCase() + brandId.slice(1);
           const featuredImage = products[0]?.images[0] || '';
 
           return (
@@ -1151,9 +1172,11 @@ const Footer = () => {
             <ul>
               <li><a href="#/category/jordan" onClick={(e) => { e.preventDefault(); navigate('/category/jordan'); }}>Jordan</a></li>
               <li><a href="#/category/nike" onClick={(e) => { e.preventDefault(); navigate('/category/nike'); }}>Nike</a></li>
-              <li><a href="#/category/yeezy" onClick={(e) => { e.preventDefault(); navigate('/category/yeezy'); }}>Yeezy</a></li>
               <li><a href="#/category/adidas" onClick={(e) => { e.preventDefault(); navigate('/category/adidas'); }}>Adidas</a></li>
               <li><a href="#/category/new-balance" onClick={(e) => { e.preventDefault(); navigate('/category/new-balance'); }}>New Balance</a></li>
+              <li><a href="#/category/yeezy" onClick={(e) => { e.preventDefault(); navigate('/category/yeezy'); }}>Yeezy</a></li>
+              <li><a href="#/category/ugg" onClick={(e) => { e.preventDefault(); navigate('/category/ugg'); }}>UGG</a></li>
+              <li><a href="#/category/crocs" onClick={(e) => { e.preventDefault(); navigate('/category/crocs'); }}>Crocs</a></li>
             </ul>
           </div>
           <div className="kl-footer-col">
@@ -1183,7 +1206,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="kl-footer-bottom">
-        <p>© 2025 KicksList. All rights reserved.</p>
+        <p>© 2026 KicksList. All rights reserved.</p>
         <div className="kl-footer-legal">
           <a href="#">Privacy Policy</a>
           <a href="#">Terms of Service</a>
