@@ -607,6 +607,8 @@ const ShopPage = () => {
 
   const [sortBy, setSortBy] = useState('newest');
   const [activeCategory, setActiveCategory] = useState(route.params.category || 'all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 20;
 
   const queryParam = route.params.q || searchQuery;
 
@@ -623,9 +625,22 @@ const ShopPage = () => {
     filteredProducts = [...filteredProducts].sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
   }
 
+  // Pagination
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
+
+  // Reset to page 1 when category or search changes
   useEffect(() => {
     setActiveCategory(route.params.category || 'all');
-  }, [route.params.category]);
+    setCurrentPage(1);
+  }, [route.params.category, queryParam]);
+
+  // Scroll to top when page changes
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <main className="kl-shop-page">
@@ -684,11 +699,86 @@ const ShopPage = () => {
               <button className="kl-btn kl-btn-primary" onClick={() => navigate('/shop')}>View All Products</button>
             </div>
           ) : (
-            <div className="kl-product-grid">
-              {filteredProducts.map((product, idx) => (
-                <ProductCard key={product.id} product={product} index={idx} />
-              ))}
-            </div>
+            <>
+              <div className="kl-product-grid">
+                {paginatedProducts.map((product, idx) => (
+                  <ProductCard key={product.id} product={product} index={idx} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="kl-pagination">
+                  <button
+                    className="kl-pagination-btn kl-pagination-prev"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Previous
+                  </button>
+
+                  <div className="kl-pagination-pages">
+                    {/* First page */}
+                    {currentPage > 3 && (
+                      <>
+                        <button
+                          className="kl-pagination-page"
+                          onClick={() => handlePageChange(1)}
+                        >
+                          1
+                        </button>
+                        {currentPage > 4 && <span className="kl-pagination-ellipsis">...</span>}
+                      </>
+                    )}
+
+                    {/* Page numbers around current */}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(page => page >= currentPage - 2 && page <= currentPage + 2)
+                      .map(page => (
+                        <button
+                          key={page}
+                          className={`kl-pagination-page ${page === currentPage ? 'active' : ''}`}
+                          onClick={() => handlePageChange(page)}
+                        >
+                          {page}
+                        </button>
+                      ))
+                    }
+
+                    {/* Last page */}
+                    {currentPage < totalPages - 2 && (
+                      <>
+                        {currentPage < totalPages - 3 && <span className="kl-pagination-ellipsis">...</span>}
+                        <button
+                          className="kl-pagination-page"
+                          onClick={() => handlePageChange(totalPages)}
+                        >
+                          {totalPages}
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  <button
+                    className="kl-pagination-btn kl-pagination-next"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                  </button>
+                </div>
+              )}
+
+              <div className="kl-pagination-info">
+                Showing {startIndex + 1}-{Math.min(startIndex + productsPerPage, filteredProducts.length)} of {filteredProducts.length} products
+              </div>
+            </>
           )}
         </div>
       </div>

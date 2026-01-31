@@ -1797,6 +1797,118 @@ a {
 }
 
 /* ========================================
+   Pagination
+======================================== */
+.kl-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--kl-border-light);
+}
+
+.kl-pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--kl-text-primary);
+  background: var(--kl-bg-secondary);
+  border: 1px solid var(--kl-border-medium);
+  transition: all var(--kl-transition-fast);
+}
+
+.kl-pagination-btn:hover:not(:disabled) {
+  background: var(--kl-bg-tertiary);
+  border-color: var(--kl-border-dark);
+}
+
+.kl-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.kl-pagination-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.kl-pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.kl-pagination-page {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--kl-text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all var(--kl-transition-fast);
+}
+
+.kl-pagination-page:hover {
+  color: var(--kl-text-primary);
+  background: var(--kl-bg-tertiary);
+}
+
+.kl-pagination-page.active {
+  color: var(--kl-text-inverse);
+  background: var(--kl-bg-dark);
+  border-color: var(--kl-bg-dark);
+}
+
+.kl-pagination-ellipsis {
+  padding: 0 0.5rem;
+  color: var(--kl-text-tertiary);
+}
+
+.kl-pagination-info {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--kl-text-tertiary);
+  margin-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  .kl-pagination {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .kl-pagination-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .kl-pagination-btn span {
+    display: none;
+  }
+
+  .kl-pagination-pages {
+    order: -1;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .kl-pagination-page {
+    min-width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ========================================
    Product Detail Page
 ======================================== */
 .kl-product-detail {
