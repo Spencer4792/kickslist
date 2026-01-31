@@ -142,104 +142,60 @@ const TrustRating = ({ rating, showCount = false, count = 0, size = 'md' }) => {
 };
 
 // ============================================
-// Price Range Component
+// Price Display Component (Shows Retail Price)
 // ============================================
-const PriceRange = ({ product, showVendorCount = true, showSavings = false }) => {
-  const { getLowestPrice, getHighestPrice, getVendorCount, getSavings } = window.KicksListData;
+const PriceDisplay = ({ product }) => {
+  const retailPrice = product.retail;
 
-  const lowPrice = getLowestPrice(product);
-  const highPrice = getHighestPrice(product);
-  const vendorCount = getVendorCount(product);
-  const savings = getSavings(product);
-
-  if (!lowPrice) {
-    return <span className="kl-price-range kl-out-of-stock">Out of Stock</span>;
+  if (!retailPrice) {
+    return <span className="kl-price-range kl-out-of-stock">Price Unavailable</span>;
   }
 
   return (
     <div className="kl-price-range">
-      <span className="kl-price-from">from</span>
-      <span className="kl-price-low">${lowPrice.toLocaleString()}</span>
-      {highPrice !== lowPrice && (
-        <>
-          <span className="kl-price-sep">-</span>
-          <span className="kl-price-high">${highPrice.toLocaleString()}</span>
-        </>
-      )}
-      {showVendorCount && vendorCount > 0 && (
-        <span className="kl-vendor-count">{vendorCount} vendors</span>
-      )}
-      {showSavings && savings > 0 && (
-        <span className="kl-savings-badge">Save up to ${savings}</span>
-      )}
+      <span className="kl-price-label">Retail:</span>
+      <span className="kl-price-low">${retailPrice.toLocaleString()}</span>
     </div>
   );
 };
 
 // ============================================
-// Where To Buy Section (Vendor Links)
+// Where To Buy Section (Direct Links to Vendors)
 // ============================================
 const VendorComparisonTable = ({ product }) => {
-  const { generateVendorPrices, getBestDeal } = window.KicksListData;
-  const { vendors: vendorData, getVendorById } = window.KicksListVendors;
+  const { generateVendorPrices } = window.KicksListData;
+  const { getVendorById, getRetailVendors, getResaleVendors } = window.KicksListVendors;
 
   const vendorPrices = generateVendorPrices(product);
-  const bestDeal = getBestDeal(product);
 
   // Separate retail and resale vendors
   const retailVendors = vendorPrices.filter(v => v.type === 'retail');
   const resaleVendors = vendorPrices.filter(v => v.type === 'resale');
 
-  // Sort each group: in-stock by price (lowest first), then out-of-stock
-  const sortVendors = (vendors) => {
-    const inStock = vendors.filter(v => v.inStock).sort((a, b) => a.price - b.price);
-    const outOfStock = vendors.filter(v => !v.inStock);
-    return [...inStock, ...outOfStock];
-  };
-
-  const sortedRetail = sortVendors(retailVendors);
-  const sortedResale = sortVendors(resaleVendors);
-
-  const VendorRow = ({ vendorPrice, showRetailBadge = false }) => {
+  const VendorRow = ({ vendorPrice, isResale = false }) => {
     const vendor = getVendorById(vendorPrice.vendorId);
-    const isBestDeal = bestDeal && vendorPrice.vendorId === bestDeal.vendorId && vendorPrice.inStock;
 
     return (
-      <div
-        className={`kl-comparison-row ${!vendorPrice.inStock ? 'out-of-stock' : ''} ${isBestDeal ? 'kl-best-deal' : ''}`}
-      >
+      <div className="kl-comparison-row">
         <div className="kl-comparison-vendor">
           <span className="kl-vendor-name" style={{ color: vendor.color }}>{vendor.name}</span>
-          {isBestDeal && <span className="kl-best-deal-badge">Top Pick</span>}
-          {showRetailBadge && vendorPrice.inStock && <span className="kl-retail-badge">Retail</span>}
+          {!isResale && <span className="kl-retail-badge">Retail</span>}
+          {isResale && <span className="kl-resale-badge">Resale</span>}
         </div>
         <div className="kl-comparison-rating">
           <TrustRating rating={vendor.trustRating} size="sm" />
           <span className="kl-vendor-reviews">({vendor.trustCount.toLocaleString()})</span>
         </div>
-        <div className="kl-comparison-price">
-          {vendorPrice.inStock ? (
-            <span className="kl-vendor-price">${vendorPrice.price.toLocaleString()}</span>
-          ) : (
-            <span className="kl-vendor-oos">Out of Stock</span>
-          )}
-        </div>
         <div className="kl-comparison-action">
-          {vendorPrice.inStock ? (
-            <a
-              href={vendorPrice.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="kl-btn kl-btn-shop"
-              style={{ '--vendor-color': vendor.color }}
-            >
-              View at {vendor.name}
-            </a>
-          ) : (
-            <button className="kl-btn kl-btn-notify-vendor" disabled>
-              Notify Me
-            </button>
-          )}
+          <a
+            href={vendorPrice.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="kl-btn kl-btn-shop"
+            style={{ '--vendor-color': vendor.color }}
+          >
+            {isResale ? 'Check Live Price' : 'Check Availability'}
+          </a>
         </div>
       </div>
     );
@@ -247,35 +203,35 @@ const VendorComparisonTable = ({ product }) => {
 
   return (
     <div className="kl-vendor-comparison">
-      {/* Retail Section */}
+      {/* Resale Marketplaces - Show these first since they're more likely to have the shoe */}
       <div className="kl-comparison-section">
         <h3 className="kl-comparison-title">
-          <span>Retail Stores</span>
-          <span className="kl-comparison-subtitle">Official retailers · MSRP pricing</span>
+          <span>Resale Marketplaces</span>
+          <span className="kl-comparison-subtitle">Authenticated · Live market prices</span>
         </h3>
         <div className="kl-comparison-table">
-          {sortedRetail.map((vendorPrice) => (
-            <VendorRow key={vendorPrice.vendorId} vendorPrice={vendorPrice} showRetailBadge={true} />
+          {resaleVendors.map((vendorPrice) => (
+            <VendorRow key={vendorPrice.vendorId} vendorPrice={vendorPrice} isResale={true} />
           ))}
         </div>
       </div>
 
-      {/* Resale Section */}
+      {/* Retail Section */}
       <div className="kl-comparison-section">
         <h3 className="kl-comparison-title">
-          <span>Resale Marketplaces</span>
-          <span className="kl-comparison-subtitle">Authenticated · Market pricing</span>
+          <span>Retail Stores</span>
+          <span className="kl-comparison-subtitle">Official retailers · MSRP ${product.retail?.toLocaleString()}</span>
         </h3>
         <div className="kl-comparison-table">
-          {sortedResale.map((vendorPrice) => (
-            <VendorRow key={vendorPrice.vendorId} vendorPrice={vendorPrice} />
+          {retailVendors.map((vendorPrice) => (
+            <VendorRow key={vendorPrice.vendorId} vendorPrice={vendorPrice} isResale={false} />
           ))}
         </div>
       </div>
 
       {/* Affiliate Disclosure */}
       <p className="kl-affiliate-disclosure">
-        We may earn a commission when you shop through our links. This helps support KicksList at no extra cost to you.
+        Prices shown on vendor sites are live and may change. We may earn a commission when you shop through our links.
       </p>
     </div>
   );
@@ -388,13 +344,11 @@ const Navigation = () => {
 };
 
 // ============================================
-// Product Card (Updated with PriceRange)
+// Product Card (Shows Retail + Compare Prices CTA)
 // ============================================
 const ProductCard = ({ product, index = 0 }) => {
   const { navigate, wishlist, toggleWishlist } = useApp();
-  const { getVendorCount } = window.KicksListData;
   const isWishlisted = wishlist.includes(product.id);
-  const vendorCount = getVendorCount(product);
 
   return (
     <article
@@ -425,9 +379,9 @@ const ProductCard = ({ product, index = 0 }) => {
       <div className="kl-product-info" onClick={() => navigate(`/product/${product.id}`)}>
         <p className="kl-product-brand">{product.brand}</p>
         <h3 className="kl-product-name">{product.name}</h3>
-        <PriceRange product={product} showVendorCount={false} />
+        <PriceDisplay product={product} />
         <a className="kl-compare-link" onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.id}`); }}>
-          Shop at {vendorCount} Stores →
+          Compare Live Prices →
         </a>
       </div>
     </article>
@@ -442,7 +396,7 @@ const Homepage = () => {
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const [activeCategory, setActiveCategory] = useState('all');
 
-  const { products, categories, getFeaturedProducts, getTrendingProducts, getNewDrops, getLowestPrice } = window.KicksListData;
+  const { products, categories, getFeaturedProducts, getTrendingProducts, getNewDrops } = window.KicksListData;
   const featuredProducts = getFeaturedProducts();
   const trendingProducts = getTrendingProducts();
   const newDrops = getNewDrops();
@@ -473,7 +427,7 @@ const Homepage = () => {
                   <button className="kl-btn kl-btn-primary" onClick={() => navigate(`/product/${product.id}`)}>
                     Shop Now
                   </button>
-                  <span className="kl-hero-price">from ${getLowestPrice(product)?.toLocaleString()}</span>
+                  <span className="kl-hero-price">Retail ${product.retail?.toLocaleString()}</span>
                 </div>
               </div>
               <div className="kl-hero-image">
@@ -591,7 +545,7 @@ const Homepage = () => {
               <div className="kl-trending-info">
                 <p className="kl-trending-brand">{product.brand}</p>
                 <h3 className="kl-trending-name">{product.name}</h3>
-                <span className="kl-trending-price">from ${getLowestPrice(product)?.toLocaleString()}</span>
+                <span className="kl-trending-price">Retail ${product.retail?.toLocaleString()}</span>
               </div>
               <svg className="kl-trending-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
@@ -625,7 +579,7 @@ const Homepage = () => {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
           </svg>
-          <div><h4>Real-Time Prices</h4><p>Live pricing from 10+ stores & marketplaces</p></div>
+          <div><h4>Compare Live Prices</h4><p>Direct links to StockX, GOAT & more</p></div>
         </div>
         <div className="kl-trust-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -649,7 +603,7 @@ const Homepage = () => {
 // ============================================
 const ShopPage = () => {
   const { route, navigate, searchQuery } = useApp();
-  const { products, categories, getProductsByCategory, searchProducts, getLowestPrice } = window.KicksListData;
+  const { products, categories, getProductsByCategory, searchProducts } = window.KicksListData;
 
   const [sortBy, setSortBy] = useState('newest');
   const [activeCategory, setActiveCategory] = useState(route.params.category || 'all');
@@ -660,11 +614,11 @@ const ShopPage = () => {
     ? searchProducts(queryParam)
     : getProductsByCategory(activeCategory);
 
-  // Sort
+  // Sort by retail price
   if (sortBy === 'price-low') {
-    filteredProducts = [...filteredProducts].sort((a, b) => (getLowestPrice(a) || 0) - (getLowestPrice(b) || 0));
+    filteredProducts = [...filteredProducts].sort((a, b) => (a.retail || 0) - (b.retail || 0));
   } else if (sortBy === 'price-high') {
-    filteredProducts = [...filteredProducts].sort((a, b) => (getLowestPrice(b) || 0) - (getLowestPrice(a) || 0));
+    filteredProducts = [...filteredProducts].sort((a, b) => (b.retail || 0) - (a.retail || 0));
   } else if (sortBy === 'newest') {
     filteredProducts = [...filteredProducts].sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
   }
@@ -747,7 +701,7 @@ const ShopPage = () => {
 // ============================================
 const ProductDetailPage = () => {
   const { route, navigate, wishlist, toggleWishlist } = useApp();
-  const { getProductById, getRelatedProducts, getLowestPrice, getHighestPrice, getSavings, getVendorCount } = window.KicksListData;
+  const { getProductById, getRelatedProducts } = window.KicksListData;
 
   const productId = parseInt(route.params.id);
   const product = getProductById(productId);
@@ -784,11 +738,6 @@ const ProductDetailPage = () => {
       </main>
     );
   }
-
-  const lowestPrice = getLowestPrice(product);
-  const highestPrice = getHighestPrice(product);
-  const savings = getSavings(product);
-  const vendorCount = getVendorCount(product);
 
   const handleImageHover = (e) => {
     if (!isZoomed) return;
@@ -858,18 +807,13 @@ const ProductDetailPage = () => {
 
           <div className="kl-price-block">
             <div className="kl-price-row">
+              <span className="kl-price-label-large">Retail Price:</span>
               <span className="kl-price-current">
-                {lowestPrice ? `from $${lowestPrice.toLocaleString()}` : 'Out of Stock'}
+                ${product.retail?.toLocaleString() || 'N/A'}
               </span>
-              {highestPrice && highestPrice !== lowestPrice && (
-                <span className="kl-price-retail">to ${highestPrice.toLocaleString()}</span>
-              )}
             </div>
             <div className="kl-price-meta">
-              {savings > 0 && (
-                <p className="kl-price-note kl-price-savings">Save up to ${savings.toLocaleString()} by comparing</p>
-              )}
-              <p className="kl-vendor-count-note">{vendorCount} vendors available</p>
+              <p className="kl-price-note">Click below to check current live prices from verified vendors</p>
             </div>
           </div>
 
@@ -887,7 +831,7 @@ const ProductDetailPage = () => {
 
           <div className="kl-trust-badges">
             <div className="kl-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg><span>All Vendors Verified</span></div>
-            <div className="kl-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Real-Time Prices</span></div>
+            <div className="kl-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Live Price Links</span></div>
             <div className="kl-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span>Secure Checkout</span></div>
           </div>
 
