@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "description": "KicksList - Sneaker price comparison across trusted retailers and resale marketplaces.",
   "scripts": {
+    "start": "npx serve -l 3000",
     "fetch-sneakers": "node tools/fetch-sneakers.js"
   },
   "keywords": [
