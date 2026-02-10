@@ -2,103 +2,151 @@ import { FeedAdapter, FeedResult, NormalizedProduct, NormalizedVendorPrice } fro
 
 const KICKSDB_BASE_URL = "https://api.kicks.dev";
 
+/**
+ * Unified interface covering both StockX and GOAT response fields.
+ * StockX uses: title, image, gallery, min_price, secondary_title, breadcrumbs
+ * GOAT uses:   name, image_url, images, colorway, retail_prices, category
+ */
 interface KicksDBProduct {
-  id: string;
-  name: string;
+  id: string | number;
+  // StockX: title, GOAT: name
+  title?: string;
+  name?: string;
   brand: string;
-  sku: string;
-  slug: string;
-  colorway: string;
-  gender: string;
-  retailPrice: number;
-  releaseDate: string;
-  description: string;
-  image: string;
-  thumbnail: string;
-  links: {
-    stockX?: string;
-    goat?: string;
-    flightClub?: string;
-  };
-  lowestResellPrice?: {
-    stockX?: number;
-    goat?: number;
-    flightClub?: number;
-  };
+  model?: string;
+  gender?: string;
+  description?: string;
+  // StockX: image, GOAT: image_url
+  image?: string;
+  image_url?: string;
+  sku?: string;
+  slug?: string;
+  product_type?: string;
+  category?: string;
+  secondary_category?: string;
+  categories?: string[];
+  breadcrumbs?: { value: string; alias: string; level: number }[];
+  // StockX: gallery, GOAT: images
+  gallery?: string[];
+  images?: string[];
+  link?: string;
+  rank?: number;
+  weekly_orders?: number;
+  // StockX fields
+  primary_title?: string;
+  secondary_title?: string;
+  min_price?: number;
+  max_price?: number;
+  avg_price?: number;
+  short_description?: string;
+  upcoming?: boolean;
+  // GOAT fields
+  colorway?: string;
+  season?: string;
+  release_date?: string;
+  retail_prices?: number | null;
+  // Common
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface KicksDBResponse {
-  count: number;
-  results: KicksDBProduct[];
+  data: KicksDBProduct[];
+  meta?: {
+    total?: number;
+    current_page?: number;
+    per_page?: number;
+  };
 }
 
-function categorizeFromName(name: string, brand: string): string {
-  const lower = name.toLowerCase();
-  if (lower.includes("dunk") || lower.includes("force 1") || lower.includes("jordan 1")) return "Lifestyle";
-  if (lower.includes("run") || lower.includes("pegasus") || lower.includes("ultraboost")) return "Running";
-  if (lower.includes("slide") || lower.includes("foam")) return "Slides";
-  if (brand.toLowerCase() === "new balance") return "Lifestyle";
-  return "Lifestyle";
+function categorizeProduct(raw: KicksDBProduct): string {
+  // Use breadcrumbs for StockX (more accurate subcategory)
+  if (raw.breadcrumbs && raw.breadcrumbs.length >= 2) {
+    const subcategory = raw.breadcrumbs[1]?.value;
+    if (subcategory) return subcategory;
+  }
+
+  // Use product_type for categorization
+  if (raw.product_type) {
+    const type = raw.product_type.toLowerCase();
+    if (type === "sneakers" || type === "shoes") return "Sneakers";
+    if (type === "tops" || type === "bottoms" || type === "outerwear") return "Apparel";
+    if (type === "accessories") return "Accessories";
+    return raw.product_type.charAt(0).toUpperCase() + raw.product_type.slice(1);
+  }
+
+  const title = (raw.title || raw.name || "").toLowerCase();
+  if (title.includes("slide") || title.includes("sandal")) return "Slides & Sandals";
+  if (title.includes("boot")) return "Boots";
+  return "Sneakers";
+}
+
+/**
+ * Determine vendor ID from the source endpoint.
+ */
+function vendorIdFromEndpoint(endpoint: string): string {
+  if (endpoint.includes("/stockx/")) return "stockx";
+  if (endpoint.includes("/goat/")) return "goat";
+  if (endpoint.includes("/flightclub/")) return "flightclub";
+  return "stockx";
 }
 
 function normalizeProduct(
   raw: KicksDBProduct,
-  sourceName: string
+  sourceName: string,
+  vendorId: string
 ): NormalizedProduct {
   const vendorPrices: NormalizedVendorPrice[] = [];
+  const productName = raw.title || raw.name || "";
 
-  if (raw.lowestResellPrice?.stockX != null && raw.links?.stockX) {
+  // StockX provides min_price; GOAT provides retail_prices
+  const price = raw.min_price ?? raw.retail_prices ?? null;
+  const link = raw.link || null;
+
+  if (price != null && price > 0 && link) {
     vendorPrices.push({
-      vendorId: "stockx",
-      price: raw.lowestResellPrice.stockX,
-      url: raw.links.stockX,
-      inStock: raw.lowestResellPrice.stockX > 0,
-      isAffiliateUrl: false,
+      vendorId,
+      price,
+      url: link,
+      inStock: true,
+      isAffiliateUrl: link.includes("pvxt.net") || link.includes("sjv.io") || link.includes("goto.target"),
     });
   }
 
-  if (raw.lowestResellPrice?.goat != null && raw.links?.goat) {
-    vendorPrices.push({
-      vendorId: "goat",
-      price: raw.lowestResellPrice.goat,
-      url: raw.links.goat,
-      inStock: raw.lowestResellPrice.goat > 0,
-      isAffiliateUrl: false,
-    });
+  // Parse release/created date
+  const dateStr = raw.release_date || raw.created_at || null;
+  const parsedDate = dateStr ? new Date(dateStr) : null;
+  const validDate = parsedDate && !isNaN(parsedDate.getTime()) ? parsedDate : null;
+
+  // Build image list from whichever fields are available
+  const imageList: string[] = [];
+  const mainImage = raw.image || raw.image_url || null;
+  if (mainImage) imageList.push(mainImage);
+
+  // StockX uses gallery, GOAT uses images
+  const extraImages = raw.gallery || raw.images || [];
+  for (const img of extraImages) {
+    if (img && !imageList.includes(img)) imageList.push(img);
   }
 
-  if (raw.lowestResellPrice?.flightClub != null && raw.links?.flightClub) {
-    vendorPrices.push({
-      vendorId: "flightclub",
-      price: raw.lowestResellPrice.flightClub,
-      url: raw.links.flightClub,
-      inStock: raw.lowestResellPrice.flightClub > 0,
-      isAffiliateUrl: false,
-    });
-  }
-
-  const releaseDate = raw.releaseDate ? new Date(raw.releaseDate) : null;
-  const validReleaseDate = releaseDate && !isNaN(releaseDate.getTime()) ? releaseDate : null;
-
-  const images: string[] = [];
-  if (raw.image) images.push(raw.image);
-  if (raw.thumbnail && raw.thumbnail !== raw.image) images.push(raw.thumbnail);
+  // Colorway: StockX uses secondary_title, GOAT uses colorway directly
+  const colorway = raw.colorway || raw.secondary_title || null;
 
   return {
-    sourceId: raw.id,
+    sourceId: String(raw.id),
     sourceName,
-    name: raw.name,
+    name: productName,
     brand: raw.brand || "Unknown",
-    category: categorizeFromName(raw.name, raw.brand),
+    category: categorizeProduct(raw),
     sku: raw.sku || null,
     styleId: raw.sku || null,
     slug: raw.slug || null,
-    colorway: raw.colorway || null,
+    colorway,
     gender: raw.gender || null,
-    retailPrice: raw.retailPrice || null,
-    releaseDate: validReleaseDate,
-    description: raw.description || null,
-    images,
+    retailPrice: raw.retail_prices ?? null,
+    releaseDate: validDate,
+    description: raw.description || raw.short_description || null,
+    images: imageList,
     vendorPrices,
   };
 }
@@ -137,7 +185,8 @@ export class KicksDBAdapter implements FeedAdapter {
     const endpoint = (config.endpoint as string) || "/v3/stockx/products";
     const sourceName = (config.sourceName as string) || "kicksdb-stockx";
     const limit = (config.limit as number) || 50;
-    const maxPages = (config.maxPages as number) || 4; // 4 pages × 50 = 200 products
+    const maxPages = (config.maxPages as number) || 4;
+    const vendorId = vendorIdFromEndpoint(endpoint);
 
     const products: NormalizedProduct[] = [];
     const errors: string[] = [];
@@ -146,18 +195,17 @@ export class KicksDBAdapter implements FeedAdapter {
       try {
         const data = await fetchPage(endpoint, apiKey, page, limit);
 
-        if (!data.results || data.results.length === 0) break;
+        if (!data.data || data.data.length === 0) break;
 
-        for (const raw of data.results) {
+        for (const raw of data.data) {
           try {
-            products.push(normalizeProduct(raw, sourceName));
+            products.push(normalizeProduct(raw, sourceName, vendorId));
           } catch (err) {
             errors.push(`Failed to normalize product ${raw.id}: ${err}`);
           }
         }
 
-        // If we got fewer results than the limit, we've reached the end
-        if (data.results.length < limit) break;
+        if (data.data.length < limit) break;
       } catch (err) {
         errors.push(`Failed to fetch page ${page} from ${endpoint}: ${err}`);
         break;
