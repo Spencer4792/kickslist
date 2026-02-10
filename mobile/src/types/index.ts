@@ -70,6 +70,7 @@ export type RootStackParamList = {
   BrandDetail: { brand: string; category: string };
   Auth: undefined;
   Paywall: undefined;
+  CreateDropAlert: undefined;
 };
 
 export interface SubscriptionInfo {
@@ -85,6 +86,29 @@ export type TabParamList = {
   AlertsTab: undefined;
   ProfileTab: undefined;
 };
+
+export interface DropAlert {
+  id: number;
+  alertType: 'drop' | 'restock';
+  brand: string | null;
+  category: string | null;
+  keywords: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  isActive: boolean;
+  triggeredCount: number;
+  lastTriggeredAt: string | null;
+  createdAt: string;
+}
+
+export interface CreateDropAlertPayload {
+  alertType: 'drop' | 'restock';
+  brand?: string;
+  category?: string;
+  keywords?: string;
+  minPrice?: number;
+  maxPrice?: number;
+}
 
 export interface PriceAlert {
   id: number;

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { User, PriceAlert, SubscriptionInfo } from '../types';
-import { authApi, wishlistApi, priceAlertsApi, subscriptionApi } from '../services/api';
+import { User, PriceAlert, DropAlert, CreateDropAlertPayload, SubscriptionInfo } from '../types';
+import { authApi, wishlistApi, priceAlertsApi, dropAlertsApi, subscriptionApi } from '../services/api';
 import { tokenStorage } from '../services/tokenStorage';
 import { checkProEntitlement, logoutPurchases } from '../services/purchases';
 
@@ -16,6 +16,10 @@ interface AppState {
   // Price Alerts
   alerts: PriceAlert[];
   isAlertsLoading: boolean;
+
+  // Drop Alerts
+  dropAlerts: DropAlert[];
+  isDropAlertsLoading: boolean;
 
   // Subscription
   subscription: SubscriptionInfo | null;
@@ -40,6 +44,11 @@ interface AppState {
   hasActiveAlertForProduct: (productId: number) => boolean;
   activeAlertCount: () => number;
 
+  // Drop Alert actions
+  fetchDropAlerts: () => Promise<void>;
+  createDropAlert: (data: CreateDropAlertPayload) => Promise<void>;
+  deleteDropAlert: (alertId: number) => Promise<void>;
+
   // Subscription actions
   syncSubscription: () => Promise<void>;
 
@@ -55,6 +64,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   wishlist: [],
   alerts: [],
   isAlertsLoading: false,
+  dropAlerts: [],
+  isDropAlertsLoading: false,
   subscription: null,
   searchQuery: '',
 
@@ -85,6 +96,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     // Load alerts
     get().fetchAlerts();
+    get().fetchDropAlerts();
 
     // Sync subscription
     get().syncSubscription();
@@ -109,6 +121,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     // Load alerts
     get().fetchAlerts();
+    get().fetchDropAlerts();
 
     // Sync subscription
     get().syncSubscription();
@@ -126,7 +139,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       // Ignore RevenueCat logout errors
     }
     await tokenStorage.clearTokens();
-    set({ user: null, isAuthenticated: false, wishlist: [], alerts: [], subscription: null });
+    set({ user: null, isAuthenticated: false, wishlist: [], alerts: [], dropAlerts: [], subscription: null });
   },
 
   restoreSession: async () => {
@@ -150,6 +163,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
       // Load alerts
       get().fetchAlerts();
+      get().fetchDropAlerts();
 
       // Sync subscription
       get().syncSubscription();
@@ -228,6 +242,38 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   activeAlertCount: () =>
     get().alerts.filter((a) => !a.isTriggered).length,
+
+  fetchDropAlerts: async () => {
+    set({ isDropAlertsLoading: true });
+    try {
+      const { data } = await dropAlertsApi.getAll();
+      set({ dropAlerts: data.alerts });
+    } catch {
+      // Keep existing drop alerts on failure
+    } finally {
+      set({ isDropAlertsLoading: false });
+    }
+  },
+
+  createDropAlert: async (payload) => {
+    const { data } = await dropAlertsApi.create(payload);
+    set({ dropAlerts: [data.alert, ...get().dropAlerts] });
+  },
+
+  deleteDropAlert: async (alertId) => {
+    const previousAlerts = get().dropAlerts;
+
+    // Optimistic update
+    set({ dropAlerts: previousAlerts.filter((a) => a.id !== alertId) });
+
+    try {
+      await dropAlertsApi.delete(alertId);
+    } catch {
+      // Rollback on failure
+      set({ dropAlerts: previousAlerts });
+      throw new Error('Failed to delete drop alert');
+    }
+  },
 
   syncSubscription: async () => {
     try {

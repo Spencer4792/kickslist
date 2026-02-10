@@ -10,6 +10,7 @@ import vendorsRouter from "./routes/vendors";
 import authRouter from "./routes/auth";
 import wishlistRouter from "./routes/wishlist";
 import priceAlertsRouter from "./routes/priceAlerts";
+import dropAlertsRouter from "./routes/dropAlerts";
 import webhooksRouter from "./routes/webhooks";
 import subscriptionRouter from "./routes/subscription";
 import { errorHandler } from "./middleware/errorHandler";
@@ -31,6 +32,7 @@ app.use("/api/vendors", vendorsRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/wishlist", wishlistRouter);
 app.use("/api/price-alerts", priceAlertsRouter);
+app.use("/api/drop-alerts", dropAlertsRouter);
 app.use("/api/webhooks", webhooksRouter);
 app.use("/api/subscription", subscriptionRouter);
 

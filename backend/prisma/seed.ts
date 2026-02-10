@@ -347,16 +347,81 @@ async function main() {
   }
   console.log(`  ✓ ${vendorPriceCount} vendor prices seeded\n`);
 
+  // Seed Feed Sources
+  console.log('📡 Seeding feed sources...');
+
+  await prisma.feedSource.upsert({
+    where: { id: 'kicksdb-stockx' },
+    update: {
+      name: 'KicksDB - StockX',
+      adapterType: 'kicksdb',
+      isActive: true,
+      syncInterval: 1440, // 24 hours
+      config: {
+        endpoint: '/v3/stockx/products',
+        sourceName: 'kicksdb-stockx',
+        limit: 50,
+        maxPages: 4,
+      },
+    },
+    create: {
+      id: 'kicksdb-stockx',
+      name: 'KicksDB - StockX',
+      adapterType: 'kicksdb',
+      isActive: true,
+      syncInterval: 1440,
+      config: {
+        endpoint: '/v3/stockx/products',
+        sourceName: 'kicksdb-stockx',
+        limit: 50,
+        maxPages: 4,
+      },
+    },
+  });
+
+  await prisma.feedSource.upsert({
+    where: { id: 'kicksdb-goat' },
+    update: {
+      name: 'KicksDB - GOAT',
+      adapterType: 'kicksdb',
+      isActive: true,
+      syncInterval: 1440,
+      config: {
+        endpoint: '/v3/goat/products',
+        sourceName: 'kicksdb-goat',
+        limit: 50,
+        maxPages: 4,
+      },
+    },
+    create: {
+      id: 'kicksdb-goat',
+      name: 'KicksDB - GOAT',
+      adapterType: 'kicksdb',
+      isActive: true,
+      syncInterval: 1440,
+      config: {
+        endpoint: '/v3/goat/products',
+        sourceName: 'kicksdb-goat',
+        limit: 50,
+        maxPages: 4,
+      },
+    },
+  });
+
+  console.log('  ✓ 2 feed sources seeded\n');
+
   // Summary
   const totalProducts = await prisma.product.count();
   const totalVendors = await prisma.vendor.count();
   const totalVendorPrices = await prisma.vendorPrice.count();
+  const totalFeedSources = await prisma.feedSource.count();
 
   console.log('============================');
   console.log('✅ Seeding complete!');
   console.log(`  Products:      ${totalProducts}`);
   console.log(`  Vendors:       ${totalVendors}`);
   console.log(`  Vendor Prices: ${totalVendorPrices}`);
+  console.log(`  Feed Sources:  ${totalFeedSources}`);
   console.log('============================\n');
 }
 

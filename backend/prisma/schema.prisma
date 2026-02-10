@@ -69,6 +69,7 @@ model User {
   updatedAt        DateTime         @updatedAt @map("updated_at")
 
   priceAlerts   PriceAlert[]
+  dropAlerts    DropAlert[]
   wishlists     Wishlist[]
   listings      Listing[]      @relation("SellerListings")
   buyerOrders   Order[]        @relation("BuyerOrders")
@@ -84,6 +85,12 @@ model Product {
   brand              String
   category           String
   sku                String?
+  styleId            String?   @map("style_id")
+  sourceId           String?   @map("source_id")
+  sourceName         String?   @map("source_name")
+  slug               String?
+  colorway           String?
+  gender             String?
   retailPrice        Decimal?  @map("retail_price") @db.Decimal(10, 2)
   currentLowestPrice Decimal?  @map("current_lowest_price") @db.Decimal(10, 2)
   releaseDate        DateTime? @map("release_date")
@@ -92,6 +99,7 @@ model Product {
   isFeatured         Boolean   @default(false) @map("is_featured")
   isTrending         Boolean   @default(false) @map("is_trending")
   badge              String?
+  lastSyncAt         DateTime? @map("last_sync_at")
   createdAt          DateTime  @default(now()) @map("created_at")
   updatedAt          DateTime  @updatedAt @map("updated_at")
 
@@ -101,6 +109,8 @@ model Product {
   sponsoredPlacements SponsoredPlacement[]
   listings            Listing[]
 
+  @@index([styleId])
+  @@index([sourceId, sourceName])
   @@map("products")
 }
 
@@ -124,13 +134,15 @@ model Vendor {
 }
 
 model VendorPrice {
-  id            Int      @id @default(autoincrement())
-  productId     Int      @map("product_id")
-  vendorId      String   @map("vendor_id")
-  price         Decimal? @db.Decimal(10, 2)
-  url           String
-  lastFetchedAt DateTime @default(now()) @map("last_fetched_at")
-  inStock       Boolean  @default(true) @map("in_stock")
+  id             Int       @id @default(autoincrement())
+  productId      Int       @map("product_id")
+  vendorId       String    @map("vendor_id")
+  price          Decimal?  @db.Decimal(10, 2)
+  url            String
+  isAffiliateUrl Boolean   @default(false) @map("is_affiliate_url")
+  lastFetchedAt  DateTime  @default(now()) @map("last_fetched_at")
+  inStock        Boolean   @default(true) @map("in_stock")
+  stockChangedAt DateTime? @map("stock_changed_at")
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   vendor  Vendor  @relation(fields: [vendorId], references: [id], onDelete: Cascade)
@@ -236,4 +248,44 @@ model Subscription {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("subscriptions")
+}
+
+enum AlertType {
+  drop
+  restock
+}
+
+model FeedSource {
+  id             String    @id @default(cuid())
+  name           String
+  adapterType    String    @map("adapter_type")
+  isActive       Boolean   @default(true) @map("is_active")
+  config         Json      @default("{}")
+  lastSyncAt     DateTime? @map("last_sync_at")
+  lastSyncStatus String?   @map("last_sync_status")
+  lastSyncError  String?   @map("last_sync_error")
+  syncInterval   Int       @default(1440) @map("sync_interval")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@map("feed_sources")
+}
+
+model DropAlert {
+  id              Int       @id @default(autoincrement())
+  userId          String    @map("user_id")
+  alertType       AlertType @map("alert_type")
+  brand           String?
+  category        String?
+  keywords        String?
+  minPrice        Decimal?  @map("min_price") @db.Decimal(10, 2)
+  maxPrice        Decimal?  @map("max_price") @db.Decimal(10, 2)
+  isActive        Boolean   @default(true) @map("is_active")
+  triggeredCount  Int       @default(0) @map("triggered_count")
+  lastTriggeredAt DateTime? @map("last_triggered_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("drop_alerts")
 }

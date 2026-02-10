@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Product, Vendor, Brand, AuthResponse, User, PriceAlert, SubscriptionInfo } from '../types';
+import { Product, Vendor, Brand, AuthResponse, User, PriceAlert, DropAlert, CreateDropAlertPayload, SubscriptionInfo } from '../types';
 import { tokenStorage } from './tokenStorage';
 
 const API_BASE_URL = __DEV__ ? 'http://localhost:3001/api' : 'https://api.kickslist.com/api';
@@ -157,6 +157,15 @@ export const priceAlertsApi = {
   delete: (alertId: number) => api.delete(`/price-alerts/${alertId}`),
 
   getCount: () => api.get<{ count: number }>('/price-alerts/count'),
+};
+
+export const dropAlertsApi = {
+  getAll: () => api.get<{ alerts: DropAlert[] }>('/drop-alerts'),
+
+  create: (data: CreateDropAlertPayload) =>
+    api.post<{ alert: DropAlert }>('/drop-alerts', data),
+
+  delete: (alertId: number) => api.delete(`/drop-alerts/${alertId}`),
 };
 
 export const pushTokenApi = {

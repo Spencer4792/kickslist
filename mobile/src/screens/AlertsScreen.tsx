@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Image } from 'expo-image';
 import { colors, spacing, borderRadius } from '../theme';
-import { RootStackParamList, PriceAlert } from '../types';
+import { RootStackParamList, PriceAlert, DropAlert } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import LoadingState from '../components/LoadingState';
 
@@ -28,13 +28,18 @@ export default function AlertsScreen() {
   const fetchAlerts = useAppStore((s) => s.fetchAlerts);
   const deleteAlert = useAppStore((s) => s.deleteAlert);
   const activeAlertCount = useAppStore((s) => s.activeAlertCount());
+  const dropAlerts = useAppStore((s) => s.dropAlerts);
+  const isDropAlertsLoading = useAppStore((s) => s.isDropAlertsLoading);
+  const fetchDropAlerts = useAppStore((s) => s.fetchDropAlerts);
+  const deleteDropAlert = useAppStore((s) => s.deleteDropAlert);
 
   const activeAlerts = alerts.filter((a) => !a.isTriggered);
   const triggeredAlerts = alerts.filter((a) => a.isTriggered);
 
   const onRefresh = useCallback(() => {
     fetchAlerts();
-  }, [fetchAlerts]);
+    fetchDropAlerts();
+  }, [fetchAlerts, fetchDropAlerts]);
 
   const handleDelete = useCallback((alert: PriceAlert) => {
     Alert.alert(
@@ -54,6 +59,26 @@ export default function AlertsScreen() {
       ]
     );
   }, [deleteAlert]);
+
+  const handleDeleteDropAlert = useCallback((alert: DropAlert) => {
+    const description = buildDropAlertDescription(alert);
+    Alert.alert(
+      'Delete Drop Alert',
+      `Remove this ${alert.alertType} alert?\n${description}`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            deleteDropAlert(alert.id).catch(() => {
+              Alert.alert('Error', 'Failed to delete alert. Please try again.');
+            });
+          },
+        },
+      ]
+    );
+  }, [deleteDropAlert]);
 
   // Not authenticated
   if (!isAuthenticated) {
@@ -75,25 +100,31 @@ export default function AlertsScreen() {
   }
 
   // Loading
-  if (isAlertsLoading && alerts.length === 0) {
+  if (isAlertsLoading && alerts.length === 0 && isDropAlertsLoading && dropAlerts.length === 0) {
     return <LoadingState />;
   }
 
   // Empty state
-  if (alerts.length === 0) {
+  if (alerts.length === 0 && dropAlerts.length === 0) {
     return (
       <View style={styles.centerContainer}>
         <RefreshControl refreshing={isAlertsLoading} onRefresh={onRefresh} />
         <Ionicons name="notifications-outline" size={64} color={colors.textMuted} />
         <Text style={styles.title}>No Alerts Yet</Text>
         <Text style={styles.description}>
-          Browse sneakers and set a target price to get notified when the price drops.
+          Browse sneakers and set a target price, or create a drop alert to get notified.
         </Text>
         <TouchableOpacity
           style={styles.signInButton}
           onPress={() => navigation.navigate('MainTabs')}
         >
           <Text style={styles.signInButtonText}>Browse Sneakers</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.signInButton, styles.secondaryButton]}
+          onPress={() => navigation.navigate('CreateDropAlert')}
+        >
+          <Text style={styles.secondaryButtonText}>Create Drop Alert</Text>
         </TouchableOpacity>
       </View>
     );
@@ -151,25 +182,87 @@ export default function AlertsScreen() {
     );
   };
 
-  const renderSectionHeader = (title: string, count: number) => (
+  const renderDropAlertItem = (alert: DropAlert) => {
+    const description = buildDropAlertDescription(alert);
+
+    return (
+      <View style={styles.alertRow} key={`drop-${alert.id}`}>
+        <View style={styles.dropAlertIconContainer}>
+          <Ionicons
+            name={alert.alertType === 'drop' ? 'flash' : 'refresh'}
+            size={22}
+            color={colors.accentGold}
+          />
+        </View>
+
+        <View style={styles.alertInfo}>
+          <View style={styles.dropAlertTypeRow}>
+            <View style={[styles.dropAlertBadge, alert.alertType === 'restock' && styles.restockBadge]}>
+              <Text style={styles.dropAlertBadgeText}>
+                {alert.alertType === 'drop' ? 'DROP' : 'RESTOCK'}
+              </Text>
+            </View>
+            {alert.triggeredCount > 0 && (
+              <Text style={styles.triggeredCountText}>
+                Triggered {alert.triggeredCount}x
+              </Text>
+            )}
+          </View>
+          <Text style={styles.alertName} numberOfLines={2}>{description}</Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => handleDeleteDropAlert(alert)}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Ionicons name="trash-outline" size={18} color={colors.textTertiary} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderSectionHeader = (title: string, count: number, action?: { label: string; onPress: () => void }) => (
     <View style={styles.sectionHeader}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <Text style={styles.sectionCount}>{count}</Text>
+      <View style={styles.sectionHeaderLeft}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <Text style={styles.sectionCount}>{count}</Text>
+      </View>
+      {action && (
+        <TouchableOpacity onPress={action.onPress}>
+          <Text style={styles.sectionAction}>{action.label}</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
   // Build flat data with section markers
-  type ListItem = { type: 'header'; title: string; count: number; key: string } | { type: 'alert'; alert: PriceAlert; key: string };
+  type ListItem =
+    | { type: 'header'; title: string; count: number; action?: { label: string; onPress: () => void }; key: string }
+    | { type: 'alert'; alert: PriceAlert; key: string }
+    | { type: 'dropAlert'; alert: DropAlert; key: string };
 
   const listData: ListItem[] = [];
+
+  // Price Alerts sections
   if (activeAlerts.length > 0) {
-    listData.push({ type: 'header', title: 'Active', count: activeAlerts.length, key: 'header-active' });
+    listData.push({ type: 'header', title: 'Active Price Alerts', count: activeAlerts.length, key: 'header-active' });
     activeAlerts.forEach((a) => listData.push({ type: 'alert', alert: a, key: `alert-${a.id}` }));
   }
   if (triggeredAlerts.length > 0) {
     listData.push({ type: 'header', title: 'Triggered', count: triggeredAlerts.length, key: 'header-triggered' });
     triggeredAlerts.forEach((a) => listData.push({ type: 'alert', alert: a, key: `alert-${a.id}` }));
   }
+
+  // Drop Alerts section
+  listData.push({
+    type: 'header',
+    title: 'Drop Alerts',
+    count: dropAlerts.length,
+    action: { label: '+ Add', onPress: () => navigation.navigate('CreateDropAlert') },
+    key: 'header-drop-alerts',
+  });
+  dropAlerts.forEach((a) => listData.push({ type: 'dropAlert', alert: a, key: `drop-${a.id}` }));
 
   return (
     <View style={styles.container}>
@@ -187,7 +280,7 @@ export default function AlertsScreen() {
           <Text style={styles.tierText}>Pro: Unlimited Alerts</Text>
         ) : (
           <Text style={styles.tierText}>
-            {activeAlertCount}/3 alerts used · Upgrade for Unlimited
+            {activeAlertCount}/3 price alerts used · Upgrade for Unlimited
           </Text>
         )}
       </TouchableOpacity>
@@ -197,17 +290,35 @@ export default function AlertsScreen() {
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => {
           if (item.type === 'header') {
-            return renderSectionHeader(item.title, item.count);
+            return renderSectionHeader(item.title, item.count, item.action);
+          }
+          if (item.type === 'dropAlert') {
+            return renderDropAlertItem(item.alert);
           }
           return renderAlertItem({ item: item.alert });
         }}
         refreshControl={
-          <RefreshControl refreshing={isAlertsLoading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={isAlertsLoading || isDropAlertsLoading} onRefresh={onRefresh} />
         }
         contentContainerStyle={styles.listContent}
       />
     </View>
   );
+}
+
+function buildDropAlertDescription(alert: DropAlert): string {
+  const parts: string[] = [];
+  if (alert.brand) parts.push(alert.brand);
+  if (alert.category) parts.push(alert.category);
+  if (alert.keywords) parts.push(`"${alert.keywords}"`);
+  if (alert.minPrice != null || alert.maxPrice != null) {
+    const min = alert.minPrice != null ? `$${Number(alert.minPrice).toFixed(0)}` : '';
+    const max = alert.maxPrice != null ? `$${Number(alert.maxPrice).toFixed(0)}` : '';
+    if (min && max) parts.push(`${min}-${max}`);
+    else if (min) parts.push(`${min}+`);
+    else parts.push(`up to ${max}`);
+  }
+  return parts.length > 0 ? parts.join(' · ') : 'All products';
 }
 
 const styles = StyleSheet.create({
@@ -248,6 +359,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    marginTop: spacing.sm,
+  },
+  secondaryButtonText: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
   tierBanner: {
     backgroundColor: colors.bgTertiary,
     paddingHorizontal: spacing.lg,
@@ -270,6 +392,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     backgroundColor: colors.bgPrimary,
   },
+  sectionHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
@@ -279,6 +406,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.textTertiary,
     fontWeight: '500',
+  },
+  sectionAction: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.accentGold,
   },
   alertRow: {
     flexDirection: 'row',
@@ -359,5 +491,37 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: colors.borderLight,
     marginLeft: spacing.lg + 56 + spacing.md,
+  },
+  dropAlertIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.bgTertiary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dropAlertTypeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  dropAlertBadge: {
+    backgroundColor: colors.bgDark,
+    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+  },
+  restockBadge: {
+    backgroundColor: colors.accentSuccess,
+  },
+  dropAlertBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#fff',
+    letterSpacing: 0.5,
+  },
+  triggeredCountText: {
+    fontSize: 11,
+    color: colors.textTertiary,
   },
 });

@@ -11,6 +11,7 @@ import TabNavigator from './src/navigation/TabNavigator';
 import AuthNavigator from './src/navigation/AuthNavigator';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import PaywallScreen from './src/screens/PaywallScreen';
+import CreateDropAlertScreen from './src/screens/CreateDropAlertScreen';
 import { useAppStore } from './src/store/useAppStore';
 import { registerForPushNotifications, registerPushTokenWithServer } from './src/services/notifications';
 import { initPurchases, identifyUser } from './src/services/purchases';
@@ -59,7 +60,7 @@ export default function App() {
     // User tapped notification
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
       const data = response.notification.request.content.data;
-      if (data?.type === 'price_alert' && data?.productId) {
+      if ((data?.type === 'price_alert' || data?.type === 'drop_alert' || data?.type === 'restock_alert') && data?.productId) {
         // Navigate to product detail
         if (navigationRef.isReady()) {
           navigationRef.navigate('ProductDetail', { productId: Number(data.productId) });
@@ -119,6 +120,17 @@ export default function App() {
             options={{
               headerShown: false,
               presentation: 'modal',
+            }}
+          />
+          <Stack.Screen
+            name="CreateDropAlert"
+            component={CreateDropAlertScreen}
+            options={{
+              headerTitle: 'New Drop Alert',
+              headerBackTitle: 'Back',
+              headerStyle: { backgroundColor: colors.bgPrimary },
+              headerShadowVisible: false,
+              headerTintColor: colors.textPrimary,
             }}
           />
         </Stack.Navigator>
