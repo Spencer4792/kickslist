@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubscriptionTier {
+  free
+  pro
+}
+
+enum VendorType {
+  retail
+  resale
+}
+
+enum PlacementType {
+  search
+  homepage
+  category
+}
+
+enum ListingCondition {
+  new_item
+  used
+  like_new
+}
+
+enum ListingStatus {
+  active
+  sold
+  cancelled
+}
+
+enum OrderStatus {
+  pending
+  paid
+  shipped
+  delivered
+  disputed
+}
+
+enum SubscriptionPlan {
+  monthly
+  yearly
+}
+
+enum SubscriptionStatus {
+  active
+  cancelled
+  expired
+}
+
+model User {
+  id               String           @id @default(cuid())
+  email            String           @unique
+  name             String?
+  avatar           String?
+  authProvider     String?          @map("auth_provider")
+  subscriptionTier SubscriptionTier @default(free) @map("subscription_tier")
+  stripeCustomerId String?          @map("stripe_customer_id")
+  passwordHash     String?          @map("password_hash")
+  refreshToken     String?          @map("refresh_token")
+  pushToken        String?          @map("push_token")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+
+  priceAlerts   PriceAlert[]
+  wishlists     Wishlist[]
+  listings      Listing[]      @relation("SellerListings")
+  buyerOrders   Order[]        @relation("BuyerOrders")
+  sellerOrders  Order[]        @relation("SellerOrders")
+  subscriptions Subscription[]
+
+  @@map("users")
+}
+
+model Product {
+  id                 Int       @id @default(autoincrement())
+  name               String
+  brand              String
+  category           String
+  sku                String?
+  retailPrice        Decimal?  @map("retail_price") @db.Decimal(10, 2)
+  currentLowestPrice Decimal?  @map("current_lowest_price") @db.Decimal(10, 2)
+  releaseDate        DateTime? @map("release_date")
+  description        String?
+  images             String[]
+  isFeatured         Boolean   @default(false) @map("is_featured")
+  isTrending         Boolean   @default(false) @map("is_trending")
+  badge              String?
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  vendorPrices        VendorPrice[]
+  priceAlerts         PriceAlert[]
+  wishlists           Wishlist[]
+  sponsoredPlacements SponsoredPlacement[]
+  listings            Listing[]
+
+  @@map("products")
+}
+
+model Vendor {
+  id               String     @id
+  name             String
+  logoUrl          String?    @map("logo_url")
+  color            String?
+  trustRating      Decimal?   @map("trust_rating") @db.Decimal(2, 1)
+  reviewCount      Int        @default(0) @map("review_count")
+  affiliateBaseUrl String?    @map("affiliate_base_url")
+  url              String?
+  type             VendorType
+  description      String?
+  isActive         Boolean    @default(true) @map("is_active")
+
+  vendorPrices        VendorPrice[]
+  sponsoredPlacements SponsoredPlacement[]
+
+  @@map("vendors")
+}
+
+model VendorPrice {
+  id            Int      @id @default(autoincrement())
+  productId     Int      @map("product_id")
+  vendorId      String   @map("vendor_id")
+  price         Decimal? @db.Decimal(10, 2)
+  url           String
+  lastFetchedAt DateTime @default(now()) @map("last_fetched_at")
+  inStock       Boolean  @default(true) @map("in_stock")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  vendor  Vendor  @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, vendorId])
+  @@map("vendor_prices")
+}
+
+model PriceAlert {
+  id             Int       @id @default(autoincrement())
+  userId         String    @map("user_id")
+  productId      Int       @map("product_id")
+  targetPrice    Decimal   @map("target_price") @db.Decimal(10, 2)
+  isTriggered    Boolean   @default(false) @map("is_triggered")
+  triggeredAt    DateTime? @map("triggered_at")
+  triggeredPrice Decimal?  @map("triggered_price") @db.Decimal(10, 2)
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("price_alerts")
+}
+
+model Wishlist {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  productId Int      @map("product_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("wishlists")
+}
+
+model SponsoredPlacement {
+  id            Int           @id @default(autoincrement())
+  vendorId      String?       @map("vendor_id")
+  productId     Int?          @map("product_id")
+  placementType PlacementType @map("placement_type")
+  bidAmount     Decimal       @map("bid_amount") @db.Decimal(10, 2)
+  impressions   Int           @default(0)
+  clicks        Int           @default(0)
+  startDate     DateTime      @map("start_date")
+  endDate       DateTime      @map("end_date")
+  isActive      Boolean       @default(true) @map("is_active")
+
+  vendor  Vendor?  @relation(fields: [vendorId], references: [id])
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@map("sponsored_placements")
+}
+
+model Listing {
+  id          Int              @id @default(autoincrement())
+  sellerId    String           @map("seller_id")
+  productId   Int              @map("product_id")
+  size        String
+  condition   ListingCondition
+  askingPrice Decimal          @map("asking_price") @db.Decimal(10, 2)
+  images      String[]
+  status      ListingStatus    @default(active)
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  seller  User    @relation("SellerListings", fields: [sellerId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orders  Order[]
+
+  @@map("listings")
+}
+
+model Order {
+  id                    Int         @id @default(autoincrement())
+  listingId             Int         @map("listing_id")
+  buyerId               String      @map("buyer_id")
+  sellerId              String      @map("seller_id")
+  amount                Decimal     @db.Decimal(10, 2)
+  platformFee           Decimal     @map("platform_fee") @db.Decimal(10, 2)
+  stripePaymentIntentId String?     @map("stripe_payment_intent_id")
+  status                OrderStatus @default(pending)
+  trackingNumber        String?     @map("tracking_number")
+  createdAt             DateTime    @default(now()) @map("created_at")
+
+  listing Listing @relation(fields: [listingId], references: [id])
+  buyer   User    @relation("BuyerOrders", fields: [buyerId], references: [id])
+  seller  User    @relation("SellerOrders", fields: [sellerId], references: [id])
+
+  @@map("orders")
+}
+
+model Subscription {
+  id                       Int                @id @default(autoincrement())
+  userId                   String             @map("user_id")
+  plan                     SubscriptionPlan
+  status                   SubscriptionStatus @default(active)
+  revenuecatSubscriptionId String?            @map("revenucat_subscription_id")
+  currentPeriodStart       DateTime           @map("current_period_start")
+  currentPeriodEnd         DateTime           @map("current_period_end")
+  createdAt                DateTime           @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}

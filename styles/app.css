@@ -1726,6 +1726,14 @@ a {
   position: sticky;
   top: 100px;
   height: fit-content;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding-bottom: 1rem;
+}
+
+.kl-shop-filters::-webkit-scrollbar {
+  display: none;
 }
 
 @media (max-width: 1024px) {
@@ -1908,6 +1916,9 @@ a {
   margin-top: 3rem;
   padding: 2rem 0;
   border-top: 1px solid var(--kl-border-light);
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .kl-pagination-btn {
