@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1128" height="191" viewBox="0 0 1128 191">
+  <rect width="1128" height="191" fill="#1a1917"/>
+  <text x="564" y="105" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="64" font-weight="400" letter-spacing="-1.5">
+    <tspan fill="#fafaf9">Kicks</tspan><tspan fill="#b5a191">List</tspan>
+  </text>
+  <line x1="470" y1="125" x2="658" y2="125" stroke="#b5a191" stroke-width="1.2" opacity="0.6"/>
+  <text x="564" y="150" text-anchor="middle" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="12" fill="#78716c" letter-spacing="5">EVERY PRICE. ONE PLACE.</text>
+</svg>
