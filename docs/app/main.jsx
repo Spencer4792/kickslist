@@ -498,7 +498,7 @@ const Homepage = () => {
             </svg>
           </a>
         </div>
-        <div className="kl-product-grid">
+        <div className="kl-product-grid kl-featured-grid">
           {featuredProducts.slice(0, 8).map((product, idx) => (
             <ProductCard key={product.id} product={product} index={idx} />
           ))}
@@ -1570,13 +1570,18 @@ const Footer = () => {
             </ul>
           </div>
           <div className="kl-footer-col">
-            <h5>Vendors</h5>
+            <h5>Retailers</h5>
             <ul>
               {vendors.filter(v => v.type === 'retail').map(vendor => (
                 <li key={vendor.id}>
                   <a href={vendor.url} target="_blank" rel="noopener noreferrer">{vendor.name}</a>
                 </li>
               ))}
+            </ul>
+          </div>
+          <div className="kl-footer-col">
+            <h5>Resale</h5>
+            <ul>
               {vendors.filter(v => v.type === 'resale').map(vendor => (
                 <li key={vendor.id}>
                   <a href={vendor.url} target="_blank" rel="noopener noreferrer">{vendor.name}</a>

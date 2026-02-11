@@ -539,8 +539,14 @@ a {
 @media (max-width: 1024px) {
   .kl-hero-slide {
     grid-template-columns: 1fr;
-    padding: 2rem;
+    padding: 2rem 2rem 5rem;
     text-align: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .kl-hero-nav {
+    bottom: 1.5rem;
   }
 }
 
@@ -808,6 +814,11 @@ a {
 
 @media (max-width: 1200px) {
   .kl-product-grid { grid-template-columns: repeat(3, 1fr); }
+  .kl-featured-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 1024px) {
+  .kl-featured-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 900px) {
@@ -1167,7 +1178,7 @@ a {
    Brands Section
 ======================================== */
 .kl-brands {
-  padding: 4rem 3rem;
+  padding: 3rem;
   background: var(--kl-bg-tertiary);
   text-align: center;
 }
@@ -1178,25 +1189,26 @@ a {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--kl-text-tertiary);
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .kl-brands-grid {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 1rem;
-  max-width: 800px;
+  gap: 0.5rem;
+  max-width: 700px;
   margin: 0 auto;
 }
 
 .kl-brand-btn {
-  padding: 1rem 2rem;
+  padding: 0.6rem 1.4rem;
   background: var(--kl-bg-secondary);
   border: 1px solid var(--kl-border-light);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.05em;
+  border-radius: 100px;
   transition: all var(--kl-transition-base);
 }
 
