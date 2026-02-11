@@ -703,6 +703,12 @@ a {
   border-bottom: 1px solid var(--kl-border-light);
   padding: 1rem 0;
   overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.kl-categories::-webkit-scrollbar {
+  display: none;
 }
 
 .kl-categories-inner {

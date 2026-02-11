@@ -463,23 +463,6 @@ const Homepage = () => {
             </div>
           ))}
         </div>
-        {featuredProducts.length > 1 && (
-          <div className="kl-hero-nav">
-            {featuredProducts.slice(0, 3).map((_, idx) => (
-              <button
-                key={idx}
-                className={`kl-hero-dot ${idx === activeHeroSlide ? 'active' : ''}`}
-                onClick={() => setActiveHeroSlide(idx)}
-              />
-            ))}
-          </div>
-        )}
-        <div className="kl-hero-scroll">
-          <span>Scroll to explore</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M12 5v14M19 12l-7 7-7-7"/>
-          </svg>
-        </div>
       </section>
 
       {/* Categories */}
