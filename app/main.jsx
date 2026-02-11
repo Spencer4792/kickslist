@@ -1145,32 +1145,32 @@ const AboutPage = () => {
   return (
     <main className="kl-about-page">
       <section className="kl-about-hero">
-        <h1>Discover Your Next<br /><em>Grail</em></h1>
-        <p>KicksList curates authentic sneakers from trusted retailers and resale platforms. Find your perfect pair and shop with confidence from verified vendors.</p>
+        <h1>Every Sneaker. Every Price.<br /><em>One Place.</em></h1>
+        <p>Stop tab-hopping between retailers. KicksList brings together prices from 14 verified vendors so you can compare in seconds and buy with confidence.</p>
       </section>
 
       <section className="kl-about-values">
         <div className="kl-about-value">
           <span className="kl-about-value-num">01</span>
-          <h3>Curated Collection</h3>
-          <p>We handpick the most sought-after sneakers from Jordan, Nike, Adidas, Yeezy, New Balance, and more. Every shoe in our catalog is worth your attention.</p>
+          <h3>Compare Prices Instantly</h3>
+          <p>See what StockX, GOAT, Nike, Foot Locker, and 10 other vendors are charging — all on one page. No more guessing who has the best deal.</p>
         </div>
         <div className="kl-about-value">
           <span className="kl-about-value-num">02</span>
-          <h3>Trusted Sources</h3>
-          <p>Shop from verified retailers like Nike, Foot Locker, and authenticated marketplaces like StockX and GOAT. Every vendor has a proven track record.</p>
+          <h3>Shop Smarter, Not Harder</h3>
+          <p>Retail or resale, we show you both. Filter by brand, price range, or release date to find exactly what you want at the price you want to pay.</p>
         </div>
         <div className="kl-about-value">
           <span className="kl-about-value-num">03</span>
-          <h3>Easy Discovery</h3>
-          <p>Browse by brand, style, or release date. Find exactly what you're looking for with smart filters and search. No more endless scrolling across multiple sites.</p>
+          <h3>Every Vendor Verified</h3>
+          <p>We only link to trusted retailers and authenticated marketplaces. Every vendor on KicksList has a proven track record for selling genuine products.</p>
         </div>
       </section>
 
       <section className="kl-about-stats">
-        <div className="kl-about-stat"><span>10+</span><p>Trusted Retailers</p></div>
-        <div className="kl-about-stat"><span>{products.length}</span><p>Sneakers Curated</p></div>
-        <div className="kl-about-stat"><span>5</span><p>Top Brands</p></div>
+        <div className="kl-about-stat"><span>14</span><p>Verified Vendors</p></div>
+        <div className="kl-about-stat"><span>{products.length.toLocaleString()}</span><p>Sneakers Listed</p></div>
+        <div className="kl-about-stat"><span>30+</span><p>Brands</p></div>
         <div className="kl-about-stat"><span>100%</span><p>Authentic Sources</p></div>
       </section>
 
