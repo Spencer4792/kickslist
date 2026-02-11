@@ -173,12 +173,12 @@ a {
   }
 }
 
-.kl-menu-toggle {
+.kl-nav-icon-btn.kl-menu-toggle {
   display: none;
 }
 
 @media (max-width: 900px) {
-  .kl-menu-toggle {
+  .kl-nav-icon-btn.kl-menu-toggle {
     display: flex;
   }
 }
