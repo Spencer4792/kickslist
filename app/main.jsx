@@ -6,6 +6,15 @@
 const { useState, useEffect, useRef, useCallback, createContext, useContext } = React;
 
 // ============================================
+// Analytics Helper
+// ============================================
+function trackEvent(eventName, params = {}) {
+  if (window.gtag) {
+    window.gtag('event', eventName, params);
+  }
+}
+
+// ============================================
 // App Context
 // ============================================
 const AppContext = createContext();
@@ -78,11 +87,13 @@ const AppProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const toggleWishlist = useCallback((productId) => {
-    setWishlist(prev =>
-      prev.includes(productId)
+    setWishlist(prev => {
+      const isRemoving = prev.includes(productId);
+      trackEvent(isRemoving ? 'remove_from_wishlist' : 'add_to_wishlist', { item_id: productId });
+      return isRemoving
         ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    );
+        : [...prev, productId];
+    });
   }, []);
 
   return (
@@ -197,6 +208,13 @@ const VendorComparisonTable = ({ product }) => {
             rel="noopener noreferrer"
             className="kl-btn kl-btn-shop"
             style={{ '--vendor-color': vendor.color }}
+            onClick={() => trackEvent('vendor_click', {
+              vendor_name: vendor.name,
+              vendor_id: vendor.id,
+              vendor_type: isResale ? 'resale' : 'retail',
+              product_name: product.name,
+              product_id: product.id
+            })}
           >
             {isResale ? 'Check Live Price' : 'Check Availability'}
           </a>
@@ -265,6 +283,7 @@ const Navigation = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      trackEvent('search', { search_term: searchQuery.trim() });
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
       setSearchOpen(false);
     }
@@ -926,6 +945,18 @@ const ProductDetailPage = () => {
 
   useEffect(() => {
     setSelectedImage(0);
+  }, [productId]);
+
+  useEffect(() => {
+    if (product) {
+      trackEvent('view_item', {
+        item_id: product.id,
+        item_name: product.name,
+        item_brand: product.brand,
+        item_category: product.category,
+        price: product.retail
+      });
+    }
   }, [productId]);
 
   useEffect(() => {
@@ -1704,6 +1735,11 @@ const App = () => {
     }
 
     updatePageMeta(title, description, image);
+
+    trackEvent('page_view', {
+      page_title: title,
+      page_path: window.location.hash || '#/'
+    });
   }, [route]);
 
   let PageComponent;
