@@ -107,6 +107,50 @@ const vendors = [
     description: 'Sporting Goods Retailer',
     affiliate: { network: 'cj', programId: 'PENDING', enabled: false }
   },
+  {
+    id: 'adidas',
+    name: 'Adidas',
+    trustRating: 4.8,
+    trustCount: 750000,
+    color: '#000000',
+    url: 'https://adidas.com',
+    type: 'retail',
+    description: 'Official Adidas Store',
+    affiliate: { network: 'cj', programId: 'PENDING', enabled: false }
+  },
+  {
+    id: 'puma',
+    name: 'Puma',
+    trustRating: 4.3,
+    trustCount: 280000,
+    color: '#ba2026',
+    url: 'https://puma.com',
+    type: 'retail',
+    description: 'Official Puma Store',
+    affiliate: { network: 'cj', programId: 'PENDING', enabled: false }
+  },
+  {
+    id: 'newbalance',
+    name: 'New Balance',
+    trustRating: 4.5,
+    trustCount: 350000,
+    color: '#e21836',
+    url: 'https://newbalance.com',
+    type: 'retail',
+    description: 'Official New Balance Store',
+    affiliate: { network: 'rakuten', programId: 'PENDING', enabled: false }
+  },
+  {
+    id: 'reebok',
+    name: 'Reebok',
+    trustRating: 4.2,
+    trustCount: 165000,
+    color: '#2b2c2b',
+    url: 'https://reebok.com',
+    type: 'retail',
+    description: 'Official Reebok Store',
+    affiliate: { network: 'rakuten', programId: 'PENDING', enabled: false }
+  },
   // === RESALE MARKETPLACES ===
   {
     id: 'stockx',

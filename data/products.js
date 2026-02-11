@@ -72987,6 +72987,10 @@ function generateVendorPrices(product) {
       case 'champssports': directUrl = `https://champssports.com/search?query=${searchTerm}`; break;
       case 'jdsports': directUrl = `https://jdsports.com/search/${searchTerm}`; break;
       case 'dickssporting': directUrl = `https://dickssportinggoods.com/search/SearchDisplay?searchTerm=${searchTerm}`; break;
+      case 'adidas': directUrl = `https://www.adidas.com/search?q=${searchTerm}`; break;
+      case 'puma': directUrl = `https://us.puma.com/us/en/search?query=${searchTerm}`; break;
+      case 'newbalance': directUrl = `https://www.newbalance.com/search?q=${searchTerm}`; break;
+      case 'reebok': directUrl = `https://www.reebok.com/pages/search-results?q=${searchTerm}`; break;
       default: directUrl = `${vendor.url}/search?q=${searchTerm}`;
     }
     const url = buildAffiliateUrl(vendor, directUrl);

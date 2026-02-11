@@ -1552,12 +1552,12 @@ const Footer = () => {
           <div className="kl-footer-col">
             <h5>Vendors</h5>
             <ul>
-              {vendors.filter(v => v.type === 'retail').slice(0, 3).map(vendor => (
+              {vendors.filter(v => v.type === 'retail').map(vendor => (
                 <li key={vendor.id}>
                   <a href={vendor.url} target="_blank" rel="noopener noreferrer">{vendor.name}</a>
                 </li>
               ))}
-              {vendors.filter(v => v.type === 'resale').slice(0, 2).map(vendor => (
+              {vendors.filter(v => v.type === 'resale').map(vendor => (
                 <li key={vendor.id}>
                   <a href={vendor.url} target="_blank" rel="noopener noreferrer">{vendor.name}</a>
                 </li>
