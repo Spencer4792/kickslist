@@ -265,6 +265,7 @@ const VendorComparisonTable = ({ product }) => {
 const Navigation = () => {
   const { navigate, searchQuery, setSearchQuery } = useApp();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const searchInputRef = useRef(null);
 
@@ -316,9 +317,24 @@ const Navigation = () => {
                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
               </svg>
             </button>
+            <button className="kl-nav-icon-btn kl-menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                {menuOpen
+                  ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
+                  : <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>
+                }
+              </svg>
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      <div className={`kl-mobile-menu ${menuOpen ? 'open' : ''}`}>
+        <a href="#/shop" onClick={(e) => { e.preventDefault(); navigate('/shop'); setMenuOpen(false); }}>Browse</a>
+        <a href="#/brands" onClick={(e) => { e.preventDefault(); navigate('/brands'); setMenuOpen(false); }}>Brands</a>
+        <a href="#/about" onClick={(e) => { e.preventDefault(); navigate('/about'); setMenuOpen(false); }}>About</a>
+      </div>
 
       {/* Search Overlay */}
       <div className={`kl-search-overlay ${searchOpen ? 'open' : ''}`}>

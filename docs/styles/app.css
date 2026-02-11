@@ -173,6 +173,51 @@ a {
   }
 }
 
+.kl-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .kl-menu-toggle {
+    display: flex;
+  }
+}
+
+.kl-mobile-menu {
+  display: none;
+  flex-direction: column;
+  background: var(--kl-bg-secondary);
+  border-bottom: 1px solid var(--kl-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+.kl-mobile-menu.open {
+  display: flex;
+}
+
+@media (min-width: 901px) {
+  .kl-mobile-menu {
+    display: none !important;
+  }
+}
+
+.kl-mobile-menu a {
+  padding: 1rem 2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--kl-text-secondary);
+  border-bottom: 1px solid var(--kl-border-light);
+  transition: color var(--kl-transition-fast), background var(--kl-transition-fast);
+}
+
+.kl-mobile-menu a:hover {
+  color: var(--kl-text-primary);
+  background: var(--kl-bg-tertiary);
+}
+
 .kl-nav-links a {
   font-size: 0.8rem;
   font-weight: 500;
