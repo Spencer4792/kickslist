@@ -72956,7 +72956,7 @@ const products = [
 
 // Helper function to generate vendor prices dynamically
 function generateVendorPrices(product) {
-  const { vendors, getRetailVendors, getResaleVendors } = window.KicksListVendors;
+  const { vendors, getRetailVendors, getResaleVendors, buildAffiliateUrl } = window.KicksListVendors;
   const vendorPrices = [];
   const basePrice = product.price;
   const retailPrice = product.retail;
@@ -72979,16 +72979,17 @@ function generateVendorPrices(product) {
     }
 
     const searchTerm = encodeURIComponent(product.name);
-    let url;
+    let directUrl;
     switch(vendor.id) {
-      case 'nike': url = `https://nike.com/w?q=${searchTerm}`; break;
-      case 'footlocker': url = `https://footlocker.com/search?query=${searchTerm}`; break;
-      case 'finishline': url = `https://finishline.com/store/browse/search.jsp?searchTerm=${searchTerm}`; break;
-      case 'champssports': url = `https://champssports.com/search?query=${searchTerm}`; break;
-      case 'jdsports': url = `https://jdsports.com/search/${searchTerm}`; break;
-      case 'dickssporting': url = `https://dickssportinggoods.com/search/SearchDisplay?searchTerm=${searchTerm}`; break;
-      default: url = `${vendor.url}/search?q=${searchTerm}`;
+      case 'nike': directUrl = `https://nike.com/w?q=${searchTerm}`; break;
+      case 'footlocker': directUrl = `https://footlocker.com/search?query=${searchTerm}`; break;
+      case 'finishline': directUrl = `https://finishline.com/store/browse/search.jsp?searchTerm=${searchTerm}`; break;
+      case 'champssports': directUrl = `https://champssports.com/search?query=${searchTerm}`; break;
+      case 'jdsports': directUrl = `https://jdsports.com/search/${searchTerm}`; break;
+      case 'dickssporting': directUrl = `https://dickssportinggoods.com/search/SearchDisplay?searchTerm=${searchTerm}`; break;
+      default: directUrl = `${vendor.url}/search?q=${searchTerm}`;
     }
+    const url = buildAffiliateUrl(vendor, directUrl);
 
     vendorPrices.push({ vendorId: vendor.id, price, url, inStock, type: 'retail' });
   });
@@ -73002,14 +73003,15 @@ function generateVendorPrices(product) {
     const inStock = rand > 0.1;
 
     const searchTerm = encodeURIComponent(product.name);
-    let url;
+    let directUrl;
     switch(vendor.id) {
-      case 'stockx': url = `https://stockx.com/search?s=${searchTerm}`; break;
-      case 'goat': url = `https://goat.com/search?query=${searchTerm}`; break;
-      case 'ebay': url = `https://ebay.com/sch/i.html?_nkw=${searchTerm}`; break;
-      case 'flightclub': url = `https://flightclub.com/search?q=${searchTerm}`; break;
-      default: url = `${vendor.url}/search?q=${searchTerm}`;
+      case 'stockx': directUrl = `https://stockx.com/search?s=${searchTerm}`; break;
+      case 'goat': directUrl = `https://goat.com/search?query=${searchTerm}`; break;
+      case 'ebay': directUrl = `https://ebay.com/sch/i.html?_nkw=${searchTerm}`; break;
+      case 'flightclub': directUrl = `https://flightclub.com/search?q=${searchTerm}`; break;
+      default: directUrl = `${vendor.url}/search?q=${searchTerm}`;
     }
+    const url = buildAffiliateUrl(vendor, directUrl);
 
     vendorPrices.push({ vendorId: vendor.id, price, url, inStock, type: 'resale' });
   });
