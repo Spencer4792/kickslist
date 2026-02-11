@@ -488,10 +488,10 @@ const Homepage = () => {
       <section className="kl-section">
         <div className="kl-section-header">
           <div className="kl-section-title-group">
-            <p className="kl-section-eyebrow">Just Listed</p>
+            <p className="kl-section-eyebrow">Most Popular</p>
             <h2 className="kl-section-title">Featured Drops</h2>
           </div>
-          <a href="#/shop?filter=new" className="kl-section-link" onClick={(e) => { e.preventDefault(); navigate('/shop?filter=new'); }}>
+          <a href="#/shop" className="kl-section-link" onClick={(e) => { e.preventDefault(); navigate('/shop'); }}>
             View All
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
@@ -499,7 +499,7 @@ const Homepage = () => {
           </a>
         </div>
         <div className="kl-product-grid">
-          {newDrops.slice(0, 4).map((product, idx) => (
+          {featuredProducts.slice(0, 8).map((product, idx) => (
             <ProductCard key={product.id} product={product} index={idx} />
           ))}
         </div>
