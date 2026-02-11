@@ -568,6 +568,8 @@ const Homepage = () => {
             { name: 'Nike', id: 'nike' },
             { name: 'Adidas', id: 'adidas' },
             { name: 'New Balance', id: 'new-balance' },
+            { name: 'Puma', id: 'puma' },
+            { name: 'Reebok', id: 'reebok' },
             { name: 'Yeezy', id: 'yeezy' },
             { name: 'UGG', id: 'ugg' },
             { name: 'Crocs', id: 'crocs' },
@@ -1215,10 +1217,26 @@ const BrandsPage = () => {
       highlights: ['Classic Clog icon', 'Celebrity collaborations', 'Jibbitz customization culture'],
       featuredImage: 'https://images.stockx.com/images/Crocs-Classic-Clog-Black-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
       featuredShoe: 'Crocs Classic Clog'
+    },
+    puma: {
+      description: 'Puma is a German multinational corporation that designs athletic and casual footwear. With roots in track and field, Puma has built a legacy around speed and style. Iconic silhouettes like the Suede, RS-X, and Clyde have cemented the brand in sneaker culture, while collaborations with Rihanna and other artists have brought it to the forefront of fashion.',
+      founded: '1948',
+      headquarters: 'Herzogenaurach, Germany',
+      highlights: ['Suede classic heritage', 'RS-X technology line', 'High-profile celebrity collabs'],
+      featuredImage: 'https://images.stockx.com/images/Puma-Suede-Classic-XXI-Black-White-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
+      featuredShoe: 'Puma Suede Classic'
+    },
+    reebok: {
+      description: 'Reebok is an American-founded fitness and lifestyle brand with a storied history in basketball and training. Allen Iverson\'s Question and Answer lines became cultural icons, while the Classic Leather and Club C remain timeless staples. Now owned by Authentic Brands Group, Reebok continues to blend athletic heritage with streetwear appeal.',
+      founded: '1958',
+      headquarters: 'Boston, Massachusetts',
+      highlights: ['Iverson Question legacy', 'Classic Leather icon', 'Fitness heritage brand'],
+      featuredImage: 'https://images.stockx.com/images/Reebok-Club-C-85-Vintage-Chalk-Green-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90',
+      featuredShoe: 'Reebok Club C 85'
     }
   };
 
-  const brandIds = ['jordan', 'nike', 'yeezy', 'adidas', 'new-balance', 'ugg', 'crocs'];
+  const brandIds = ['jordan', 'nike', 'yeezy', 'adidas', 'new-balance', 'puma', 'reebok', 'ugg', 'crocs'];
 
   return (
     <main className="kl-brands-page">
@@ -1232,7 +1250,7 @@ const BrandsPage = () => {
           const products = getProductsByCategory(brandId);
           const productCount = products.length;
           const info = brandsInfo[brandId];
-          const brandNameMap = { 'new-balance': 'New Balance', 'ugg': 'UGG', 'crocs': 'Crocs' };
+          const brandNameMap = { 'new-balance': 'New Balance', 'puma': 'Puma', 'reebok': 'Reebok', 'ugg': 'UGG', 'crocs': 'Crocs' };
           const brandName = brandNameMap[brandId] || brandId.charAt(0).toUpperCase() + brandId.slice(1);
 
           return (
@@ -1544,6 +1562,8 @@ const Footer = () => {
               <li><a href="#/category/nike" onClick={(e) => { e.preventDefault(); navigate('/category/nike'); }}>Nike</a></li>
               <li><a href="#/category/adidas" onClick={(e) => { e.preventDefault(); navigate('/category/adidas'); }}>Adidas</a></li>
               <li><a href="#/category/new-balance" onClick={(e) => { e.preventDefault(); navigate('/category/new-balance'); }}>New Balance</a></li>
+              <li><a href="#/category/puma" onClick={(e) => { e.preventDefault(); navigate('/category/puma'); }}>Puma</a></li>
+              <li><a href="#/category/reebok" onClick={(e) => { e.preventDefault(); navigate('/category/reebok'); }}>Reebok</a></li>
               <li><a href="#/category/yeezy" onClick={(e) => { e.preventDefault(); navigate('/category/yeezy'); }}>Yeezy</a></li>
               <li><a href="#/category/ugg" onClick={(e) => { e.preventDefault(); navigate('/category/ugg'); }}>UGG</a></li>
               <li><a href="#/category/crocs" onClick={(e) => { e.preventDefault(); navigate('/category/crocs'); }}>Crocs</a></li>
