@@ -60,6 +60,8 @@ const useRouter = () => {
         setRoute({ page: 'terms', params });
       } else if (path === '/privacy') {
         setRoute({ page: 'privacy', params });
+      } else if (path === '/wishlist') {
+        setRoute({ page: 'wishlist', params });
       } else {
         setRoute({ page: 'home', params });
       }
@@ -83,8 +85,15 @@ const useRouter = () => {
 // ============================================
 const AppProvider = ({ children }) => {
   const router = useRouter();
-  const [wishlist, setWishlist] = useState([]);
+  const [wishlist, setWishlist] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('kickslist-wishlist')) || []; }
+    catch { return []; }
+  });
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('kickslist-wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
 
   const toggleWishlist = useCallback((productId) => {
     setWishlist(prev => {
@@ -263,7 +272,7 @@ const VendorComparisonTable = ({ product }) => {
 // Navigation Component (Cart removed)
 // ============================================
 const Navigation = () => {
-  const { navigate, searchQuery, setSearchQuery } = useApp();
+  const { navigate, searchQuery, setSearchQuery, wishlist } = useApp();
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -317,6 +326,12 @@ const Navigation = () => {
                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
               </svg>
             </button>
+            <button className="kl-nav-icon-btn kl-nav-wishlist-btn" onClick={() => navigate('/wishlist')} aria-label="Wishlist">
+              <svg viewBox="0 0 24 24" fill={wishlist.length > 0 ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              {wishlist.length > 0 && <span className="kl-nav-wishlist-badge">{wishlist.length}</span>}
+            </button>
             <button className="kl-nav-icon-btn kl-menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 {menuOpen
@@ -333,6 +348,7 @@ const Navigation = () => {
       <div className={`kl-mobile-menu ${menuOpen ? 'open' : ''}`}>
         <a href="#/shop" onClick={(e) => { e.preventDefault(); navigate('/shop'); setMenuOpen(false); }}>Browse</a>
         <a href="#/brands" onClick={(e) => { e.preventDefault(); navigate('/brands'); setMenuOpen(false); }}>Brands</a>
+        <a href="#/wishlist" onClick={(e) => { e.preventDefault(); navigate('/wishlist'); setMenuOpen(false); }}>Wishlist{wishlist.length > 0 ? ` (${wishlist.length})` : ''}</a>
         <a href="#/about" onClick={(e) => { e.preventDefault(); navigate('/about'); setMenuOpen(false); }}>About</a>
       </div>
 
@@ -1761,6 +1777,56 @@ const Footer = () => {
 // ============================================
 // SEO Helper - Update page title and meta
 // ============================================
+// ============================================
+// Wishlist Page
+// ============================================
+const WishlistPage = () => {
+  const { navigate, wishlist, toggleWishlist } = useApp();
+  const { getProductById } = window.KicksListData;
+
+  const wishlistProducts = wishlist.map(id => getProductById(id)).filter(Boolean);
+
+  const clearAll = () => {
+    wishlist.forEach(id => toggleWishlist(id));
+  };
+
+  return (
+    <main className="kl-wishlist-page">
+      <div className="kl-wishlist-container">
+        <nav className="kl-breadcrumb">
+          <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
+          <span className="kl-breadcrumb-sep">/</span>
+          <span className="kl-breadcrumb-current">Wishlist</span>
+        </nav>
+
+        <div className="kl-wishlist-header">
+          <h1>Your Wishlist{wishlistProducts.length > 0 ? ` (${wishlistProducts.length} item${wishlistProducts.length !== 1 ? 's' : ''})` : ''}</h1>
+          {wishlistProducts.length > 0 && (
+            <button className="kl-btn kl-btn-outline kl-wishlist-clear" onClick={clearAll}>Clear All</button>
+          )}
+        </div>
+
+        {wishlistProducts.length > 0 ? (
+          <div className="kl-product-grid kl-wishlist-grid">
+            {wishlistProducts.map((product, index) => (
+              <ProductCard key={product.id} product={product} index={index} />
+            ))}
+          </div>
+        ) : (
+          <div className="kl-wishlist-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="kl-wishlist-empty-icon">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <h2>Your wishlist is empty</h2>
+            <p>Save sneakers you love by tapping the heart icon on any product.</p>
+            <button className="kl-btn kl-btn-primary" onClick={() => navigate('/shop')}>Browse Sneakers</button>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+};
+
 const updatePageMeta = (title, description, image = null) => {
   document.title = title;
 
@@ -1843,6 +1909,10 @@ const App = () => {
         title = `Privacy Policy | ${baseTitle}`;
         description = `KicksList Privacy Policy - learn how we collect, use, and protect your information.`;
         break;
+      case 'wishlist':
+        title = `Your Wishlist | ${baseTitle}`;
+        description = `View and manage your saved sneakers on KicksList.`;
+        break;
       default:
         title = `${baseTitle} | Discover & Shop Authentic Sneakers`;
     }
@@ -1874,6 +1944,9 @@ const App = () => {
       break;
     case 'privacy':
       PageComponent = PrivacyPage;
+      break;
+    case 'wishlist':
+      PageComponent = WishlistPage;
       break;
     default:
       PageComponent = Homepage;
