@@ -1716,7 +1716,7 @@ const App = () => {
   useEffect(() => {
     const baseTitle = 'KicksList';
     let title = baseTitle;
-    let description = 'Compare prices on 4,800+ sneakers from Jordan, Nike, Adidas, Yeezy, New Balance, and more.';
+    let description = 'Compare prices on 20,000+ sneakers from Jordan, Nike, Adidas, Yeezy, New Balance, and more.';
     let image = null;
 
     switch (route.page) {
@@ -1741,7 +1741,7 @@ const App = () => {
           description = `Search results for "${route.params.q}" on KicksList. Find the best prices on authentic sneakers.`;
         } else {
           title = `Shop All Sneakers | ${baseTitle}`;
-          description = `Browse 4,800+ sneakers from Jordan, Nike, Adidas, Yeezy, and more. Compare prices from trusted retailers.`;
+          description = `Browse 20,000+ sneakers from Jordan, Nike, Adidas, Yeezy, and more. Compare prices from trusted retailers.`;
         }
         break;
       case 'brands':
