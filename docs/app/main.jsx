@@ -1365,101 +1365,151 @@ const TermsPage = () => {
         </nav>
 
         <h1>Terms of Service</h1>
-        <p className="kl-legal-updated">Last Updated: January 30, 2026</p>
+        <p className="kl-legal-updated">Last Updated: February 12, 2026</p>
 
         <section className="kl-legal-section">
           <h2>1. Acceptance of Terms</h2>
-          <p>Welcome to KicksList. By accessing or using our website (the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use our Service.</p>
-          <p>We reserve the right to modify these Terms at any time. Your continued use of the Service following any changes constitutes acceptance of those changes.</p>
+          <p>Welcome to KicksList ("Company," "we," "us," or "our"). By accessing or using our website at kickslist.net (the "Service"), you ("User," "you," or "your") agree to be legally bound by these Terms of Service ("Terms"), our Privacy Policy, and all applicable laws and regulations. If you do not agree to these Terms, you must immediately discontinue use of the Service.</p>
+          <p>We reserve the right to modify, amend, or update these Terms at any time and at our sole discretion. Changes become effective immediately upon posting to the Service. Your continued use of the Service after any modifications constitutes your binding acceptance of the revised Terms. It is your responsibility to review these Terms periodically.</p>
+          <p><strong>PLEASE READ THESE TERMS CAREFULLY. THEY CONTAIN AN ARBITRATION AGREEMENT AND CLASS ACTION WAIVER THAT AFFECT YOUR LEGAL RIGHTS.</strong></p>
         </section>
 
         <section className="kl-legal-section">
           <h2>2. Description of Service</h2>
-          <p>KicksList is a sneaker discovery and price comparison platform. We aggregate product information and pricing from third-party retailers and resale marketplaces to help users find and compare sneakers.</p>
-          <p><strong>Important:</strong> KicksList does not sell products directly. We are an affiliate and referral service that connects users with third-party vendors. All purchases are made directly through the respective retailer or marketplace websites.</p>
+          <p>KicksList is a sneaker discovery and price comparison platform. We aggregate publicly available product information, images, and pricing from third-party retailers and resale marketplaces to help users find and compare sneakers.</p>
+          <p><strong>Important — KicksList Does Not Sell Products:</strong> KicksList is solely an informational and affiliate referral service. We do not manufacture, sell, ship, warehouse, authenticate, or handle any products. We do not process payments or fulfill orders. All purchases are made directly through the respective third-party retailer or marketplace websites. KicksList is not a party to any transaction between you and any third-party vendor.</p>
         </section>
 
         <section className="kl-legal-section">
           <h2>3. Affiliate Disclosure</h2>
-          <p>KicksList participates in affiliate marketing programs. This means we may earn a commission when you click on links to retailers or marketplaces on our site and make a purchase. This comes at no additional cost to you.</p>
-          <p>Our affiliate relationships do not influence our product listings or the information we display. We strive to provide accurate and unbiased information to help you make informed purchasing decisions.</p>
+          <p>KicksList participates in affiliate marketing programs, including but not limited to programs operated by Impact, CJ Affiliate, Rakuten, and others. This means we may earn a commission when you click on links to retailers or marketplaces on our Service and make a purchase. This comes at no additional cost to you.</p>
+          <p>Our affiliate relationships do not influence our product listings, rankings, or the information we display. We strive to provide accurate and unbiased information. However, we cannot guarantee that all product information is complete or current, as this data is sourced from third parties.</p>
+          <p>In accordance with FTC guidelines, we disclose that affiliate links on this site may generate revenue for KicksList.</p>
         </section>
 
         <section className="kl-legal-section">
           <h2>4. Product Information and Pricing</h2>
-          <p>While we make every effort to display accurate product information and pricing, we cannot guarantee that all information on our Service is complete, current, or error-free. Product prices, availability, and descriptions are provided by third-party vendors and may change without notice.</p>
-          <p>The retail prices displayed on KicksList are for reference purposes only. Actual prices on vendor websites may vary. Always verify the final price on the vendor's website before making a purchase.</p>
+          <p>All product information, including names, descriptions, images, and pricing, is sourced from third-party vendors and publicly available data. While we make reasonable efforts to display accurate information, we make no representations or warranties regarding the accuracy, completeness, reliability, or currentness of any product information displayed on our Service.</p>
+          <p>Prices displayed on KicksList are for informational and reference purposes only. Actual prices, availability, promotions, and product details on vendor websites may differ and may change at any time without notice. You must always verify the final price, product details, and availability directly on the vendor's website before making any purchase.</p>
+          <p>KicksList shall not be held liable for any pricing errors, product description inaccuracies, or outdated information displayed on our Service.</p>
         </section>
 
         <section className="kl-legal-section">
           <h2>5. Third-Party Vendors and Links</h2>
-          <p>Our Service contains links to third-party websites, including retailers and resale marketplaces. These third-party sites have their own terms of service and privacy policies, which we encourage you to review.</p>
-          <p>KicksList is not responsible for:</p>
+          <p>Our Service contains links to third-party websites, including but not limited to retailers, resale marketplaces, and other external sites. These third-party sites operate independently of KicksList, and each has its own terms of service, privacy policies, and business practices, which we strongly encourage you to review before engaging with them.</p>
+          <p><strong>KicksList expressly disclaims any and all responsibility and liability for:</strong></p>
           <ul>
-            <li>The content, accuracy, or practices of third-party websites</li>
-            <li>Any products or services purchased from third-party vendors</li>
-            <li>Any disputes between you and third-party vendors</li>
-            <li>The authenticity, quality, or condition of products sold by third parties</li>
-            <li>Shipping, returns, refunds, or customer service provided by third parties</li>
+            <li>The content, accuracy, legality, or practices of any third-party websites</li>
+            <li>Any products or services purchased from, or offered by, third-party vendors</li>
+            <li>The authenticity, quality, safety, legality, or condition of any products sold by third parties</li>
+            <li>Any disputes, claims, or issues between you and any third-party vendor</li>
+            <li>Shipping, delivery, returns, exchanges, refunds, or customer service provided by third parties</li>
+            <li>Any financial loss, personal injury, or property damage arising from your interactions with third parties</li>
+            <li>Any unauthorized charges, fraud, or security breaches occurring on third-party websites</li>
           </ul>
-          <p>Any transactions you conduct with third-party vendors are solely between you and that vendor.</p>
+          <p>Any transactions you conduct with third-party vendors are solely between you and that vendor. KicksList acts only as a referral service and assumes no liability whatsoever for any aspect of your dealings with third parties.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>6. Intellectual Property</h2>
-          <p>The KicksList name, logo, and all related marks are trademarks of KicksList. All content on our Service, including text, graphics, logos, and software, is our property or the property of our licensors and is protected by intellectual property laws.</p>
-          <p>Product names, brand names, and images displayed on our Service are the trademarks and property of their respective owners. Their use on our Service does not imply any affiliation with or endorsement by those brands.</p>
+          <h2>6. No Endorsement or Guarantee</h2>
+          <p>The inclusion of any product, brand, retailer, or marketplace on our Service does not constitute an endorsement, recommendation, or guarantee by KicksList. We do not verify, authenticate, or inspect any products listed on our Service. We do not guarantee that any third-party vendor is legitimate, authorized, or trustworthy. Users assume all risk when purchasing from any third-party vendor linked from our Service.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>7. User Conduct</h2>
-          <p>You agree not to:</p>
+          <h2>7. Intellectual Property</h2>
+          <p>The KicksList name, logo, domain name, and all related marks, as well as the design, layout, look, appearance, and graphics of our Service, are the property of KicksList and are protected by United States and international intellectual property laws. You may not reproduce, distribute, modify, create derivative works of, publicly display, or otherwise use any of our intellectual property without our prior written consent.</p>
+          <p>Product names, brand names, trademarks, logos, and images displayed on our Service are the property of their respective owners. Their display on our Service is for informational purposes only and does not imply any affiliation with, endorsement by, or sponsorship by those brands or trademark holders. If you believe any content on our Service infringes your intellectual property rights, please contact us using the information in Section 15.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>8. DMCA / Copyright Complaints</h2>
+          <p>If you believe that content on our Service infringes your copyright, please send a written notice to our designated agent at contact@kickslist.net containing: (a) a description of the copyrighted work you claim has been infringed; (b) a description of where the allegedly infringing material is located on our Service; (c) your contact information; (d) a statement that you have a good faith belief that the use is not authorized; (e) a statement under penalty of perjury that the information in your notice is accurate and that you are the copyright owner or authorized to act on the owner's behalf; and (f) your physical or electronic signature.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>9. User Conduct</h2>
+          <p>By using our Service, you agree not to:</p>
           <ul>
-            <li>Use the Service for any unlawful purpose</li>
-            <li>Attempt to gain unauthorized access to our systems or networks</li>
-            <li>Use automated tools to scrape or collect data from our Service</li>
-            <li>Interfere with or disrupt the Service or servers</li>
-            <li>Reproduce, duplicate, or resell any part of our Service without permission</li>
+            <li>Use the Service for any unlawful, fraudulent, or malicious purpose</li>
+            <li>Attempt to gain unauthorized access to our systems, servers, or networks</li>
+            <li>Use automated tools, bots, scrapers, crawlers, or similar technology to access, collect, or extract data from our Service without our express written permission</li>
+            <li>Interfere with, disrupt, or place an undue burden on the Service or its infrastructure</li>
+            <li>Reproduce, duplicate, copy, sell, resell, or otherwise exploit any part of our Service for commercial purposes without our express written permission</li>
+            <li>Attempt to reverse-engineer, decompile, or disassemble any software or technology used in the Service</li>
+            <li>Transmit any viruses, malware, or other harmful code</li>
+            <li>Impersonate any person or entity, or misrepresent your affiliation with any person or entity</li>
+            <li>Circumvent, disable, or otherwise interfere with any security features of the Service</li>
           </ul>
+          <p>Violation of these provisions may result in immediate termination of your access to the Service and may subject you to civil and/or criminal liability.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>8. Disclaimer of Warranties</h2>
-          <p>THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.</p>
-          <p>We do not warrant that the Service will be uninterrupted, error-free, or free of viruses or other harmful components. We do not warrant the accuracy, completeness, or usefulness of any information on the Service.</p>
+          <h2>10. Disclaimer of Warranties</h2>
+          <p>THE SERVICE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, KICKSLIST DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, AND ACCURACY.</p>
+          <p>WITHOUT LIMITING THE FOREGOING, KICKSLIST MAKES NO WARRANTY OR REPRESENTATION THAT: (A) THE SERVICE WILL MEET YOUR REQUIREMENTS OR EXPECTATIONS; (B) THE SERVICE WILL BE UNINTERRUPTED, TIMELY, SECURE, OR ERROR-FREE; (C) ANY INFORMATION OBTAINED THROUGH THE SERVICE WILL BE ACCURATE, RELIABLE, OR COMPLETE; (D) ANY DEFECTS OR ERRORS IN THE SERVICE WILL BE CORRECTED; OR (E) THE SERVICE OR ITS SERVERS ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS.</p>
+          <p>YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT YOUR USE OF THE SERVICE IS AT YOUR SOLE RISK. KICKSLIST DOES NOT WARRANT, ENDORSE, GUARANTEE, OR ASSUME RESPONSIBILITY FOR ANY PRODUCT OR SERVICE ADVERTISED OR OFFERED BY A THIRD PARTY THROUGH THE SERVICE OR ANY LINKED WEBSITE.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>9. Limitation of Liability</h2>
-          <p>TO THE FULLEST EXTENT PERMITTED BY LAW, KICKSLIST SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, OR OTHER INTANGIBLE LOSSES, RESULTING FROM:</p>
+          <h2>11. Limitation of Liability</h2>
+          <p>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL KICKSLIST, ITS OWNERS, OPERATORS, OFFICERS, DIRECTORS, EMPLOYEES, AGENTS, AFFILIATES, LICENSORS, OR SERVICE PROVIDERS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF PROFITS, REVENUE, GOODWILL, DATA, OR OTHER INTANGIBLE LOSSES, REGARDLESS OF WHETHER SUCH DAMAGES ARE BASED ON WARRANTY, CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY, OR ANY OTHER LEGAL THEORY, AND WHETHER OR NOT KICKSLIST HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, RESULTING FROM:</p>
           <ul>
-            <li>Your use or inability to use the Service</li>
-            <li>Any purchases made through third-party vendors linked from our Service</li>
-            <li>Unauthorized access to or alteration of your data</li>
-            <li>Any errors, inaccuracies, or omissions in our content</li>
+            <li>Your access to, use of, or inability to use the Service</li>
+            <li>Any products or services purchased or obtained from third-party vendors through links on our Service</li>
+            <li>Any conduct or content of any third party on or linked from the Service</li>
+            <li>Unauthorized access to, alteration of, or loss of your data or transmissions</li>
+            <li>Any errors, inaccuracies, omissions, or misleading information in our content, including product prices, descriptions, and images</li>
+            <li>Any personal injury, property damage, or financial loss of any nature arising from your use of the Service</li>
+            <li>Any bugs, viruses, or other harmful code that may be transmitted through the Service</li>
           </ul>
-          <p>IN NO EVENT SHALL OUR TOTAL LIABILITY EXCEED THE AMOUNT YOU PAID TO US, IF ANY, IN THE PAST TWELVE MONTHS.</p>
+          <p>IN NO EVENT SHALL THE TOTAL AGGREGATE LIABILITY OF KICKSLIST FOR ALL CLAIMS ARISING OUT OF OR RELATING TO THE USE OF THE SERVICE EXCEED THE GREATER OF: (A) THE AMOUNT YOU PAID TO KICKSLIST, IF ANY, IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM; OR (B) ONE HUNDRED U.S. DOLLARS ($100.00).</p>
+          <p>SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR LIMITATION OF CERTAIN DAMAGES, SO SOME OF THE ABOVE LIMITATIONS MAY NOT APPLY TO YOU. IN SUCH JURISDICTIONS, KICKSLIST'S LIABILITY SHALL BE LIMITED TO THE FULLEST EXTENT PERMITTED BY LAW.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>10. Indemnification</h2>
-          <p>You agree to indemnify, defend, and hold harmless KicksList and its officers, directors, employees, and agents from any claims, damages, losses, liabilities, costs, or expenses (including reasonable attorneys' fees) arising from your use of the Service or violation of these Terms.</p>
+          <h2>12. Indemnification</h2>
+          <p>You agree to indemnify, defend, and hold harmless KicksList and its owners, operators, officers, directors, employees, agents, affiliates, licensors, and service providers from and against any and all claims, demands, actions, damages, losses, liabilities, judgments, settlements, costs, and expenses (including reasonable attorneys' fees and legal costs) arising out of or relating to: (a) your use of or access to the Service; (b) your violation of these Terms; (c) your violation of any applicable law, regulation, or third-party right; (d) any content or information you submit or transmit through the Service; or (e) any dispute between you and a third-party vendor.</p>
+          <p>KicksList reserves the right, at your expense, to assume the exclusive defense and control of any matter for which you are required to indemnify us, and you agree to cooperate with our defense of such claims.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>11. Governing Law</h2>
-          <p>These Terms shall be governed by and construed in accordance with the laws of the State of California, United States, without regard to its conflict of law provisions. Any disputes arising under these Terms shall be resolved in the state or federal courts located in California.</p>
+          <h2>13. Dispute Resolution and Arbitration</h2>
+          <p><strong>PLEASE READ THIS SECTION CAREFULLY — IT AFFECTS YOUR LEGAL RIGHTS.</strong></p>
+          <p><strong>Binding Arbitration:</strong> Any dispute, controversy, or claim arising out of or relating to these Terms or the Service, including the determination of the scope or applicability of this agreement to arbitrate, shall be determined by binding arbitration administered in accordance with the rules of the American Arbitration Association ("AAA"). The arbitration shall be conducted by a single arbitrator in the State of California. The language of the arbitration shall be English. Judgment on the arbitration award may be entered in any court having jurisdiction.</p>
+          <p><strong>Class Action Waiver:</strong> YOU AND KICKSLIST AGREE THAT EACH MAY BRING CLAIMS AGAINST THE OTHER ONLY IN YOUR OR ITS INDIVIDUAL CAPACITY, AND NOT AS A PLAINTIFF OR CLASS MEMBER IN ANY PURPORTED CLASS, CONSOLIDATED, OR REPRESENTATIVE PROCEEDING. THE ARBITRATOR MAY NOT CONSOLIDATE MORE THAN ONE PERSON'S CLAIMS AND MAY NOT OTHERWISE PRESIDE OVER ANY FORM OF A CLASS OR REPRESENTATIVE PROCEEDING.</p>
+          <p><strong>Waiver of Jury Trial:</strong> TO THE EXTENT PERMITTED BY LAW, YOU AND KICKSLIST EACH WAIVE THE RIGHT TO A JURY TRIAL FOR ANY DISPUTES COVERED BY THESE TERMS.</p>
+          <p><strong>Exception:</strong> Notwithstanding the foregoing, either party may bring an individual action in small claims court for disputes within the jurisdiction of such court, and either party may seek injunctive or equitable relief in any court of competent jurisdiction to protect its intellectual property rights.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>12. Severability</h2>
-          <p>If any provision of these Terms is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.</p>
+          <h2>14. Governing Law</h2>
+          <p>These Terms shall be governed by and construed in accordance with the laws of the State of California, United States, without regard to its conflict of law provisions. To the extent that arbitration does not apply, you consent to the exclusive jurisdiction of the state and federal courts located in California for the resolution of any disputes.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>13. Contact Information</h2>
+          <h2>15. Termination</h2>
+          <p>KicksList reserves the right to terminate or suspend your access to the Service, without prior notice or liability, for any reason whatsoever, including but not limited to a breach of these Terms. Upon termination, your right to use the Service will immediately cease. All provisions of these Terms that by their nature should survive termination shall survive, including but not limited to ownership provisions, warranty disclaimers, indemnification, arbitration, and limitations of liability.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>16. Severability</h2>
+          <p>If any provision of these Terms is found to be unlawful, void, or unenforceable by a court of competent jurisdiction, that provision shall be deemed severable and shall not affect the validity and enforceability of the remaining provisions, which shall remain in full force and effect.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>17. Entire Agreement</h2>
+          <p>These Terms, together with the Privacy Policy, constitute the entire agreement between you and KicksList regarding the use of the Service and supersede all prior and contemporaneous agreements, understandings, representations, and warranties, both written and oral, regarding the Service.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>18. Waiver</h2>
+          <p>The failure of KicksList to enforce any right or provision of these Terms shall not constitute a waiver of such right or provision. No waiver of any term shall be deemed a further or continuing waiver of such term or any other term.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>19. Contact Information</h2>
           <p>If you have any questions about these Terms of Service, please contact us at:</p>
-          <p>Email: legal@kickslist.com</p>
+          <p>Email: contact@kickslist.net</p>
         </section>
       </div>
     </main>
@@ -1482,114 +1532,152 @@ const PrivacyPage = () => {
         </nav>
 
         <h1>Privacy Policy</h1>
-        <p className="kl-legal-updated">Last Updated: January 30, 2026</p>
+        <p className="kl-legal-updated">Last Updated: February 12, 2026</p>
 
         <section className="kl-legal-section">
           <h2>1. Introduction</h2>
-          <p>KicksList ("we," "our," or "us") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.</p>
+          <p>KicksList ("Company," "we," "our," or "us") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website at kickslist.net (the "Service"). Please read this policy carefully. By using the Service, you consent to the practices described in this Privacy Policy.</p>
         </section>
 
         <section className="kl-legal-section">
           <h2>2. Information We Collect</h2>
-          <h3>Information You Provide</h3>
-          <p>We may collect information you voluntarily provide, such as:</p>
+          <h3>Information You Voluntarily Provide</h3>
+          <p>We may collect information you voluntarily provide when you interact with us, such as:</p>
           <ul>
-            <li>Email address (if you subscribe to our newsletter)</li>
-            <li>Contact information (if you reach out to us)</li>
+            <li>Email address (if you subscribe to our newsletter or contact us)</li>
+            <li>Name and contact information (if you reach out to us directly)</li>
+            <li>Any other information you choose to provide in communications with us</li>
           </ul>
 
-          <h3>Automatically Collected Information</h3>
-          <p>When you visit our website, we may automatically collect:</p>
+          <h3>Information Automatically Collected</h3>
+          <p>When you visit our Service, we and our third-party service providers may automatically collect certain information, including:</p>
           <ul>
-            <li>Device information (browser type, operating system)</li>
-            <li>IP address and general location</li>
-            <li>Pages visited and time spent on our site</li>
-            <li>Referring website or source</li>
-            <li>Clicks on affiliate links</li>
+            <li>Device and browser information (type, version, operating system)</li>
+            <li>IP address and approximate geographic location</li>
+            <li>Pages visited, time spent on pages, and navigation paths</li>
+            <li>Referring website, search terms, and traffic source</li>
+            <li>Date and time of visits</li>
+            <li>Clicks on links, including affiliate links to third-party vendors</li>
+            <li>Screen resolution and device identifiers</li>
           </ul>
         </section>
 
         <section className="kl-legal-section">
           <h2>3. How We Use Your Information</h2>
-          <p>We use the information we collect to:</p>
+          <p>We use the information we collect for the following purposes:</p>
           <ul>
-            <li>Provide and improve our Service</li>
-            <li>Send newsletters and updates (with your consent)</li>
-            <li>Analyze website traffic and user behavior</li>
-            <li>Track affiliate link performance</li>
-            <li>Respond to your inquiries</li>
-            <li>Comply with legal obligations</li>
+            <li>To provide, operate, maintain, and improve our Service</li>
+            <li>To analyze website traffic, user behavior, and usage patterns</li>
+            <li>To track affiliate link performance and referral conversions</li>
+            <li>To send periodic communications, including newsletters and updates (only with your explicit consent)</li>
+            <li>To respond to your inquiries, comments, or requests</li>
+            <li>To detect, prevent, and address technical issues, fraud, or security concerns</li>
+            <li>To comply with legal obligations and enforce our Terms of Service</li>
+            <li>To generate aggregated, anonymized, or de-identified data for analytics and business purposes</li>
           </ul>
         </section>
 
         <section className="kl-legal-section">
           <h2>4. Cookies and Tracking Technologies</h2>
-          <p>We use cookies and similar tracking technologies to:</p>
+          <p>We use cookies, web beacons, pixels, and similar tracking technologies to:</p>
           <ul>
-            <li>Remember your preferences</li>
-            <li>Analyze site traffic through services like Google Analytics</li>
-            <li>Track affiliate referrals to our partner vendors</li>
+            <li>Remember your preferences and settings</li>
+            <li>Analyze site traffic and user engagement through services such as Google Analytics 4</li>
+            <li>Track affiliate referrals and conversions to our partner vendors</li>
+            <li>Improve the functionality and performance of our Service</li>
           </ul>
-          <p>You can control cookies through your browser settings. Note that disabling cookies may affect some functionality of our Service.</p>
+          <p><strong>Google Analytics:</strong> We use Google Analytics 4, which collects data such as your IP address, browser type, pages visited, and session duration. Google may use this data in accordance with its own privacy policy. You can opt out of Google Analytics by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Google Analytics Opt-Out Browser Add-on</a>.</p>
+          <p><strong>Affiliate Tracking:</strong> When you click on affiliate links, our affiliate network partners (including Impact, CJ Affiliate, and Rakuten) may place cookies on your device to track referrals and conversions. These cookies are governed by the respective affiliate network's privacy policy.</p>
+          <p>You can control and manage cookies through your browser settings. Note that disabling cookies may affect the functionality of our Service. Most browsers allow you to refuse cookies, delete existing cookies, or alert you when cookies are being sent.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>5. Third-Party Services</h2>
-          <p>Our Service integrates with third-party services, including:</p>
+          <h2>5. Third-Party Services and Data Sharing</h2>
+          <p>Our Service integrates with and may share data with the following categories of third-party services:</p>
           <ul>
-            <li><strong>Affiliate Networks:</strong> When you click links to vendors like StockX, GOAT, Nike, or others, those sites may collect information according to their own privacy policies.</li>
-            <li><strong>Analytics Providers:</strong> We use analytics services to understand how users interact with our site.</li>
+            <li><strong>Affiliate Networks (Impact, CJ Affiliate, Rakuten):</strong> We share referral data (such as click identifiers) with affiliate networks to track conversions. These networks may place cookies on your device.</li>
+            <li><strong>Analytics Providers (Google Analytics):</strong> We share usage data with analytics providers to understand how users interact with our Service.</li>
+            <li><strong>Hosting Provider (GitHub Pages):</strong> Our Service is hosted on GitHub Pages, which may collect server logs including IP addresses.</li>
+            <li><strong>Third-Party Retailers:</strong> When you click links to vendors like StockX, GOAT, Nike, Foot Locker, or others, those sites will collect information according to their own privacy policies. We encourage you to review them.</li>
           </ul>
-          <p>We encourage you to review the privacy policies of any third-party sites you visit through our Service.</p>
+          <p><strong>We do not sell your personal information.</strong> We may disclose information to:</p>
+          <ul>
+            <li>Service providers who assist in operating our website and business</li>
+            <li>Affiliate partners, limited to referral and conversion tracking</li>
+            <li>Legal authorities when required by law, subpoena, or court order</li>
+            <li>Third parties in connection with a merger, acquisition, or sale of assets</li>
+            <li>Any party with your explicit consent</li>
+          </ul>
         </section>
 
         <section className="kl-legal-section">
-          <h2>6. Data Sharing</h2>
-          <p>We do not sell your personal information. We may share information with:</p>
-          <ul>
-            <li>Service providers who assist in operating our website</li>
-            <li>Affiliate partners (limited to referral tracking)</li>
-            <li>Legal authorities when required by law</li>
-          </ul>
+          <h2>6. Data Retention</h2>
+          <p>We retain your personal information only for as long as necessary to fulfill the purposes described in this Privacy Policy, unless a longer retention period is required or permitted by law. Automatically collected data (such as analytics data) is retained according to the default retention settings of our third-party analytics providers.</p>
         </section>
 
         <section className="kl-legal-section">
           <h2>7. Data Security</h2>
-          <p>We implement reasonable security measures to protect your information. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>
+          <p>We implement commercially reasonable administrative, technical, and physical security measures to protect your information from unauthorized access, alteration, disclosure, or destruction. However, no method of electronic transmission or storage is completely secure, and we cannot guarantee the absolute security of your information. You acknowledge that you provide your information at your own risk.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>8. Your Rights</h2>
-          <p>Depending on your location, you may have the right to:</p>
+          <h2>8. Your Rights and Choices</h2>
+          <p>Depending on your location, you may have certain rights regarding your personal information, including:</p>
           <ul>
-            <li>Access the personal information we hold about you</li>
-            <li>Request correction of inaccurate information</li>
-            <li>Request deletion of your information</li>
-            <li>Opt out of marketing communications</li>
-            <li>Opt out of certain data collection (e.g., cookies)</li>
+            <li><strong>Right to Access:</strong> Request a copy of the personal information we hold about you</li>
+            <li><strong>Right to Correction:</strong> Request correction of inaccurate or incomplete information</li>
+            <li><strong>Right to Deletion:</strong> Request deletion of your personal information, subject to certain exceptions</li>
+            <li><strong>Right to Opt Out:</strong> Opt out of marketing communications, cookies, or certain data collection</li>
+            <li><strong>Right to Data Portability:</strong> Request your data in a structured, commonly used format</li>
+            <li><strong>Right to Object:</strong> Object to certain types of data processing</li>
           </ul>
-          <p>To exercise these rights, please contact us using the information below.</p>
+          <p>To exercise any of these rights, please contact us at contact@kickslist.net. We will respond to your request within 30 days or as required by applicable law.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>9. California Privacy Rights</h2>
-          <p>California residents have additional rights under the California Consumer Privacy Act (CCPA), including the right to know what personal information is collected, request deletion, and opt out of the sale of personal information. We do not sell personal information.</p>
+          <h2>9. California Privacy Rights (CCPA/CPRA)</h2>
+          <p>If you are a California resident, the California Consumer Privacy Act (CCPA) and California Privacy Rights Act (CPRA) provide you with additional rights, including:</p>
+          <ul>
+            <li>The right to know what personal information is collected, used, shared, or sold</li>
+            <li>The right to request deletion of your personal information</li>
+            <li>The right to opt out of the sale or sharing of personal information</li>
+            <li>The right to non-discrimination for exercising your privacy rights</li>
+            <li>The right to correct inaccurate personal information</li>
+            <li>The right to limit the use of sensitive personal information</li>
+          </ul>
+          <p><strong>We do not sell or share personal information</strong> as defined under the CCPA/CPRA. To submit a verifiable consumer request, please contact us at contact@kickslist.net.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>10. Children's Privacy</h2>
-          <p>Our Service is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately.</p>
+          <h2>10. European Privacy Rights (GDPR)</h2>
+          <p>If you are located in the European Economic Area (EEA), United Kingdom, or Switzerland, you have rights under the General Data Protection Regulation (GDPR), including the rights described in Section 8 above. Our legal basis for processing your personal information includes: (a) your consent; (b) our legitimate business interests; and (c) compliance with legal obligations.</p>
+          <p>If you wish to exercise your GDPR rights or have concerns about our data practices, please contact us at contact@kickslist.net. You also have the right to lodge a complaint with your local data protection authority.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>11. Changes to This Policy</h2>
-          <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.</p>
+          <h2>11. Do Not Track Signals</h2>
+          <p>Some web browsers transmit "Do Not Track" (DNT) signals. Because there is no uniform standard for interpreting DNT signals, our Service does not currently respond to DNT signals. However, you can manage your privacy preferences through browser settings and the opt-out tools described in this policy.</p>
         </section>
 
         <section className="kl-legal-section">
-          <h2>12. Contact Us</h2>
-          <p>If you have questions about this Privacy Policy, please contact us at:</p>
-          <p>Email: privacy@kickslist.com</p>
+          <h2>12. Children's Privacy</h2>
+          <p>Our Service is not directed to, and we do not knowingly collect personal information from, children under the age of 13 (or 16 in the EEA). If we become aware that we have collected personal information from a child under the applicable age, we will take steps to delete such information promptly. If you believe we have collected information from a child, please contact us immediately at contact@kickslist.net.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>13. International Data Transfers</h2>
+          <p>Our Service is operated in the United States. If you access the Service from outside the United States, please be aware that your information may be transferred to, stored, and processed in the United States, where data protection laws may differ from those in your jurisdiction. By using the Service, you consent to the transfer of your information to the United States.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>14. Changes to This Policy</h2>
+          <p>We may update this Privacy Policy from time to time at our sole discretion. We will notify you of material changes by posting the updated policy on this page and updating the "Last Updated" date. Your continued use of the Service after any changes constitutes your acceptance of the revised policy. We encourage you to review this page periodically.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>15. Contact Us</h2>
+          <p>If you have questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us at:</p>
+          <p>Email: contact@kickslist.net</p>
         </section>
       </div>
     </main>
@@ -1609,11 +1697,6 @@ const Footer = () => {
         <div className="kl-footer-brand">
           <a href="#/" className="kl-logo" onClick={(e) => { e.preventDefault(); navigate('/'); }}>KicksList</a>
           <p>Discover and shop authentic sneakers from trusted retailers and marketplaces.</p>
-          <div className="kl-footer-socials">
-            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-            <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5 0-.28-.03-.56-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
-            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-          </div>
         </div>
         <div className="kl-footer-links">
           <div className="kl-footer-col">

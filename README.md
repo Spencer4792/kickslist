@@ -1,115 +1,32 @@
 # KicksList
 
-> Buy & Sell Authentic Sneakers
+> Discover & Shop Authentic Sneakers
 
-A premium sneaker marketplace inspired by GOAT and Louis Vuitton. Clean, elegant, and designed for serious collectors.
+Compare prices on 20,000+ sneakers from trusted retailers and resale marketplaces. Find the best deal on Jordan, Nike, Adidas, Yeezy, New Balance, and more — all in one place.
+
+**Live at [kickslist.net](https://kickslist.net)**
 
 ---
 
 ## Features
 
-### For Buyers
-- **Browse** curated selection of authenticated sneakers
-- **Search** by name, brand, or style ID
-- **Filter** by category (Jordan, Nike, Yeezy, etc.)
-- **Add to Bag** and checkout securely
-- **Get Notified** when sold-out items are back in stock
-
-### For Sellers
-- **List Your Sneakers** through our simple submission form
-- **Set Your Price** — you're in control
-- **We Authenticate** every pair before it ships
-- **Get Paid** quickly and securely
+- **Price Comparison** — See prices from StockX, GOAT, Foot Locker, JD Sports, and other retailers side by side
+- **20,000+ Products** — Nike, Jordan, Adidas, Yeezy, New Balance, Puma, UGG, Crocs, Birkenstock, and more
+- **Search & Filter** — Find sneakers by name, brand, or category
+- **Brand Pages** — Browse curated collections for each brand
+- **Product Details** — View images, retail prices, and direct links to buy
+- **New Drops** — See the latest releases across all brands
+- **Mobile Responsive** — Works on any device
 
 ---
 
-## Quick Start
+## Tech Stack
 
-```bash
-# Install dependencies
-npm install
-
-# Start the server
-npm start
-
-# Open in browser
-open http://localhost:3000
-```
-
----
-
-## API Reference
-
-### Products
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/products` | Get all products |
-| GET | `/api/products/:id` | Get single product |
-| GET | `/api/products?category=jordan` | Filter by category |
-| GET | `/api/products?search=dunk` | Search products |
-
-### Cart
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/cart` | Get cart contents |
-| POST | `/api/cart` | Add item to cart |
-| DELETE | `/api/cart/:cartId` | Remove item from cart |
-
-### Checkout
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/checkout` | Process order |
-
-### Sell
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/listings` | Submit a sell listing |
-
-### Notifications
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/notify` | Subscribe to back-in-stock alerts |
-
----
-
-## Adding Inventory
-
-All products are marked **Sold Out** by default. To add stock:
-
-```bash
-curl -X POST http://localhost:3000/api/admin/stock \
-  -H "Content-Type: application/json" \
-  -d '{"productId": 1, "sizes": ["8", "9", "10", "11"]}'
-```
-
----
-
-## Design System
-
-### Colors
-| Name | Value | Usage |
-|------|-------|-------|
-| Background | `#fafafa` | Page background |
-| White | `#ffffff` | Cards, modals |
-| Text | `#1a1a1a` | Primary text |
-| Muted | `#666666` | Secondary text |
-| Border | `#e5e5e5` | Dividers |
-
-### Typography
-- **Headings:** Cormorant Garamond (serif)
-- **Body:** Inter (sans-serif)
-
-### Aesthetic
-- Clean, minimal layouts
-- Generous white space
-- Editorial photography
-- Subtle hover states
-- No harsh colors or effects
+- **Frontend:** React (via HTM/Preact), single-page app
+- **Hosting:** GitHub Pages with custom domain
+- **Data:** Static product database (20,000+ entries)
+- **Analytics:** Google Analytics 4
+- **SEO:** Sitemap, robots.txt, structured data (JSON-LD)
 
 ---
 
@@ -117,33 +34,76 @@ curl -X POST http://localhost:3000/api/admin/stock \
 
 ```
 kickslist/
-├── index.html      # Frontend (single-page app)
-├── server.js       # Express API server
-├── package.json    # Dependencies
-└── README.md       # Documentation
+├── docs/                # Deployed site (GitHub Pages)
+│   ├── index.html       # Main app entry point
+│   ├── app/             # React components
+│   │   └── main.jsx     # App logic, routing, UI
+│   ├── data/
+│   │   ├── products.js  # Product database
+│   │   └── vendors.js   # Retailer configs & affiliate setup
+│   ├── styles/          # CSS
+│   ├── robots.txt       # Bot crawl rules
+│   ├── sitemap.xml      # Search engine sitemap
+│   └── CNAME            # Custom domain config
+├── tools/               # Data pipeline scripts
+│   ├── scrape-brands.js # Multi-brand sitemap scraper (12 sources)
+│   ├── scrape-nike.js   # Nike sitemap scraper
+│   ├── fetch-sneakers.js# Single-query sneaker fetcher
+│   └── import-products.js# CSV to products.js importer
+├── data/                # Source product data
+├── app/                 # Source app code
+└── package.json
 ```
 
 ---
 
-## Production Checklist
+## Scraping Tools
 
-- [ ] Database (PostgreSQL / MongoDB)
-- [ ] User authentication (Auth0 / Clerk)
-- [ ] Payment processing (Stripe)
-- [ ] Image uploads (Cloudinary / S3)
-- [ ] Email notifications (SendGrid / Resend)
-- [ ] Search (Algolia / Elasticsearch)
-- [ ] Analytics (Mixpanel / Amplitude)
-- [ ] SSL certificate
+The `tools/` directory contains scripts for building the product database:
+
+```bash
+# Scrape from brand sites (Nike, Adidas, Puma, Reebok, etc.)
+node tools/scrape-brands.js --brands nike,adidas,puma
+
+# Scrape from multi-brand retailers (Stadium Goods, Foot Locker, Journeys)
+node tools/scrape-brands.js --brands stadiumgoods,footlocker,journeys
+
+# Dry run (preview without writing)
+node tools/scrape-brands.js --brands nike --dry-run
+
+# List all available brands
+node tools/scrape-brands.js --list
+```
+
+### Supported Sources
+
+| Source | Type | Method |
+|--------|------|--------|
+| Nike | Brand site | Sitemap + JSON-LD |
+| Adidas | Brand site | Sitemap + JSON-LD |
+| Puma | Brand site | Sitemap + JSON-LD |
+| New Balance | Brand site | Sitemap + Shopify JSON |
+| Reebok | Brand site | Sitemap + Shopify JSON |
+| Crocs | Brand site | Sitemap + JSON-LD |
+| UGG | Brand site | Sitemap + JSON-LD |
+| Dr. Martens | Brand site | Sitemap + Shopify JSON |
+| Merrell | Brand site | Sitemap + Shopify JSON |
+| Stadium Goods | Retailer | Shopify Bulk API |
+| Foot Locker | Retailer | Sitemap + JSON-LD |
+| Journeys | Retailer | Sitemap + Custom (maProductJson) |
+
+---
+
+## Local Development
+
+```bash
+npm install
+npm start
+# Opens at http://localhost:3000
+```
 
 ---
 
 ## License
 
 MIT
-
----
-
-<p align="center">
-  <strong>KicksList</strong> — Authenticity Guaranteed
-</p>
