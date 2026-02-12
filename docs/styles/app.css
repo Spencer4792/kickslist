@@ -3937,3 +3937,315 @@ a {
     gap: 1rem;
   }
 }
+
+/* ========================================
+   About - How It Works
+======================================== */
+.kl-about-howitworks {
+  text-align: center;
+  padding: 5rem 3rem;
+  background: var(--kl-bg-secondary);
+}
+
+.kl-about-howitworks h2 {
+  font-family: var(--kl-font-display);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 400;
+  margin: 0 0 3rem;
+}
+
+.kl-about-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .kl-about-steps { grid-template-columns: 1fr; gap: 2.5rem; }
+}
+
+.kl-about-step {
+  text-align: center;
+}
+
+.kl-about-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--kl-text-primary);
+  border-radius: 50%;
+  font-family: var(--kl-font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.kl-about-step h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.kl-about-step p {
+  font-size: 0.9rem;
+  color: var(--kl-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========================================
+   Contact Form
+======================================== */
+.kl-contact-form {
+  margin-top: 2rem;
+}
+
+.kl-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .kl-form-row { grid-template-columns: 1fr; }
+}
+
+.kl-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.kl-form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+  color: var(--kl-text-primary);
+}
+
+.kl-form-group input,
+.kl-form-group textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-family: var(--kl-font-body);
+  font-size: 0.9rem;
+  border: 1px solid var(--kl-border-light);
+  background: var(--kl-bg-primary);
+  color: var(--kl-text-primary);
+  transition: border-color var(--kl-transition-fast);
+}
+
+.kl-form-group input:focus,
+.kl-form-group textarea:focus {
+  outline: none;
+  border-color: var(--kl-text-primary);
+}
+
+.kl-form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.kl-contact-success {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--kl-bg-tertiary);
+  border: 1px solid var(--kl-border-light);
+  margin-top: 2rem;
+}
+
+.kl-contact-success svg {
+  width: 48px;
+  height: 48px;
+  color: var(--kl-accent-success);
+  margin-bottom: 1rem;
+}
+
+.kl-contact-success h3 {
+  font-family: var(--kl-font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin: 0 0 0.5rem;
+}
+
+.kl-contact-success p {
+  font-size: 0.9rem;
+  color: var(--kl-text-secondary);
+  margin: 0;
+}
+
+/* ========================================
+   FAQ Accordion
+======================================== */
+.kl-faq-list {
+  margin-top: 1rem;
+}
+
+.kl-faq-item {
+  border-bottom: 1px solid var(--kl-border-light);
+}
+
+.kl-faq-question {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 0;
+  background: none;
+  border: none;
+  font-family: var(--kl-font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--kl-text-primary);
+  text-align: left;
+  cursor: pointer;
+  gap: 1rem;
+}
+
+.kl-faq-question:hover {
+  color: var(--kl-text-secondary);
+}
+
+.kl-faq-chevron {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform var(--kl-transition-base);
+}
+
+.kl-faq-item.open .kl-faq-chevron {
+  transform: rotate(180deg);
+}
+
+.kl-faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--kl-transition-slow), padding var(--kl-transition-slow);
+}
+
+.kl-faq-item.open .kl-faq-answer {
+  max-height: 300px;
+  padding-bottom: 1.25rem;
+}
+
+.kl-faq-answer p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--kl-text-secondary);
+  margin: 0;
+}
+
+/* ========================================
+   Footer Newsletter
+======================================== */
+.kl-footer-newsletter {
+  border-top: 1px solid var(--kl-border-light);
+  padding: 2rem 3rem;
+}
+
+.kl-footer-newsletter-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.kl-footer-newsletter-inner > p {
+  font-size: 0.9rem;
+  color: var(--kl-text-secondary);
+  margin: 0;
+}
+
+.kl-newsletter-form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.kl-newsletter-input {
+  padding: 0.7rem 1rem;
+  font-family: var(--kl-font-body);
+  font-size: 0.85rem;
+  border: 1px solid var(--kl-border-light);
+  background: var(--kl-bg-primary);
+  color: var(--kl-text-primary);
+  min-width: 240px;
+  transition: border-color var(--kl-transition-fast);
+}
+
+.kl-newsletter-input:focus {
+  outline: none;
+  border-color: var(--kl-text-primary);
+}
+
+.kl-newsletter-thanks {
+  font-size: 0.9rem;
+  color: var(--kl-accent-success);
+  font-weight: 500;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .kl-footer-newsletter { padding: 1.5rem; }
+  .kl-footer-newsletter-inner { flex-direction: column; text-align: center; }
+  .kl-newsletter-form { width: 100%; flex-direction: column; }
+  .kl-newsletter-input { min-width: 0; width: 100%; }
+}
+
+/* ========================================
+   Cookie Consent Banner
+======================================== */
+.kl-cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--kl-bg-dark);
+  color: var(--kl-text-inverse);
+  padding: 1rem 2rem;
+}
+
+.kl-cookie-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.kl-cookie-inner p {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.kl-cookie-accept {
+  flex-shrink: 0;
+  padding: 0.6rem 1.5rem;
+  background: white;
+  color: var(--kl-bg-dark);
+  border: none;
+  font-family: var(--kl-font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: opacity var(--kl-transition-fast);
+}
+
+.kl-cookie-accept:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 640px) {
+  .kl-cookie-inner { flex-direction: column; text-align: center; }
+}

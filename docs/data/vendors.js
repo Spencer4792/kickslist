@@ -72,7 +72,7 @@ const vendors = [
     url: 'https://finishline.com',
     type: 'retail',
     description: 'Athletic Footwear Retailer',
-    affiliate: { network: 'impact', programId: 'PENDING', enabled: false }
+    affiliate: { network: 'rakuten', programId: 'PENDING', enabled: false }
   },
   {
     id: 'champssports',
@@ -105,7 +105,7 @@ const vendors = [
     url: 'https://dickssportinggoods.com',
     type: 'retail',
     description: 'Sporting Goods Retailer',
-    affiliate: { network: 'cj', programId: 'PENDING', enabled: false }
+    affiliate: { network: 'impact', programId: 'PENDING', enabled: false }
   },
   {
     id: 'adidas',
@@ -138,7 +138,7 @@ const vendors = [
     url: 'https://newbalance.com',
     type: 'retail',
     description: 'Official New Balance Store',
-    affiliate: { network: 'rakuten', programId: 'PENDING', enabled: false }
+    affiliate: { network: 'impact', programId: 'PENDING', enabled: false }
   },
   {
     id: 'reebok',

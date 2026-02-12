@@ -62,6 +62,12 @@ const useRouter = () => {
         setRoute({ page: 'privacy', params });
       } else if (path === '/wishlist') {
         setRoute({ page: 'wishlist', params });
+      } else if (path === '/affiliate-disclosure') {
+        setRoute({ page: 'affiliate-disclosure', params });
+      } else if (path === '/contact') {
+        setRoute({ page: 'contact', params });
+      } else if (path === '/faq') {
+        setRoute({ page: 'faq', params });
       } else {
         setRoute({ page: 'home', params });
       }
@@ -1196,6 +1202,27 @@ const AboutPage = () => {
         <p>Stop tab-hopping between retailers. KicksList brings together prices from 14 verified vendors so you can compare in seconds and buy with confidence.</p>
       </section>
 
+      <section className="kl-about-howitworks">
+        <h2>How It Works</h2>
+        <div className="kl-about-steps">
+          <div className="kl-about-step">
+            <span className="kl-about-step-num">1</span>
+            <h3>We Aggregate Prices</h3>
+            <p>KicksList pulls live pricing data from 14+ verified retailers and resale marketplaces so you never have to tab-hop again.</p>
+          </div>
+          <div className="kl-about-step">
+            <span className="kl-about-step-num">2</span>
+            <h3>You Compare Side-by-Side</h3>
+            <p>Browse every option in one place — retail and resale, new and pre-owned — and pick the best deal for you.</p>
+          </div>
+          <div className="kl-about-step">
+            <span className="kl-about-step-num">3</span>
+            <h3>Buy Direct from the Retailer</h3>
+            <p>Click through to purchase straight from the vendor. We never handle your payment or personal information.</p>
+          </div>
+        </div>
+      </section>
+
       <section className="kl-about-values">
         <div className="kl-about-value">
           <span className="kl-about-value-num">01</span>
@@ -1701,11 +1728,231 @@ const PrivacyPage = () => {
 };
 
 // ============================================
+// Affiliate Disclosure Page
+// ============================================
+const AffiliateDisclosurePage = () => {
+  const { navigate } = useApp();
+
+  return (
+    <main className="kl-legal-page">
+      <div className="kl-legal-container">
+        <nav className="kl-breadcrumb">
+          <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
+          <span className="kl-breadcrumb-sep">/</span>
+          <span className="kl-breadcrumb-current">Affiliate Disclosure</span>
+        </nav>
+
+        <h1>Affiliate Disclosure</h1>
+        <p className="kl-legal-updated">Last Updated: February 12, 2026</p>
+
+        <section className="kl-legal-section">
+          <h2>What Is Affiliate Marketing?</h2>
+          <p>Affiliate marketing is a way for websites like KicksList to earn a small commission by linking to products on retailer websites. When you click one of our links and make a purchase, the retailer pays us a referral fee. This is a standard practice across the internet and is how many free-to-use comparison sites sustain themselves.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>Our Affiliate Networks</h2>
+          <p>KicksList participates in affiliate programs operated by the following networks:</p>
+          <ul>
+            <li><strong>Impact</strong> — Connects us with retailers such as Foot Locker, StockX, GOAT, Dick's Sporting Goods, and New Balance.</li>
+            <li><strong>CJ Affiliate</strong> — Connects us with retailers such as Nike, Adidas, and Puma.</li>
+            <li><strong>Rakuten Advertising</strong> — Connects us with retailers such as Finish Line, JD Sports, and Reebok.</li>
+          </ul>
+          <p>These networks provide the tracking technology that attributes a sale to our referral. We only partner with reputable networks that work with well-known, trusted brands.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>No Extra Cost to You</h2>
+          <p>Using our affiliate links does not add any cost to your purchase. The price you see on the retailer's website is exactly what you pay — our commission comes from the retailer, not from you.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>Independence of Rankings</h2>
+          <p>Our affiliate relationships do not influence how we list, rank, or present products. Every sneaker and every vendor is shown based on relevance, not on commission rates. We believe that honest, unbiased information is what makes KicksList valuable — and we intend to keep it that way.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>FTC Compliance</h2>
+          <p>In accordance with the Federal Trade Commission (FTC) guidelines on endorsements and testimonials, we disclose that KicksList may receive compensation for clicks and purchases made through links on this website.</p>
+          <p>For more information, you can review the FTC's guidelines at <a href="https://www.ftc.gov/legal-library/browse/rules/endorsement-guides" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--kl-accent-gold)', textDecoration: 'underline' }}>ftc.gov/legal-library/browse/rules/endorsement-guides</a>.</p>
+        </section>
+      </div>
+    </main>
+  );
+};
+
+// ============================================
+// Contact Page
+// ============================================
+const ContactPage = () => {
+  const { navigate } = useApp();
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    trackEvent('contact_form_submit', { subject: formData.subject });
+    setSubmitted(true);
+  };
+
+  return (
+    <main className="kl-legal-page">
+      <div className="kl-legal-container">
+        <nav className="kl-breadcrumb">
+          <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
+          <span className="kl-breadcrumb-sep">/</span>
+          <span className="kl-breadcrumb-current">Contact</span>
+        </nav>
+
+        <h1>Contact Us</h1>
+        <p className="kl-legal-updated">We'd love to hear from you</p>
+
+        <section className="kl-legal-section">
+          <h2>General Inquiries</h2>
+          <p>For general questions, feedback, or support, reach out to us at <a href="mailto:contact@kickslist.net" style={{ color: 'var(--kl-accent-gold)', textDecoration: 'underline' }}>contact@kickslist.net</a>.</p>
+        </section>
+
+        <section className="kl-legal-section">
+          <h2>Business & Partnership Inquiries</h2>
+          <p>Interested in partnering with KicksList? Whether you're a retailer, brand, or affiliate network, we're open to exploring opportunities. Please use the form below or email us directly.</p>
+        </section>
+
+        {submitted ? (
+          <div className="kl-contact-success">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <h3>Thank you for reaching out!</h3>
+            <p>We've received your message and will get back to you as soon as possible.</p>
+          </div>
+        ) : (
+          <form className="kl-contact-form" onSubmit={handleSubmit}>
+            <div className="kl-form-row">
+              <div className="kl-form-group">
+                <label htmlFor="contact-name">Name</label>
+                <input type="text" id="contact-name" name="name" value={formData.name} onChange={handleChange} required placeholder="Your name" />
+              </div>
+              <div className="kl-form-group">
+                <label htmlFor="contact-email">Email</label>
+                <input type="email" id="contact-email" name="email" value={formData.email} onChange={handleChange} required placeholder="you@example.com" />
+              </div>
+            </div>
+            <div className="kl-form-group">
+              <label htmlFor="contact-subject">Subject</label>
+              <input type="text" id="contact-subject" name="subject" value={formData.subject} onChange={handleChange} required placeholder="What is this regarding?" />
+            </div>
+            <div className="kl-form-group">
+              <label htmlFor="contact-message">Message</label>
+              <textarea id="contact-message" name="message" value={formData.message} onChange={handleChange} required rows="6" placeholder="Your message..."></textarea>
+            </div>
+            <button type="submit" className="kl-btn kl-btn-primary">Send Message</button>
+          </form>
+        )}
+      </div>
+    </main>
+  );
+};
+
+// ============================================
+// FAQ Page
+// ============================================
+const FAQPage = () => {
+  const { navigate } = useApp();
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const faqs = [
+    { q: 'What is KicksList?', a: 'KicksList is a free sneaker discovery and price comparison platform. We aggregate pricing and product information from 14+ trusted retailers and resale marketplaces so you can find the best deal on authentic sneakers — all in one place.' },
+    { q: 'How does KicksList make money?', a: 'We participate in affiliate marketing programs through networks like Impact, CJ Affiliate, and Rakuten. When you click a link on our site and make a purchase from a retailer, we may earn a small commission. This never costs you anything extra — the retailer pays us, not you.' },
+    { q: 'Are the prices accurate?', a: 'We do our best to display current pricing, but prices on vendor websites are live and can change at any time. Always verify the final price on the retailer\'s website before completing a purchase.' },
+    { q: 'How do you choose which retailers to include?', a: 'We only partner with well-known, trusted retailers and authenticated resale marketplaces. Every vendor on KicksList has a strong reputation for selling genuine products and providing reliable customer service.' },
+    { q: 'Is KicksList affiliated with any brands?', a: 'No. KicksList is an independent platform. We are not owned by, sponsored by, or directly affiliated with any sneaker brand. Our listings and rankings are not influenced by any brand relationship.' },
+    { q: 'Do you sell sneakers directly?', a: 'No. KicksList is purely a comparison and referral service. We do not sell, ship, or handle any products. All purchases are made directly through the retailer or marketplace you choose.' },
+    { q: 'How do I report an issue?', a: 'If you notice incorrect information, a broken link, or any other issue, please let us know at contact@kickslist.net. We appreciate your help in keeping KicksList accurate.' },
+    { q: 'Is my data safe?', a: 'Yes. We take your privacy seriously. We use Google Analytics for site performance and do not sell your personal information. For full details, please read our Privacy Policy.' }
+  ];
+
+  return (
+    <main className="kl-legal-page">
+      <div className="kl-legal-container">
+        <nav className="kl-breadcrumb">
+          <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
+          <span className="kl-breadcrumb-sep">/</span>
+          <span className="kl-breadcrumb-current">FAQ</span>
+        </nav>
+
+        <h1>Frequently Asked Questions</h1>
+        <p className="kl-legal-updated">Everything you need to know about KicksList</p>
+
+        <div className="kl-faq-list">
+          {faqs.map((faq, i) => (
+            <div key={i} className={`kl-faq-item ${openIndex === i ? 'open' : ''}`}>
+              <button className="kl-faq-question" onClick={() => setOpenIndex(openIndex === i ? null : i)}>
+                <span>{faq.q}</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="kl-faq-chevron">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </button>
+              <div className="kl-faq-answer">
+                <p>{faq.a}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+};
+
+// ============================================
+// Cookie Consent Banner
+// ============================================
+const CookieConsent = () => {
+  const [visible, setVisible] = useState(() => {
+    return !localStorage.getItem('kickslist-cookies');
+  });
+
+  const handleAccept = () => {
+    localStorage.setItem('kickslist-cookies', 'accepted');
+    trackEvent('cookie_consent_accept');
+    setVisible(false);
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="kl-cookie-banner">
+      <div className="kl-cookie-inner">
+        <p>We use cookies and similar technologies to improve your experience and analyze site traffic. By continuing to use KicksList, you consent to our use of cookies. <a href="#/privacy" style={{ color: 'white', textDecoration: 'underline' }}>Privacy Policy</a></p>
+        <button className="kl-cookie-accept" onClick={handleAccept}>Accept</button>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
 // Footer (Updated with Vendors)
 // ============================================
 const Footer = () => {
   const { navigate } = useApp();
   const { vendors } = window.KicksListVendors;
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(() => {
+    return !!localStorage.getItem('kickslist-newsletter');
+  });
+
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault();
+    if (newsletterEmail.trim()) {
+      localStorage.setItem('kickslist-newsletter', newsletterEmail);
+      trackEvent('newsletter_signup', { email: newsletterEmail });
+      setNewsletterSubmitted(true);
+    }
+  };
 
   return (
     <footer className="kl-footer">
@@ -1713,6 +1960,17 @@ const Footer = () => {
         <div className="kl-footer-brand">
           <a href="#/" className="kl-logo" onClick={(e) => { e.preventDefault(); navigate('/'); }}>KicksList</a>
           <p>Discover and shop authentic sneakers from trusted retailers and marketplaces.</p>
+          <div className="kl-footer-socials">
+            <a href="https://twitter.com/kickslist" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://instagram.com/kickslist" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C16.67.014 16.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="https://tiktok.com/@kickslist" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.48V13.4a8.16 8.16 0 005.58 2.2v-3.45a4.85 4.85 0 01-3.77-1.69V6.69h3.77z"/></svg>
+            </a>
+          </div>
         </div>
         <div className="kl-footer-links">
           <div className="kl-footer-col">
@@ -1754,10 +2012,35 @@ const Footer = () => {
             <ul>
               <li><a href="#/about" onClick={(e) => { e.preventDefault(); navigate('/about'); }}>About Us</a></li>
               <li><a href="#/brands" onClick={(e) => { e.preventDefault(); navigate('/brands'); }}>Our Brands</a></li>
+              <li><a href="#/faq" onClick={(e) => { e.preventDefault(); navigate('/faq'); }}>FAQ</a></li>
+              <li><a href="#/contact" onClick={(e) => { e.preventDefault(); navigate('/contact'); }}>Contact</a></li>
+              <li><a href="#/affiliate-disclosure" onClick={(e) => { e.preventDefault(); navigate('/affiliate-disclosure'); }}>Affiliate Disclosure</a></li>
               <li><a href="#/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); }}>Privacy Policy</a></li>
               <li><a href="#/terms" onClick={(e) => { e.preventDefault(); navigate('/terms'); }}>Terms of Service</a></li>
             </ul>
           </div>
+        </div>
+      </div>
+      <div className="kl-footer-newsletter">
+        <div className="kl-footer-newsletter-inner">
+          {newsletterSubmitted ? (
+            <p className="kl-newsletter-thanks">Thanks for subscribing! We'll keep you in the loop.</p>
+          ) : (
+            <>
+              <p>Stay up to date with the latest drops and deals.</p>
+              <form className="kl-newsletter-form" onSubmit={handleNewsletterSubmit}>
+                <input
+                  type="email"
+                  className="kl-newsletter-input"
+                  placeholder="Enter your email"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  required
+                />
+                <button type="submit" className="kl-btn kl-btn-primary">Subscribe</button>
+              </form>
+            </>
+          )}
         </div>
       </div>
       <div className="kl-footer-bottom">
@@ -1765,6 +2048,7 @@ const Footer = () => {
         <div className="kl-footer-legal">
           <a href="#/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); }}>Privacy Policy</a>
           <a href="#/terms" onClick={(e) => { e.preventDefault(); navigate('/terms'); }}>Terms of Service</a>
+          <a href="#/affiliate-disclosure" onClick={(e) => { e.preventDefault(); navigate('/affiliate-disclosure'); }}>Affiliate Disclosure</a>
         </div>
       </div>
     </footer>
@@ -1913,6 +2197,18 @@ const App = () => {
         title = `Your Wishlist | ${baseTitle}`;
         description = `View and manage your saved sneakers on KicksList.`;
         break;
+      case 'affiliate-disclosure':
+        title = `Affiliate Disclosure | ${baseTitle}`;
+        description = `Learn how KicksList earns revenue through affiliate partnerships with Impact, CJ Affiliate, and Rakuten — at no extra cost to you.`;
+        break;
+      case 'contact':
+        title = `Contact Us | ${baseTitle}`;
+        description = `Get in touch with the KicksList team for general inquiries, business partnerships, or feedback.`;
+        break;
+      case 'faq':
+        title = `FAQ | ${baseTitle}`;
+        description = `Frequently asked questions about KicksList — how it works, how we make money, data privacy, and more.`;
+        break;
       default:
         title = `${baseTitle} | Discover & Shop Authentic Sneakers`;
     }
@@ -1948,6 +2244,15 @@ const App = () => {
     case 'wishlist':
       PageComponent = WishlistPage;
       break;
+    case 'affiliate-disclosure':
+      PageComponent = AffiliateDisclosurePage;
+      break;
+    case 'contact':
+      PageComponent = ContactPage;
+      break;
+    case 'faq':
+      PageComponent = FAQPage;
+      break;
     default:
       PageComponent = Homepage;
   }
@@ -1957,6 +2262,7 @@ const App = () => {
       <Navigation />
       <PageComponent />
       <Footer />
+      <CookieConsent />
     </div>
   );
 };
