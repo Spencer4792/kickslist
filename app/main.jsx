@@ -543,6 +543,37 @@ const Homepage = () => {
         </div>
       </section>
 
+      {/* New Drops */}
+      <section className="kl-section">
+        <div className="kl-section-header">
+          <div className="kl-section-title-group">
+            <p className="kl-section-eyebrow">Just Released</p>
+            <h2 className="kl-section-title">New Drops</h2>
+          </div>
+          <a href="#/shop" className="kl-section-link" onClick={(e) => { e.preventDefault(); navigate('/shop'); }}>
+            View All
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+        </div>
+        <div className="kl-newdrops-grid">
+          {newDrops.map((product, idx) => (
+            <article key={product.id} className="kl-newdrop-card" style={{ animationDelay: `${idx * 50}ms` }} onClick={() => navigate(`/product/${product.id}`)}>
+              <div className="kl-newdrop-image">
+                <img src={product.images[0]} alt={product.name} onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300/f5f4f2/a8a29e?text='; }} />
+              </div>
+              <div className="kl-newdrop-info">
+                <span className="kl-newdrop-date">{new Date(product.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                <p className="kl-newdrop-brand">{product.brand}</p>
+                <h3 className="kl-newdrop-name">{product.name}</h3>
+                <span className="kl-newdrop-price">${product.retail?.toLocaleString()}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
       {/* Trending */}
       <section className="kl-section kl-trending">
         <div className="kl-section-header">

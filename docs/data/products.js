@@ -73082,7 +73082,21 @@ function searchProducts(query) {
 }
 function getFeaturedProducts() { return products.filter(p => p.featured); }
 function getTrendingProducts() { return products.filter(p => p.trending); }
-function getNewDrops() { return [...products].sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate)).slice(0, 8); }
+function getNewDrops(limit = 8) {
+  var sorted = [...products]
+    .filter(function(p) { return p.brand !== 'Unknown' && p.name.toLowerCase().indexOf(p.brand.toLowerCase().split(' ')[0]) !== -1; })
+    .sort(function(a, b) { return new Date(b.releaseDate) - new Date(a.releaseDate); });
+  var seen = {};
+  var results = [];
+  for (var i = 0; i < sorted.length && results.length < limit; i++) {
+    var brand = sorted[i].brand;
+    if (!seen[brand]) {
+      seen[brand] = true;
+      results.push(sorted[i]);
+    }
+  }
+  return results;
+}
 function getRelatedProducts(productId, limit = 4) {
   const product = getProductById(productId);
   if (!product) return [];

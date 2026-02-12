@@ -1113,6 +1113,111 @@ a {
 /* ========================================
    Trending Section
 ======================================== */
+/* ========================================
+   New Drops
+======================================== */
+.kl-newdrops-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.kl-newdrop-card {
+  background: var(--kl-bg-secondary);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform var(--kl-transition-fast), box-shadow var(--kl-transition-fast);
+  opacity: 0;
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.kl-newdrop-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--kl-shadow-lg);
+}
+
+.kl-newdrop-image {
+  aspect-ratio: 1;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.kl-newdrop-image img {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+  transition: transform var(--kl-transition-slow);
+}
+
+.kl-newdrop-card:hover .kl-newdrop-image img {
+  transform: scale(1.05);
+}
+
+.kl-newdrop-info {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.kl-newdrop-date {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--kl-accent, #b5a191);
+}
+
+.kl-newdrop-brand {
+  font-size: 0.75rem;
+  color: var(--kl-text-tertiary);
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kl-newdrop-name {
+  font-family: var(--kl-font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--kl-text-primary);
+  margin-top: 0.25rem;
+  line-height: 1.3;
+}
+
+.kl-newdrop-price {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--kl-text-primary);
+}
+
+@media (max-width: 900px) {
+  .kl-newdrops-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .kl-newdrops-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .kl-newdrop-info {
+    padding: 0.75rem 1rem 1rem;
+  }
+
+  .kl-newdrop-name {
+    font-size: 0.85rem;
+  }
+}
+
+/* ========================================
+   Trending
+======================================== */
 .kl-trending {
   background: var(--kl-bg-secondary);
 }
