@@ -17,7 +17,7 @@
  *   --inspect          Inspect one page from each selected brand (diagnostic mode)
  *   --verbose          Show detailed error messages
  *
- * Supported brands: reebok, on, salomon, crocs, saucony, birkenstock, puma
+ * Supported brands: reebok, on, salomon, crocs, saucony, birkenstock, puma, drmartens, merrell
  * (ASICS blocked - returns 403 on sitemap)
  *
  * Extraction methods by brand:
@@ -28,6 +28,8 @@
  *   Saucony     — OG meta tags + dollar price parsing
  *   Birkenstock — JSON-LD structured data
  *   Puma        — JSON-LD structured data
+ *   Dr. Martens — JSON-LD (ProductGroup schema, Googlebot UA required)
+ *   Merrell     — Schema.org microdata (itemprop)
  *
  * Examples:
  *   node tools/scrape-brands.js --preview
@@ -60,13 +62,14 @@ const brandsFilter = getOpt('--brands', '').toLowerCase().split(',').filter(Bool
 // ---------------------------------------------------------------------------
 // HTTP helpers
 // ---------------------------------------------------------------------------
-function fetchUrl(url, maxRedirects = 5) {
+function fetchUrl(url, maxRedirects = 5, userAgent = null) {
   return new Promise((resolve, reject) => {
     if (maxRedirects <= 0) return reject(new Error('Too many redirects'));
     const mod = url.startsWith('https') ? https : http;
+    const ua = userAgent || 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
     const req = mod.get(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': ua,
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
       },
@@ -77,7 +80,7 @@ function fetchUrl(url, maxRedirects = 5) {
           const parsed = new URL(url);
           location = `${parsed.protocol}//${parsed.host}${location}`;
         }
-        return fetchUrl(location, maxRedirects - 1).then(resolve).catch(reject);
+        return fetchUrl(location, maxRedirects - 1, userAgent).then(resolve).catch(reject);
       }
       let data = '';
       res.on('data', chunk => data += chunk);
@@ -251,13 +254,27 @@ function extractJsonLd(html, url, brandName, category) {
           product = item;
           break;
         }
+        // Handle ProductGroup (e.g. Dr. Martens) — use first variant
+        if (item['@type'] === 'ProductGroup' && item.hasVariant && item.hasVariant.length > 0) {
+          product = item.hasVariant[0];
+          if (!product.name && item.name) product.name = item.name;
+          break;
+        }
       }
     } else if (script['@type'] === 'Product' || script['@type'] === 'IndividualProduct') {
       product = script;
+    } else if (script['@type'] === 'ProductGroup' && script.hasVariant && script.hasVariant.length > 0) {
+      product = script.hasVariant[0];
+      if (!product.name && script.name) product.name = script.name;
     } else if (script['@graph'] && Array.isArray(script['@graph'])) {
       for (const item of script['@graph']) {
         if (item['@type'] === 'Product' || item['@type'] === 'IndividualProduct') {
           product = item;
+          break;
+        }
+        if (item['@type'] === 'ProductGroup' && item.hasVariant && item.hasVariant.length > 0) {
+          product = item.hasVariant[0];
+          if (!product.name && item.name) product.name = item.name;
           break;
         }
       }
@@ -400,6 +417,63 @@ function extractOgTags(html, url, brandName, category) {
 }
 
 /**
+ * Extract from Schema.org microdata (itemprop attributes) — used by Merrell/Demandware sites
+ */
+function extractMicrodata(html, url, brandName, category) {
+  // Extract itemprop values — prefer content attribute (more reliable)
+  function getItemprop(prop) {
+    const m1 = html.match(new RegExp(`itemprop=["']${prop}["'][^>]*content=["']([^"']+)["']`, 'i'));
+    if (m1) return m1[1];
+    const m2 = html.match(new RegExp(`content=["']([^"']+)["'][^>]*itemprop=["']${prop}["']`, 'i'));
+    if (m2) return m2[1];
+    return '';
+  }
+
+  // For name, prefer og:title or the last breadcrumb itemprop name (which is the product)
+  // or look for the product-specific h1/title
+  let name = extractOgTag(html, 'og:title') || '';
+  if (!name) {
+    // Find itemprop name with class="last" (breadcrumb product name)
+    const lastNameMatch = html.match(/itemprop=["']name["'][^>]*class=["'][^"']*last[^"']*["'][^>]*>([^<]+)</i);
+    if (lastNameMatch) name = lastNameMatch[1].trim();
+  }
+  if (!name) {
+    // Try h1 product name
+    const h1Match = html.match(/<h1[^>]*class=["'][^"']*product-name[^"']*["'][^>]*>([^<]+)</i);
+    if (h1Match) name = h1Match[1].trim();
+  }
+  if (!name) return null;
+
+  const price = parseFloat(getItemprop('price')) || 0;
+  if (price === 0) return null;
+
+  let imageUrl = extractOgTag(html, 'og:image') || '';
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('//')) imageUrl = 'https:' + imageUrl;
+
+  let description = getItemprop('description') || extractOgTag(html, 'og:description') || '';
+  description = description
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z]+;/g, ' ')
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .substring(0, 300);
+
+  return {
+    name: cleanName(name),
+    brand: brandName,
+    category,
+    price,
+    retail: price,
+    releaseDate: new Date().toISOString().split('T')[0],
+    description: cleanDescription(description) || `${brandName} ${cleanName(name)}`,
+    imageUrl,
+    sourceUrl: url,
+  };
+}
+
+/**
  * Extract from __NEXT_DATA__ script tag
  */
 function extractNextData(html, url, brandName, category) {
@@ -497,7 +571,8 @@ function cleanName(name) {
     .replace(/&nbsp;/gi, ' ')
     .replace(/\u2122/g, '') // TM symbol
     .replace(/\u00AE/g, '') // registered symbol
-    .replace(/\s*[-|]\s*(Reebok|ASICS|On Running|On|Salomon|Crocs|Saucony|Birkenstock|PUMA|Puma)\s*$/i, '')
+    .replace(/\s*[-|]\s*(Reebok|ASICS|On Running|On|Salomon|Crocs|Saucony|Birkenstock|PUMA|Puma|Dr\.?\s*Martens|Merrell)\s*$/i, '')
+    .replace(/^DR\.?\s*MARTENS\s+/i, '')
     .replace(/\s*[-|]\s*Official\s*(Site|Store|Website)\s*$/i, '')
     .replace(/"/g, "'")
     .replace(/\s+/g, ' ')
@@ -643,6 +718,52 @@ const BRANDS = {
     childSitemapFilter: null, // null = fetch all
     productUrlPattern: /https:\/\/us\.puma\.com\/[^<\s"]+/gi,
   },
+  drmartens: {
+    name: 'Dr. Martens',
+    category: 'other',
+    sitemapUrl: 'https://www.drmartens.com/us/en/sitemap/Product.xml',
+    sitemapType: 'xml',
+    extractionMethod: 'json-ld',
+    // Dr. Martens requires Googlebot UA for sitemap access
+    userAgent: 'Googlebot/2.1 (+http://www.google.com/bot.html)',
+    urlFilter: (url) => {
+      const u = url.toLowerCase();
+      return u.includes('drmartens.com/us/en/')
+        && u.includes('/p/')
+        && !u.includes('/bags/') && !u.includes('/accessories/')
+        && !u.includes('/care-') && !u.includes('/laces')
+        && !u.includes('/insole')
+        && (u.includes('boot') || u.includes('shoe') || u.includes('sandal')
+          || u.includes('oxford') || u.includes('loafer') || u.includes('mule')
+          || u.includes('slide') || u.includes('platform') || u.includes('mary-jane')
+          || u.includes('derby') || u.includes('1460') || u.includes('1461')
+          || u.includes('2976') || u.includes('jadon') || u.includes('sinclair')
+          || u.includes('audrick') || u.includes('adrian') || u.includes('jorge')
+          || isShoeUrl(u));
+    },
+    productUrlPattern: /https:\/\/www\.drmartens\.com\/us\/en\/[^<\s"]+/gi,
+  },
+  merrell: {
+    name: 'Merrell',
+    category: 'other',
+    sitemapUrl: 'https://www.merrell.com/US/en/sitemap_0.xml',
+    sitemapType: 'xml',
+    extractionMethod: 'microdata',
+    urlFilter: (url) => {
+      const u = url.toLowerCase();
+      // Merrell product URLs end with a SKU like /16256W.html
+      return u.includes('merrell.com/us/en/')
+        && u.match(/\/\w+\.html$/)
+        && !u.includes('/blog/') && !u.includes('/help/')
+        && !u.includes('/sale/') && !u.includes('/c/')
+        && !u.includes('/content/') && !u.includes('/account/')
+        && !u.includes('/cart') && !u.includes('/wishlist')
+        && !u.includes('gift-card') && !u.includes('gift_card')
+        && !u.includes('/accessories') && !u.includes('/socks')
+        && !u.includes('/insole') && !u.includes('/lace');
+    },
+    productUrlPattern: /https:\/\/www\.merrell\.com\/US\/en\/[^<\s"]+/gi,
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -734,7 +855,7 @@ function writeProducts(products, existingContent) {
 async function fetchSitemapUrls(brand) {
   console.log(`  Fetching sitemap: ${brand.sitemapUrl}`);
 
-  const { status, body } = await fetchUrl(brand.sitemapUrl);
+  const { status, body } = await fetchUrl(brand.sitemapUrl, 5, brand.userAgent || null);
   if (status !== 200) {
     console.log(`  ERROR: Sitemap returned HTTP ${status}`);
     return [];
@@ -786,7 +907,7 @@ async function extractFromPage(url, brand) {
     fetchUrlToUse = brand.transformUrl ? brand.transformUrl(url) : url;
   }
 
-  const { status, body } = await fetchUrl(fetchUrlToUse);
+  const { status, body } = await fetchUrl(fetchUrlToUse, 5, brand.userAgent || null);
   if (status !== 200) return null;
 
   let product = null;
@@ -811,6 +932,13 @@ async function extractFromPage(url, brand) {
 
     case 'og-tags':
       product = extractOgTags(body, url, brand.name, brand.category);
+      break;
+
+    case 'microdata':
+      product = extractMicrodata(body, url, brand.name, brand.category);
+      if (!product) product = extractOgTags(body, url, brand.name, brand.category);
+      // Filter out non-shoe items (gift cards, accessories)
+      if (product && /gift\s*card|insole|lace\s*kit|sock|backpack/i.test(product.name)) product = null;
       break;
 
     default:
