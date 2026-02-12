@@ -18,24 +18,29 @@
  *   --verbose          Show detailed error messages
  *
  * Supported brands: reebok, on, salomon, crocs, saucony, birkenstock, puma, drmartens, merrell
+ * Retailers: stadiumgoods, footlocker, journeys
  * (ASICS blocked - returns 403 on sitemap)
  *
  * Extraction methods by brand:
- *   Reebok      — Shopify .json endpoint
- *   On Running  — JSON-LD structured data
- *   Salomon     — JSON-LD structured data
- *   Crocs       — JSON-LD structured data
- *   Saucony     — OG meta tags + dollar price parsing
- *   Birkenstock — JSON-LD structured data
- *   Puma        — JSON-LD structured data
- *   Dr. Martens — JSON-LD (ProductGroup schema, Googlebot UA required)
- *   Merrell     — Schema.org microdata (itemprop)
+ *   Reebok        — Shopify .json endpoint
+ *   On Running    — JSON-LD structured data
+ *   Salomon       — JSON-LD structured data
+ *   Crocs         — JSON-LD structured data
+ *   Saucony       — OG meta tags + dollar price parsing
+ *   Birkenstock   — JSON-LD structured data
+ *   Puma          — JSON-LD structured data
+ *   Dr. Martens   — JSON-LD (ProductGroup schema, Googlebot UA required)
+ *   Merrell       — Schema.org microdata (itemprop)
+ *   Stadium Goods — Shopify bulk JSON API (multi-brand retailer)
+ *   Foot Locker   — JSON-LD (multi-brand retailer)
+ *   Journeys      — JSON-LD (multi-brand retailer)
  *
  * Examples:
  *   node tools/scrape-brands.js --preview
  *   node tools/scrape-brands.js --brands reebok,crocs --limit 20 --dry-run
  *   node tools/scrape-brands.js --brands puma --limit 50
  *   node tools/scrape-brands.js --inspect --brands saucony
+ *   node tools/scrape-brands.js --brands stadiumgoods,footlocker,journeys
  */
 
 const https = require('https');
@@ -161,7 +166,7 @@ function extractLocs(xml) {
 /**
  * Extract from Shopify .json endpoint (Reebok)
  */
-function extractShopifyJson(jsonStr, url, brandName, category) {
+function extractShopifyJson(jsonStr, url, brandName, category, options = {}) {
   let data;
   try { data = JSON.parse(jsonStr); } catch { return null; }
 
@@ -173,16 +178,26 @@ function extractShopifyJson(jsonStr, url, brandName, category) {
 
   // Check product type for footwear relevance
   const productType = (product.product_type || '').toLowerCase();
-  const tagsRaw = product.tags || '';
-  const tags = (Array.isArray(tagsRaw) ? tagsRaw.join(' ') : String(tagsRaw)).toLowerCase();
-  const allText = `${name} ${productType} ${tags}`.toLowerCase();
 
-  // For Reebok, check if it's footwear
-  const shoeIndicators = ['shoe', 'sneaker', 'boot', 'clog', 'slide', 'sandal',
-    'slipper', 'trainer', 'footwear', 'classic leather', 'club c', 'question',
-    'nano', 'floatride', 'zig', 'instapump', 'pump', 'kamikaze', 'answer'];
-  const isFootwear = shoeIndicators.some(kw => allText.includes(kw));
-  if (!isFootwear) return null;
+  if (options.retailer) {
+    // For retailers, use product_type to filter footwear
+    if (productType !== 'shoes' && productType !== 'footwear') return null;
+    // Detect brand from vendor
+    const vendor = product.vendor || '';
+    const detected = detectRetailerBrand(vendor);
+    brandName = detected.brand;
+    category = detected.category;
+  } else {
+    const tagsRaw = product.tags || '';
+    const tags = (Array.isArray(tagsRaw) ? tagsRaw.join(' ') : String(tagsRaw)).toLowerCase();
+    const allText = `${name} ${productType} ${tags}`.toLowerCase();
+    // For Reebok, check if it's footwear
+    const shoeIndicators = ['shoe', 'sneaker', 'boot', 'clog', 'slide', 'sandal',
+      'slipper', 'trainer', 'footwear', 'classic leather', 'club c', 'question',
+      'nano', 'floatride', 'zig', 'instapump', 'pump', 'kamikaze', 'answer'];
+    const isFootwear = shoeIndicators.some(kw => allText.includes(kw));
+    if (!isFootwear) return null;
+  }
 
   // Price from first variant
   let price = 0;
@@ -232,7 +247,7 @@ function extractShopifyJson(jsonStr, url, brandName, category) {
 /**
  * Extract from JSON-LD (<script type="application/ld+json">)
  */
-function extractJsonLd(html, url, brandName, category) {
+function extractJsonLd(html, url, brandName, category, options = {}) {
   const scripts = [];
   const regex = /<script[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
   let m;
@@ -283,6 +298,19 @@ function extractJsonLd(html, url, brandName, category) {
   }
 
   if (!product) return null;
+
+  // Retailer brand detection from JSON-LD brand field
+  if (options.retailer) {
+    let rawBrand = '';
+    if (product.brand) {
+      rawBrand = typeof product.brand === 'string' ? product.brand : (product.brand.name || '');
+    }
+    if (rawBrand) {
+      const detected = detectRetailerBrand(rawBrand);
+      brandName = detected.brand;
+      category = detected.category;
+    }
+  }
 
   const name = product.name || '';
   if (!name) return null;
@@ -474,6 +502,64 @@ function extractMicrodata(html, url, brandName, category) {
 }
 
 /**
+ * Extract from Journeys maProductJson (embedded JS object)
+ */
+function extractJourneys(html, url) {
+  const maIdx = html.indexOf('maProductJson');
+  if (maIdx === -1) return null;
+
+  const jsonStart = html.indexOf('{', maIdx);
+  if (jsonStart === -1) return null;
+
+  let depth = 0, jsonEnd = jsonStart;
+  for (let i = jsonStart; i < html.length; i++) {
+    if (html[i] === '{') depth++;
+    if (html[i] === '}') depth--;
+    if (depth === 0) { jsonEnd = i + 1; break; }
+  }
+
+  let data;
+  try { data = JSON.parse(html.substring(jsonStart, jsonEnd)); } catch { return null; }
+
+  const name = (data.Name || '')
+    .replace(/&reg;/gi, '').replace(/&trade;/gi, '').replace(/&amp;/g, '&').trim();
+  if (!name) return null;
+
+  const price = parseFloat(data.Price) || 0;
+  if (price === 0) return null;
+  const retail = parseFloat(data.ListPrice) || price;
+
+  // Brand from VendorBrand
+  const rawBrand = data.VendorBrand || '';
+  const detected = detectRetailerBrand(rawBrand);
+
+  // Image from twitter:image or maProductJson fields
+  let imageUrl = '';
+  const twitterImg = html.match(/name=["']twitter:image["'][^>]*content=["']([^"']+)/i)
+    || html.match(/content=["']([^"']+)["'][^>]*name=["']twitter:image/i);
+  if (twitterImg) imageUrl = twitterImg[1];
+  if (!imageUrl && data.LargeImageRaw) imageUrl = data.LargeImageRaw;
+  if (!imageUrl) return null;
+  if (!imageUrl.startsWith('http')) imageUrl = 'https://' + imageUrl;
+
+  let description = (data.ShortDescription || data.LongDescription || '')
+    .replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ')
+    .replace(/\s+/g, ' ').trim().substring(0, 300);
+
+  return {
+    name: cleanName(name),
+    brand: detected.brand,
+    category: detected.category,
+    price,
+    retail,
+    releaseDate: new Date().toISOString().split('T')[0],
+    description: cleanDescription(description) || `${detected.brand} ${cleanName(name)}`,
+    imageUrl,
+    sourceUrl: url,
+  };
+}
+
+/**
  * Extract from __NEXT_DATA__ script tag
  */
 function extractNextData(html, url, brandName, category) {
@@ -571,7 +657,7 @@ function cleanName(name) {
     .replace(/&nbsp;/gi, ' ')
     .replace(/\u2122/g, '') // TM symbol
     .replace(/\u00AE/g, '') // registered symbol
-    .replace(/\s*[-|]\s*(Reebok|ASICS|On Running|On|Salomon|Crocs|Saucony|Birkenstock|PUMA|Puma|Dr\.?\s*Martens|Merrell)\s*$/i, '')
+    .replace(/\s*[-|]\s*(Reebok|ASICS|On Running|On|Salomon|Crocs|Saucony|Birkenstock|PUMA|Puma|Dr\.?\s*Martens|Merrell|Stadium Goods|Foot Locker|Journeys)\s*$/i, '')
     .replace(/^DR\.?\s*MARTENS\s+/i, '')
     .replace(/\s*[-|]\s*Official\s*(Site|Store|Website)\s*$/i, '')
     .replace(/"/g, "'")
@@ -596,6 +682,36 @@ function cleanDescription(desc) {
     .replace(/[\r\n\t]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+// ---------------------------------------------------------------------------
+// Brand detection for multi-brand retailers
+// ---------------------------------------------------------------------------
+function detectRetailerBrand(rawBrand) {
+  if (!rawBrand) return { brand: 'Unknown', category: 'other' };
+  const b = rawBrand.toLowerCase().trim();
+  if (b.includes('yeezy')) return { brand: 'Yeezy', category: 'adidas' };
+  if (b.includes('jordan')) return { brand: 'Jordan', category: 'jordan' };
+  if (b === 'adidas originals' || b === 'adidas') return { brand: 'Adidas', category: 'adidas' };
+  if (b.includes('nike')) return { brand: 'Nike', category: 'nike' };
+  if (b.includes('new balance')) return { brand: 'New Balance', category: 'other' };
+  if (b.includes('reebok')) return { brand: 'Reebok', category: 'reebok' };
+  if (b.includes('ugg')) return { brand: 'UGG', category: 'other' };
+  if (b.includes('puma')) return { brand: 'Puma', category: 'puma' };
+  if (b.includes('converse')) return { brand: 'Converse', category: 'other' };
+  if (b.includes('vans')) return { brand: 'Vans', category: 'other' };
+  if (b.includes('crocs')) return { brand: 'Crocs', category: 'crocs' };
+  if (b.includes('asics')) return { brand: 'ASICS', category: 'other' };
+  if (b.includes('hoka')) return { brand: 'Hoka', category: 'other' };
+  if (b.includes('on running') || b === 'on') return { brand: 'On', category: 'other' };
+  if (b.includes('birkenstock')) return { brand: 'Birkenstock', category: 'other' };
+  if (b.includes('timberland')) return { brand: 'Timberland', category: 'other' };
+  if (b.includes('dr. martens') || b.includes('dr martens')) return { brand: 'Dr. Martens', category: 'other' };
+  if (b.includes('salomon')) return { brand: 'Salomon', category: 'other' };
+  if (b.includes('saucony')) return { brand: 'Saucony', category: 'other' };
+  if (b.includes('under armour')) return { brand: 'Under Armour', category: 'other' };
+  if (b.includes('fear of god')) return { brand: 'Fear of God', category: 'other' };
+  return { brand: rawBrand, category: 'other' };
 }
 
 // ---------------------------------------------------------------------------
@@ -764,6 +880,49 @@ const BRANDS = {
     },
     productUrlPattern: /https:\/\/www\.merrell\.com\/US\/en\/[^<\s"]+/gi,
   },
+  // -----------------------------------------------------------------------
+  // Multi-brand retailers
+  // -----------------------------------------------------------------------
+  stadiumgoods: {
+    name: 'Stadium Goods',
+    category: 'other',
+    extractionMethod: 'shopify-bulk',
+    retailer: true,
+    shopifyBaseUrl: 'https://www.stadiumgoods.com',
+    // Focus on brands the user wants more of
+    targetBrands: ['Yeezy', 'Adidas', 'Reebok', 'UGG', 'Nike', 'Jordan', 'New Balance', 'ASICS', 'Puma', 'Converse', 'Vans', 'Hoka', 'Fear of God'],
+  },
+  footlocker: {
+    name: 'Foot Locker',
+    category: 'other',
+    sitemapUrl: 'https://www.footlocker.com/products-sitemap.xml',
+    sitemapType: 'xml',
+    extractionMethod: 'json-ld',
+    retailer: true,
+    urlFilter: (url) => {
+      const u = url.toLowerCase();
+      return u.includes('/product/')
+        && !u.includes('t-shirt') && !u.includes('shorts') && !u.includes('hoodie')
+        && !u.includes('pants') && !u.includes('jacket') && !u.includes('backpack')
+        && !u.includes('hat') && !u.includes('socks') && !u.includes('beanie')
+        && !u.includes('jersey') && !u.includes('fleece') && !u.includes('crew')
+        && !u.includes('jogger');
+    },
+  },
+  journeys: {
+    name: 'Journeys',
+    category: 'other',
+    sitemapUrl: 'https://www.journeys.com/sitemap.xml',
+    sitemapType: 'xml',
+    extractionMethod: 'journeys',
+    retailer: true,
+    urlFilter: (url) => {
+      const u = url.toLowerCase();
+      return u.includes('/product/')
+        && !u.includes('socks') && !u.includes('backpack') && !u.includes('care-kit')
+        && !u.includes('liners') && !u.includes('footie') && !u.includes('lace-pack');
+    },
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -911,15 +1070,16 @@ async function extractFromPage(url, brand) {
   if (status !== 200) return null;
 
   let product = null;
+  const options = brand.retailer ? { retailer: true } : {};
 
   switch (brand.extractionMethod) {
     case 'shopify-json':
-      product = extractShopifyJson(body, url, brand.name, brand.category);
+      product = extractShopifyJson(body, url, brand.name, brand.category, options);
       break;
 
     case 'json-ld':
       // Try JSON-LD first, then __NEXT_DATA__, then OG tags
-      product = extractJsonLd(body, url, brand.name, brand.category);
+      product = extractJsonLd(body, url, brand.name, brand.category, options);
       if (!product) product = extractNextData(body, url, brand.name, brand.category);
       if (!product) product = extractOgTags(body, url, brand.name, brand.category);
       break;
@@ -941,6 +1101,10 @@ async function extractFromPage(url, brand) {
       if (product && /gift\s*card|insole|lace\s*kit|sock|backpack/i.test(product.name)) product = null;
       break;
 
+    case 'journeys':
+      product = extractJourneys(body, url);
+      break;
+
     default:
       // Try all methods in order
       product = extractJsonLd(body, url, brand.name, brand.category);
@@ -949,13 +1113,141 @@ async function extractFromPage(url, brand) {
       break;
   }
 
+  // For retailers, filter out non-shoe products by name
+  if (product && brand.retailer) {
+    const n = product.name.toLowerCase();
+    if (/\bsock\b|\bsocks\b|quarter pack|ankle pack|cushion crew|6-pack|3-pack|\bhat\b|\bcap\b|\bbeanie\b|headband|\bbackpack\b|belt bag|\bjersey\b|t-shirt|\bhoodie\b|\bjogger\b|\bfleece\b|\binsole\b|\bjibbitz\b|\bcharm\b|\bglove\b|\bjacket\b|\bshorts\b/i.test(n)) {
+      product = null;
+    }
+  }
+
   return product;
+}
+
+// ---------------------------------------------------------------------------
+// Shopify bulk JSON API scraper (for multi-brand retailers like Stadium Goods)
+// ---------------------------------------------------------------------------
+async function scrapeShopifyBulk(brand, existingNames, seenNames) {
+  console.log(`\n--- ${brand.name} (Shopify Bulk API) ---`);
+
+  const baseUrl = brand.shopifyBaseUrl;
+  const scraped = [];
+  let page = 1;
+  let totalFetched = 0;
+  let dupes = 0;
+  let noData = 0;
+  let errors = 0;
+
+  if (previewMode) {
+    console.log(`  Will fetch products from ${baseUrl}/products.json (paginated)`);
+    console.log('  Run without --preview to scrape.');
+    return { scraped: [], errors: 0, dupes: 0, noData: 0 };
+  }
+
+  while (true) {
+    const url = `${baseUrl}/products.json?limit=250&page=${page}`;
+
+    let data;
+    try {
+      const { status, body } = await fetchUrl(url);
+      if (status !== 200) {
+        console.log(`\n  Page ${page}: HTTP ${status}`);
+        errors++;
+        break;
+      }
+      data = JSON.parse(body);
+    } catch (e) {
+      console.log(`\n  Page ${page}: ${e.message}`);
+      errors++;
+      break;
+    }
+
+    if (!data.products || data.products.length === 0) break;
+    totalFetched += data.products.length;
+
+    for (const product of data.products) {
+      // Filter for shoes via product_type
+      const productType = (product.product_type || '').toLowerCase();
+      if (productType !== 'shoes' && productType !== 'footwear') { noData++; continue; }
+
+      // Detect brand from vendor
+      const vendor = product.vendor || '';
+      const detected = detectRetailerBrand(vendor);
+
+      // Filter to target brands if specified
+      if (brand.targetBrands && !brand.targetBrands.some(tb => tb.toLowerCase() === detected.brand.toLowerCase())) {
+        continue;
+      }
+
+      const name = cleanName(product.title || '');
+      if (!name) { noData++; continue; }
+
+      // Dedup
+      const normName = name.toLowerCase().trim();
+      if (existingNames.has(normName) || seenNames.has(normName)) { dupes++; continue; }
+
+      // Price from first variant
+      let price = 0, retail = 0;
+      if (product.variants && product.variants.length > 0) {
+        price = parseFloat(product.variants[0].price) || 0;
+        retail = parseFloat(product.variants[0].compare_at_price) || price;
+      }
+      if (price === 0) { noData++; continue; }
+
+      // Image
+      let imageUrl = '';
+      if (product.images && product.images.length > 0) {
+        imageUrl = product.images[0].src || '';
+      }
+      if (!imageUrl) { noData++; continue; }
+
+      // Description
+      let description = (product.body_html || '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&[a-z]+;/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, 300);
+
+      const releaseDate = product.published_at
+        ? product.published_at.split('T')[0]
+        : new Date().toISOString().split('T')[0];
+
+      seenNames.add(normName);
+      scraped.push({
+        name,
+        brand: detected.brand,
+        category: detected.category,
+        price,
+        retail: retail || price,
+        releaseDate,
+        description: cleanDescription(description) || `${detected.brand} ${name}`,
+        imageUrl,
+        sourceUrl: `${baseUrl}/products/${product.handle}`,
+      });
+    }
+
+    process.stdout.write(`\r  [page ${page}] ${totalFetched} fetched, ${scraped.length} new, ${dupes} dupes, ${noData} filtered`);
+
+    if (data.products.length < 250) break;
+    page++;
+    await sleep(delay);
+
+    if (maxLimit > 0 && scraped.length >= maxLimit) break;
+  }
+
+  console.log('');
+  return { scraped, errors, dupes, noData };
 }
 
 // ---------------------------------------------------------------------------
 // Scrape a single brand
 // ---------------------------------------------------------------------------
 async function scrapeBrand(brandKey, brand, existingNames, seenNames) {
+  // Dispatch to Shopify bulk API for retailer configs that use it
+  if (brand.extractionMethod === 'shopify-bulk') {
+    return scrapeShopifyBulk(brand, existingNames, seenNames);
+  }
   console.log(`\n--- ${brand.name} ---`);
 
   // Step 1: Fetch sitemap URLs
