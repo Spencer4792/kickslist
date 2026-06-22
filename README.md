@@ -1,106 +1,95 @@
 # KicksList
 
-> Discover & Shop Authentic Sneakers
+**A fast, static sneaker discovery app — browse, search, and compare 20,000+ sneakers in one place.**
 
-Compare prices on 20,000+ sneakers from trusted retailers and resale marketplaces. Find the best deal on Jordan, Nike, Adidas, Yeezy, New Balance, and more — all in one place.
+🔗 **Live:** [kickslist.net](https://kickslist.net)
 
-**Live at [kickslist.net](https://kickslist.net)**
+KicksList lets you explore a catalog of 20,000+ sneakers across 100+ brands, see retail pricing, and jump straight to where to buy — at retailers like Nike, Foot Locker, and Finish Line, or resale marketplaces like StockX and GOAT. It’s built as a fully static single-page app: the entire catalog ships with the site, so it loads instantly and has no server to maintain or break.
 
----
-
-## Features
-
-- **Price Comparison** — See prices from StockX, GOAT, Foot Locker, JD Sports, and other retailers side by side
-- **20,000+ Products** — Nike, Jordan, Adidas, Yeezy, New Balance, Puma, UGG, Crocs, Birkenstock, and more
-- **Search & Filter** — Find sneakers by name, brand, or category
-- **Brand Pages** — Browse curated collections for each brand
-- **Product Details** — View images, retail prices, and direct links to buy
-- **New Drops** — See the latest releases across all brands
-- **Mobile Responsive** — Works on any device
+![KicksList screenshot](docs/screenshot.png)
 
 ---
 
-## Tech Stack
+## Highlights
 
-- **Frontend:** React (via HTM/Preact), single-page app
-- **Hosting:** GitHub Pages with custom domain
-- **Data:** Static product database (20,000+ entries)
-- **Analytics:** Google Analytics 4
-- **SEO:** Sitemap, robots.txt, structured data (JSON-LD)
+- **20,000+ products, 100+ brands** — Jordan, Nike, Adidas, New Balance, Yeezy, Puma, UGG, Crocs, and many more, each with imagery, retail price, and release date.
+- **Instant browse & search** — full-text search, brand/category filters, price-range filters, and sorting, all computed client-side over the in-memory catalog.
+- **Product detail pages** — image galleries, specs, and a “where to buy” panel linking out to retail and resale vendors with trust ratings.
+- **Wishlist** — save sneakers you like; persisted in the browser via `localStorage`, no account needed.
+- **New drops & trending** — curated, brand-diverse views of recent releases and popular models.
+- **Built for reliability** — no backend, no database, no runtime dependencies that can go down. The site is just static files on a CDN.
 
 ---
 
-## Project Structure
+## Tech stack
+
+| Area | Choice |
+|------|--------|
+| UI | React 18 (UMD), component-based, hash-based client routing |
+| Build | JSX precompiled to plain JS with Babel (`@babel/preset-react`) — **no in-browser compilation** |
+| Styling | Hand-written CSS (`docs/styles/app.css`) |
+| Data | Static product catalog (`docs/data/products.js`) + vendor config (`docs/data/vendors.js`) |
+| Hosting | GitHub Pages + custom domain (`kickslist.net`) |
+| Analytics & SEO | Google Analytics 4, sitemap, robots.txt, JSON-LD structured data |
+
+---
+
+## Architecture & key decisions
+
+**Static-first by design.** The whole product catalog is baked into the deployed site as data files. There is no API call on the critical path, so the catalog renders immediately and the site can’t white-screen because a backend is asleep. This trades data freshness for reliability and zero operating cost — the right call for a discovery/showcase app.
+
+**Precompiled, not compiled-in-browser.** Earlier the app shipped its JSX and compiled it in the visitor’s browser via `@babel/standalone` loaded from an unpinned CDN. When Babel released a new major version that changed its default output, the in-browser compile broke and the site went blank — with no code change on our side. The fix was to remove browser-side compilation entirely: JSX is now precompiled to plain `React.createElement` JavaScript at build time (`app/main.js`), which is faster, has no external compile dependency, and can’t break from an upstream CDN update.
+
+**Client-side everything.** Routing, search, filtering, sorting, and pagination all run in-memory against the catalog array. For a read-only catalog of this size this keeps the app snappy and completely serverless.
+
+---
+
+## Getting started
+
+```bash
+# 1. Install build tooling
+npm install
+
+# 2. Build the app (compiles JSX → plain JS)
+npm run build
+
+# 3. Serve locally
+npm start
+# → http://localhost:3000
+```
+
+> The app must be served over HTTP (via `npm start`), not opened as a `file://` page, because browsers block local file fetches.
+
+### Editing the UI
+
+The source UI lives in `docs/app/main.jsx`. After editing it, run `npm run build` to regenerate `docs/app/main.js`, which is the file the site actually loads.
+
+---
+
+## Project structure
 
 ```
 kickslist/
-├── docs/                # Deployed site (GitHub Pages)
-│   ├── index.html       # Main app entry point
-│   ├── app/             # React components
-│   │   └── main.jsx     # App logic, routing, UI
+├── docs/                  # Deployed site (GitHub Pages serves this folder)
+│   ├── index.html         # Entry point
+│   ├── app/
+│   │   ├── main.jsx        # UI source (React)
+│   │   └── main.js         # Precompiled output the browser loads
 │   ├── data/
-│   │   ├── products.js  # Product database
-│   │   └── vendors.js   # Retailer configs & affiliate setup
-│   ├── styles/          # CSS
-│   ├── robots.txt       # Bot crawl rules
-│   ├── sitemap.xml      # Search engine sitemap
-│   └── CNAME            # Custom domain config
-├── tools/               # Data pipeline scripts
-│   ├── scrape-brands.js # Multi-brand sitemap scraper (12 sources)
-│   ├── scrape-nike.js   # Nike sitemap scraper
-│   ├── fetch-sneakers.js# Single-query sneaker fetcher
-│   └── import-products.js# CSV to products.js importer
-├── data/                # Source product data
-├── app/                 # Source app code
+│   │   ├── products.js     # Static catalog (20,000+ products)
+│   │   └── vendors.js      # Retailer / resale vendor config
+│   ├── styles/app.css      # Styles
+│   ├── sitemap.xml, robots.txt, CNAME
+├── tools/                  # Data-pipeline scripts that build the catalog
+├── babel.config.json       # Build config (React preset, classic runtime)
 └── package.json
 ```
 
 ---
 
-## Scraping Tools
+## Data pipeline
 
-The `tools/` directory contains scripts for building the product database:
-
-```bash
-# Scrape from brand sites (Nike, Adidas, Puma, Reebok, etc.)
-node tools/scrape-brands.js --brands nike,adidas,puma
-
-# Scrape from multi-brand retailers (Stadium Goods, Foot Locker, Journeys)
-node tools/scrape-brands.js --brands stadiumgoods,footlocker,journeys
-
-# Dry run (preview without writing)
-node tools/scrape-brands.js --brands nike --dry-run
-
-# List all available brands
-node tools/scrape-brands.js --list
-```
-
-### Supported Sources
-
-| Source | Type | Method |
-|--------|------|--------|
-| Nike | Brand site | Sitemap + JSON-LD |
-| Adidas | Brand site | Sitemap + JSON-LD |
-| Puma | Brand site | Sitemap + JSON-LD |
-| New Balance | Brand site | Sitemap + Shopify JSON |
-| Reebok | Brand site | Sitemap + Shopify JSON |
-| Crocs | Brand site | Sitemap + JSON-LD |
-| UGG | Brand site | Sitemap + JSON-LD |
-| Dr. Martens | Brand site | Sitemap + Shopify JSON |
-| Merrell | Brand site | Sitemap + Shopify JSON |
-| Stadium Goods | Retailer | Shopify Bulk API |
-| Foot Locker | Retailer | Sitemap + JSON-LD |
-| Journeys | Retailer | Sitemap + Custom (maProductJson) |
-
----
-
-## Local Development
-
-```bash
-npm install
-npm start
-# Opens at http://localhost:3000
-```
+The catalog in `docs/data/products.js` is generated by the scripts in `tools/`, which collect and normalize product data (name, brand, image, retail price, release date) from brand and retailer sources into a single static dataset. Regenerating the catalog is an offline build step, keeping the deployed site fully static.
 
 ---
 

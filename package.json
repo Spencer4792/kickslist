@@ -1,23 +1,28 @@
 {
   "name": "kickslist",
   "version": "2.0.0",
-  "description": "KicksList - Sneaker price comparison across trusted retailers and resale marketplaces.",
+  "description": "KicksList — a fast, static sneaker discovery app: browse, search, and compare 20,000+ sneakers across trusted retailers and resale marketplaces.",
   "scripts": {
-    "start": "npx serve -l 3000",
+    "start": "npx serve docs -l 3000",
+    "build": "babel docs/app/main.jsx -o docs/app/main.js",
     "fetch-sneakers": "node tools/fetch-sneakers.js"
   },
   "keywords": [
     "sneakers",
     "price-comparison",
-    "shopping",
-    "stockx",
-    "goat",
-    "nike"
+    "react",
+    "static-site",
+    "shopping"
   ],
-  "author": "",
+  "author": "Spencer Hales",
   "license": "MIT",
   "dependencies": {
     "sneaks-api": "^1.2.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.24.0",
+    "@babel/core": "^7.24.0",
+    "@babel/preset-react": "^7.24.0"
   },
   "engines": {
     "node": ">=16.0.0"
