@@ -6,20 +6,6 @@
 const { useState, useEffect, useRef, useCallback, createContext, useContext } = React;
 
 // ============================================
-// API Configuration
-// ============================================
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:3001'
-  : 'https://kickslist-backend-production.up.railway.app';
-
-// Static-first data layer (data/catalog-api.js): catalog reads resolve from the
-// baked catalog; dynamic routes forward to the backend. Bound explicitly here so
-// it works regardless of module/strict-mode scoping, with a plain-fetch fallback.
-const klFetch = (typeof window !== 'undefined' && window.klFetch)
-  ? window.klFetch
-  : (url, opts) => fetch(url, opts);
-
-// ============================================
 // Analytics Helper
 // ============================================
 function trackEvent(eventName, params = {}) {
@@ -82,8 +68,6 @@ const useRouter = () => {
         setRoute({ page: 'contact', params });
       } else if (path === '/faq') {
         setRoute({ page: 'faq', params });
-      } else if (path === '/alerts') {
-        setRoute({ page: 'alerts', params });
       } else {
         setRoute({ page: 'home', params });
       }
@@ -192,23 +176,9 @@ const TrustRating = ({ rating, showCount = false, count = 0, size = 'md' }) => {
 // ============================================
 const PriceDisplay = ({ product }) => {
   const retailPrice = product.retail;
-  // Use API lowest price, then static vendor-prices fallback
-  const lowestPrice = product.lowest || product.price || window.KicksListVendorPrices?.prices?.[product.id]?.lowest;
 
-  if (!retailPrice && !lowestPrice) {
+  if (!retailPrice) {
     return <span className="kl-price-range kl-out-of-stock">Price Unavailable</span>;
-  }
-
-  if (lowestPrice) {
-    return (
-      <div className="kl-price-range">
-        <span className="kl-price-label kl-price-from">From:</span>
-        <span className="kl-price-low">${lowestPrice.toLocaleString()}</span>
-        {retailPrice && retailPrice !== lowestPrice && (
-          <span className="kl-price-retail-ref">Retail: ${retailPrice.toLocaleString()}</span>
-        )}
-      </div>
-    );
   }
 
   return (
@@ -223,65 +193,30 @@ const PriceDisplay = ({ product }) => {
 // Where To Buy Section (Direct Links to Vendors)
 // ============================================
 const VendorComparisonTable = ({ product }) => {
+  const { generateVendorPrices } = window.KicksListData;
   const { getVendorById, getRetailVendors, getResaleVendors } = window.KicksListVendors;
-  const generateVendorPricesFn = window.KicksListData?.generateVendorPrices;
 
-  // Use generateVendorPrices for retail URLs + static resale data
-  const vendorPrices = generateVendorPricesFn ? generateVendorPricesFn(product) : [];
-
-  // If API vendorPrices are available, merge them into the resale vendor prices
-  if (product.vendorPrices && product.vendorPrices.length > 0) {
-    product.vendorPrices.forEach(vp => {
-      const existing = vendorPrices.find(v => v.vendorId === vp.vendorId);
-      if (existing) {
-        existing.price = vp.price ? Number(vp.price) : existing.price;
-        existing.url = vp.url || existing.url;
-        existing.isRealPrice = vp.price != null;
-        existing.inStock = vp.inStock !== false;
-      }
-    });
-    // Recalculate lowest
-    const realPriced = vendorPrices.filter(v => v.type === 'resale' && v.isRealPrice && v.price != null);
-    if (realPriced.length > 0) {
-      const minPrice = Math.min(...realPriced.map(v => v.price));
-      realPriced.forEach(v => { v.isLowest = v.price === minPrice; });
-    }
-  }
+  const vendorPrices = generateVendorPrices(product);
 
   // Separate retail and resale vendors
   const retailVendors = vendorPrices.filter(v => v.type === 'retail');
   const resaleVendors = vendorPrices.filter(v => v.type === 'resale');
 
-  // Sort resale: real-price vendors first (by price asc), then no-data vendors
-  const sortedResaleVendors = [...resaleVendors].sort((a, b) => {
-    if (a.isRealPrice && !b.isRealPrice) return -1;
-    if (!a.isRealPrice && b.isRealPrice) return 1;
-    if (a.isRealPrice && b.isRealPrice) return a.price - b.price;
-    return 0;
-  });
-
-  const updatedAt = window.KicksListVendorPrices?.updatedAt;
-
   const VendorRow = ({ vendorPrice, isResale = false }) => {
     const vendor = getVendorById(vendorPrice.vendorId);
-    const hasRealPrice = vendorPrice.isRealPrice && vendorPrice.price != null;
-    const rowClass = `kl-comparison-row${vendorPrice.isLowest ? ' kl-lowest-price' : ''}`;
 
     return (
-      <div className={rowClass}>
+      <div className="kl-comparison-row">
         <div className="kl-comparison-vendor">
           <span className="kl-vendor-name" style={{ color: vendor.color }}>{vendor.name}</span>
           {!isResale && <span className="kl-retail-badge">Retail</span>}
           {isResale && <span className="kl-resale-badge">Resale</span>}
-          {vendorPrice.isLowest && <span className="kl-best-price-badge">Best Price</span>}
         </div>
         <div className="kl-comparison-rating">
           <TrustRating rating={vendor.trustRating} size="sm" />
           <span className="kl-vendor-reviews">({vendor.trustCount.toLocaleString()})</span>
         </div>
         <div className="kl-comparison-action">
-          {hasRealPrice && <span className="kl-price-low" style={{ marginRight: '0.5rem' }}>${vendorPrice.price.toLocaleString()}</span>}
-          {!hasRealPrice && isResale && <span style={{ marginRight: '0.5rem', color: 'var(--kl-text-tertiary)', fontSize: '0.8rem' }}>--</span>}
           <a
             href={vendorPrice.url}
             target="_blank"
@@ -296,7 +231,7 @@ const VendorComparisonTable = ({ product }) => {
               product_id: product.id
             })}
           >
-            {hasRealPrice ? `Buy $${vendorPrice.price.toLocaleString()}` : isResale ? 'Check Price' : 'Check Availability'}
+            {isResale ? 'Check Live Price' : 'Check Availability'}
           </a>
         </div>
       </div>
@@ -305,12 +240,6 @@ const VendorComparisonTable = ({ product }) => {
 
   return (
     <div className="kl-vendor-comparison">
-      {updatedAt && (
-        <div className="kl-price-updated">
-          Prices updated: {new Date(updatedAt).toLocaleString()}
-        </div>
-      )}
-
       {/* Resale Marketplaces - Show these first since they're more likely to have the shoe */}
       <div className="kl-comparison-section">
         <h3 className="kl-comparison-title">
@@ -318,7 +247,7 @@ const VendorComparisonTable = ({ product }) => {
           <span className="kl-comparison-subtitle">Authenticated · Live market prices</span>
         </h3>
         <div className="kl-comparison-table">
-          {sortedResaleVendors.map((vendorPrice) => (
+          {resaleVendors.map((vendorPrice) => (
             <VendorRow key={vendorPrice.vendorId} vendorPrice={vendorPrice} isResale={true} />
           ))}
         </div>
@@ -339,167 +268,8 @@ const VendorComparisonTable = ({ product }) => {
 
       {/* Affiliate Disclosure */}
       <p className="kl-affiliate-disclosure">
-        Prices are updated periodically and may not reflect real-time changes. We may earn a commission when you shop through our links.
+        Prices shown on vendor sites are live and may change. We may earn a commission when you shop through our links.
       </p>
-    </div>
-  );
-};
-
-// ============================================
-// Price History Chart Component
-// ============================================
-const PriceHistoryChart = ({ product }) => {
-  const [history, setHistory] = useState(null);
-  const [period, setPeriod] = useState(30);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    klFetch(`${API_BASE}/api/products/${product.id}/price-history?days=${period}`)
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (!cancelled) {
-          // Transform vendor-grouped format { stockx: [{price,date}], ... }
-          // into row format [{ date, stockx: price, goat: price, ... }]
-          const grouped = data?.history;
-          if (grouped && typeof grouped === 'object' && Object.keys(grouped).length > 0) {
-            const dateMap = {};
-            Object.entries(grouped).forEach(([vendor, entries]) => {
-              (entries || []).forEach(({ price, date }) => {
-                if (!dateMap[date]) dateMap[date] = { date };
-                dateMap[date][vendor] = price;
-              });
-            });
-            const rows = Object.values(dateMap).sort((a, b) => a.date.localeCompare(b.date));
-            setHistory(rows.length > 0 ? rows : null);
-          } else {
-            setHistory(null);
-          }
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setHistory(null);
-          setLoading(false);
-        }
-      });
-    return () => { cancelled = true; };
-  }, [product.id, period]);
-
-  if (!history && !loading) return null;
-
-  const vendorColors = { stockx: '#08a05c', goat: '#7c3aed', flightclub: '#ff6b00' };
-  const vendorLabels = { stockx: 'StockX', goat: 'GOAT', flightclub: 'Flight Club' };
-  const vendorKeys = Object.keys(vendorColors);
-
-  const renderChart = () => {
-    if (!history || history.length === 0) return null;
-
-    const padding = { top: 15, right: 15, bottom: 25, left: 45 };
-    const width = 600;
-    const height = 200;
-    const chartW = width - padding.left - padding.right;
-    const chartH = height - padding.top - padding.bottom;
-
-    // Gather all prices to compute Y axis range
-    const allPrices = [];
-    history.forEach(entry => {
-      vendorKeys.forEach(v => {
-        if (entry[v] != null) allPrices.push(entry[v]);
-      });
-    });
-    if (allPrices.length === 0) return null;
-
-    const minPrice = Math.floor(Math.min(...allPrices) * 0.95);
-    const maxPrice = Math.ceil(Math.max(...allPrices) * 1.05);
-    const priceRange = maxPrice - minPrice || 1;
-
-    const xScale = (i) => padding.left + (i / Math.max(history.length - 1, 1)) * chartW;
-    const yScale = (p) => padding.top + chartH - ((p - minPrice) / priceRange) * chartH;
-
-    // Build polyline paths per vendor
-    const paths = {};
-    vendorKeys.forEach(v => {
-      const points = [];
-      history.forEach((entry, i) => {
-        if (entry[v] != null) points.push(`${xScale(i)},${yScale(entry[v])}`);
-      });
-      if (points.length > 1) paths[v] = points.join(' ');
-    });
-
-    // Y-axis labels (3-4 ticks)
-    const yTicks = [];
-    const tickCount = 4;
-    for (let t = 0; t <= tickCount; t++) {
-      const val = minPrice + (priceRange * t / tickCount);
-      yTicks.push({ y: yScale(val), label: `$${Math.round(val)}` });
-    }
-
-    // X-axis labels (first, middle, last)
-    const xLabels = [];
-    if (history.length > 0) {
-      const fmt = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      xLabels.push({ x: xScale(0), label: fmt(history[0].date) });
-      if (history.length > 2) {
-        const mid = Math.floor(history.length / 2);
-        xLabels.push({ x: xScale(mid), label: fmt(history[mid].date) });
-      }
-      xLabels.push({ x: xScale(history.length - 1), label: fmt(history[history.length - 1].date) });
-    }
-
-    return React.createElement('svg', {
-      viewBox: `0 0 ${width} ${height}`,
-      style: { width: '100%', height: '200px' },
-      preserveAspectRatio: 'xMidYMid meet'
-    },
-      // Grid lines
-      yTicks.map((tick, i) =>
-        React.createElement('line', { key: `grid-${i}`, x1: padding.left, x2: width - padding.right, y1: tick.y, y2: tick.y, stroke: 'rgba(255,255,255,0.06)', strokeWidth: 1 })
-      ),
-      // Y-axis labels
-      yTicks.map((tick, i) =>
-        React.createElement('text', { key: `ytick-${i}`, x: padding.left - 5, y: tick.y + 3, textAnchor: 'end', fontSize: 9, fill: '#888' }, tick.label)
-      ),
-      // X-axis labels
-      xLabels.map((xl, i) =>
-        React.createElement('text', { key: `xtick-${i}`, x: xl.x, y: height - 3, textAnchor: 'middle', fontSize: 9, fill: '#888' }, xl.label)
-      ),
-      // Vendor lines
-      vendorKeys.map(v =>
-        paths[v] ? React.createElement('polyline', { key: v, points: paths[v], fill: 'none', stroke: vendorColors[v], strokeWidth: 2, strokeLinejoin: 'round' }) : null
-      )
-    );
-  };
-
-  return (
-    <div className="kl-price-history">
-      <div className="kl-price-history-header">
-        <span className="kl-price-history-title">Price History</span>
-        <div className="kl-period-selector">
-          {[{ label: '30D', days: 30 }, { label: '90D', days: 90 }, { label: '1Y', days: 365 }].map(opt => (
-            <button key={opt.days} className={`kl-period-btn${period === opt.days ? ' active' : ''}`} onClick={() => setPeriod(opt.days)}>
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="kl-price-chart-container">
-        {loading && <div style={{ textAlign: 'center', padding: '2rem', fontSize: '0.75rem', color: 'var(--kl-text-tertiary)' }}>Loading...</div>}
-        {!loading && history && renderChart()}
-        {!loading && !history && <div style={{ textAlign: 'center', padding: '2rem', fontSize: '0.75rem', color: 'var(--kl-text-tertiary)' }}>No price history available</div>}
-      </div>
-      {history && (
-        <div className="kl-chart-legend">
-          {vendorKeys.map(v => (
-            <div key={v} className="kl-chart-legend-item">
-              <span className="kl-chart-legend-color" style={{ background: vendorColors[v] }}></span>
-              <span>{vendorLabels[v]}</span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
@@ -635,24 +405,6 @@ const Navigation = () => {
 };
 
 // ============================================
-// Loading Grid Skeleton
-// ============================================
-const LoadingGrid = ({ count = 8 }) => (
-  <div className="kl-product-grid">
-    {Array.from({ length: count }).map((_, i) => (
-      <div key={i} className="kl-product-card kl-skeleton-card">
-        <div className="kl-skeleton kl-skeleton-image"></div>
-        <div className="kl-skeleton-info">
-          <div className="kl-skeleton kl-skeleton-brand"></div>
-          <div className="kl-skeleton kl-skeleton-name"></div>
-          <div className="kl-skeleton kl-skeleton-price"></div>
-        </div>
-      </div>
-    ))}
-  </div>
-);
-
-// ============================================
 // Product Card (Shows Retail + Compare Prices CTA)
 // ============================================
 const ProductCard = ({ product, index = 0 }) => {
@@ -704,29 +456,11 @@ const Homepage = () => {
   const { navigate } = useApp();
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const [activeCategory, setActiveCategory] = useState('all');
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [trendingProducts, setTrendingProducts] = useState([]);
-  const [newDrops, setNewDrops] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    let cancelled = false;
-    Promise.all([
-      klFetch(`${API_BASE}/api/products/featured`).then(r => r.json()).catch(() => ({ products: [] })),
-      klFetch(`${API_BASE}/api/products/trending`).then(r => r.json()).catch(() => ({ products: [] })),
-      klFetch(`${API_BASE}/api/products/new-drops`).then(r => r.json()).catch(() => ({ products: [] })),
-      klFetch(`${API_BASE}/api/categories`).then(r => r.json()).catch(() => ({ categories: [] })),
-    ]).then(([feat, trend, drops, cats]) => {
-      if (cancelled) return;
-      setFeaturedProducts(feat.products || []);
-      setTrendingProducts(trend.products || []);
-      setNewDrops(drops.products || []);
-      setCategories(cats.categories || []);
-      setLoading(false);
-    });
-    return () => { cancelled = true; };
-  }, []);
+  const { products, categories, getFeaturedProducts, getTrendingProducts, getNewDrops } = window.KicksListData;
+  const featuredProducts = getFeaturedProducts();
+  const trendingProducts = getTrendingProducts();
+  const newDrops = getNewDrops();
 
   // Only cycle through the 3 displayed slides
   const heroSlideCount = Math.min(featuredProducts.length, 3);
@@ -738,14 +472,6 @@ const Homepage = () => {
     }, 6000);
     return () => clearInterval(timer);
   }, [heroSlideCount]);
-
-  if (loading) {
-    return (
-      <main className="kl-homepage-content" style={{ padding: '4rem 2rem' }}>
-        <LoadingGrid count={8} />
-      </main>
-    );
-  }
 
   return (
     <main className="kl-homepage-content">
@@ -788,9 +514,9 @@ const Homepage = () => {
           </button>
           {categories.map((cat) => (
             <button
-              key={cat.name}
-              className={`kl-category-btn ${activeCategory === cat.name ? 'active' : ''}`}
-              onClick={() => { setActiveCategory(cat.name); navigate(`/category/${cat.name}`); }}
+              key={cat.id}
+              className={`kl-category-btn ${activeCategory === cat.id ? 'active' : ''}`}
+              onClick={() => { setActiveCategory(cat.id); navigate(`/category/${cat.id}`); }}
             >
               {cat.name}
             </button>
@@ -820,7 +546,6 @@ const Homepage = () => {
       </section>
 
       {/* Editorial */}
-      {featuredProducts.length >= 4 && (
       <section className="kl-editorial">
         <div className="kl-editorial-content">
           <p className="kl-editorial-eyebrow">The Edit</p>
@@ -832,14 +557,13 @@ const Homepage = () => {
         </div>
         <div className="kl-editorial-images">
           <div className="kl-editorial-img kl-editorial-img-1">
-            <img src={featuredProducts[1]?.images?.[0]} alt="Featured" onError={(e) => { e.target.src = 'https://via.placeholder.com/400x400/f5f4f2/a8a29e?text='; }} />
+            <img src={products[1].images[0]} alt="Travis Scott" onError={(e) => { e.target.src = 'https://via.placeholder.com/400x400/f5f4f2/a8a29e?text='; }} />
           </div>
           <div className="kl-editorial-img kl-editorial-img-2">
-            <img src={featuredProducts[3]?.images?.[0]} alt="Featured" onError={(e) => { e.target.src = 'https://via.placeholder.com/400x400/f5f4f2/a8a29e?text='; }} />
+            <img src={products[3].images[0]} alt="Jordan" onError={(e) => { e.target.src = 'https://via.placeholder.com/400x400/f5f4f2/a8a29e?text='; }} />
           </div>
         </div>
       </section>
-      )}
 
       {/* New Drops */}
       <section className="kl-section">
@@ -964,6 +688,7 @@ const Homepage = () => {
 // ============================================
 const ShopPage = () => {
   const { route, navigate, searchQuery } = useApp();
+  const { products, categories, getProductsByCategory, searchProducts } = window.KicksListData;
 
   const [sortBy, setSortBy] = useState('newest');
   const [activeCategory, setActiveCategory] = useState(route.params.category || 'all');
@@ -971,11 +696,6 @@ const ShopPage = () => {
   const [priceRange, setPriceRange] = useState('all');
   const [customMin, setCustomMin] = useState('');
   const [customMax, setCustomMax] = useState('');
-  const [paginatedProducts, setPaginatedProducts] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
   const productsPerPage = 20;
 
   // Price range presets
@@ -990,56 +710,39 @@ const ShopPage = () => {
 
   const queryParam = route.params.q || searchQuery;
 
-  // Fetch categories on mount
-  useEffect(() => {
-    klFetch(`${API_BASE}/api/categories`)
-      .then(r => r.json())
-      .then(data => setCategories(data.categories || []))
-      .catch(() => {});
-  }, []);
+  let filteredProducts = queryParam
+    ? searchProducts(queryParam)
+    : getProductsByCategory(activeCategory);
 
-  // Fetch products from API whenever filters change
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
+  // Apply price filter
+  const activeRange = priceRanges.find(r => r.id === priceRange);
+  if (priceRange === 'custom' && (customMin || customMax)) {
+    const min = customMin ? parseInt(customMin) : 0;
+    const max = customMax ? parseInt(customMax) : Infinity;
+    filteredProducts = filteredProducts.filter(p => {
+      const price = p.retail || 0;
+      return price >= min && price <= max;
+    });
+  } else if (activeRange && priceRange !== 'all') {
+    filteredProducts = filteredProducts.filter(p => {
+      const price = p.retail || 0;
+      return price >= activeRange.min && price <= activeRange.max;
+    });
+  }
 
-    const params = new URLSearchParams();
-    params.set('page', currentPage.toString());
-    params.set('limit', productsPerPage.toString());
-    if (sortBy) params.set('sort', sortBy);
-    if (queryParam) params.set('q', queryParam);
-    if (activeCategory && activeCategory !== 'all') params.set('category', activeCategory);
+  // Sort by retail price
+  if (sortBy === 'price-low') {
+    filteredProducts = [...filteredProducts].sort((a, b) => (a.retail || 0) - (b.retail || 0));
+  } else if (sortBy === 'price-high') {
+    filteredProducts = [...filteredProducts].sort((a, b) => (b.retail || 0) - (a.retail || 0));
+  } else if (sortBy === 'newest') {
+    filteredProducts = [...filteredProducts].sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+  }
 
-    // Price filter
-    const activeRange = priceRanges.find(r => r.id === priceRange);
-    if (priceRange === 'custom') {
-      if (customMin) params.set('minPrice', customMin);
-      if (customMax) params.set('maxPrice', customMax);
-    } else if (activeRange && priceRange !== 'all') {
-      params.set('minPrice', activeRange.min.toString());
-      if (activeRange.max !== Infinity) params.set('maxPrice', activeRange.max.toString());
-    }
-
-    klFetch(`${API_BASE}/api/products?${params.toString()}`)
-      .then(r => r.json())
-      .then(data => {
-        if (cancelled) return;
-        setPaginatedProducts(data.products || []);
-        setTotal(data.total || 0);
-        setTotalPages(data.totalPages || 0);
-        setLoading(false);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setPaginatedProducts([]);
-          setTotal(0);
-          setTotalPages(0);
-          setLoading(false);
-        }
-      });
-
-    return () => { cancelled = true; };
-  }, [currentPage, sortBy, activeCategory, queryParam, priceRange, customMin, customMax]);
+  // Pagination
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -1049,9 +752,7 @@ const ShopPage = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [priceRange]);
-
-  const startIndex = (currentPage - 1) * productsPerPage;
+  }, [priceRange, customMin, customMax]);
 
   // Scroll to top when page changes
   const handlePageChange = (page) => {
@@ -1080,13 +781,13 @@ const ShopPage = () => {
               <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
               <span className="kl-breadcrumb-sep">/</span>
               <span className="kl-breadcrumb-current">
-                {queryParam ? `Search: "${queryParam}"` : activeCategory === 'all' ? 'All Sneakers' : activeCategory}
+                {queryParam ? `Search: "${queryParam}"` : activeCategory === 'all' ? 'All Sneakers' : categories.find(c => c.id === activeCategory)?.name || 'Shop'}
               </span>
             </nav>
             <h1 className="kl-shop-title">
-              {queryParam ? `Results for "${queryParam}"` : activeCategory === 'all' ? 'All Sneakers' : activeCategory}
+              {queryParam ? `Results for "${queryParam}"` : activeCategory === 'all' ? 'All Sneakers' : categories.find(c => c.id === activeCategory)?.name || 'Shop'}
             </h1>
-            <p className="kl-shop-count">{total.toLocaleString()} Products</p>
+            <p className="kl-shop-count">{filteredProducts.length} Products</p>
           </div>
           <div className="kl-shop-sort">
             <label>Sort by:</label>
@@ -1104,20 +805,13 @@ const ShopPage = () => {
           <div className="kl-filter-section">
             <h3 className="kl-filter-title">Categories</h3>
             <div className="kl-filter-options">
-              <button
-                className={`kl-filter-btn ${activeCategory === 'all' ? 'active' : ''}`}
-                onClick={() => { setActiveCategory('all'); setCurrentPage(1); navigate('/shop'); }}
-              >
-                All
-              </button>
               {categories.map(cat => (
                 <button
-                  key={cat.name}
-                  className={`kl-filter-btn ${activeCategory === cat.name ? 'active' : ''}`}
+                  key={cat.id}
+                  className={`kl-filter-btn ${activeCategory === cat.id ? 'active' : ''}`}
                   onClick={() => {
-                    setActiveCategory(cat.name);
-                    setCurrentPage(1);
-                    navigate(`/category/${cat.name}`);
+                    setActiveCategory(cat.id);
+                    navigate(cat.id === 'all' ? '/shop' : `/category/${cat.id}`);
                   }}
                 >
                   {cat.name}
@@ -1190,9 +884,7 @@ const ShopPage = () => {
         </aside>
 
         <div className="kl-shop-products">
-          {loading ? (
-            <LoadingGrid count={productsPerPage} />
-          ) : paginatedProducts.length === 0 ? (
+          {filteredProducts.length === 0 ? (
             <div className="kl-shop-empty">
               <p>No sneakers found matching your criteria.</p>
               <button className="kl-btn kl-btn-primary" onClick={() => navigate('/shop')}>View All Products</button>
@@ -1275,7 +967,7 @@ const ShopPage = () => {
               )}
 
               <div className="kl-pagination-info">
-                Showing {startIndex + 1}-{Math.min(startIndex + productsPerPage, total)} of {total.toLocaleString()} products
+                Showing {startIndex + 1}-{Math.min(startIndex + productsPerPage, filteredProducts.length)} of {filteredProducts.length} products
               </div>
             </>
           )}
@@ -1286,126 +978,15 @@ const ShopPage = () => {
 };
 
 // ============================================
-// Price Alert Form (on Product Detail Page)
-// ============================================
-const PriceAlertForm = ({ product }) => {
-  const [email, setEmail] = useState(() => localStorage.getItem('kickslist-alert-email') || '');
-  const [targetPrice, setTargetPrice] = useState(() => {
-    const price = product.retail || 200;
-    return Math.floor(price * 0.9);
-  });
-  const [status, setStatus] = useState('idle'); // idle, loading, success, error
-  const [errorMsg, setErrorMsg] = useState('');
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email.trim() || !targetPrice) return;
-
-    setStatus('loading');
-    setErrorMsg('');
-
-    try {
-      const res = await klFetch(`${API_BASE}/api/price-alerts/guest`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email.trim(),
-          productId: typeof product.id === 'string' ? parseInt(product.id, 10) : product.id,
-          targetPrice: parseFloat(targetPrice),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to create alert');
-      }
-
-      localStorage.setItem('kickslist-alert-email', email.trim());
-      setStatus('success');
-      trackEvent('set_price_alert', {
-        product_id: product.id,
-        product_name: product.name,
-        target_price: targetPrice,
-      });
-    } catch (err) {
-      setStatus('error');
-      setErrorMsg(err.message || 'Something went wrong. Please try again.');
-    }
-  };
-
-  if (status === 'success') {
-    return (
-      <div className="kl-price-alert-form">
-        <div className="kl-alert-success">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="kl-alert-success-icon">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-          <h3>Alert Set!</h3>
-          <p>We'll email you at <strong>{email}</strong> when {product.name} drops to ${targetPrice} or below.</p>
-          <a href="#/alerts" className="kl-alert-manage-link">Manage your alerts</a>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="kl-price-alert-form">
-      <h3 className="kl-alert-form-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 20, height: 20 }}>
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
-        Set Price Alert
-      </h3>
-      <p className="kl-alert-form-desc">Get notified when this sneaker drops to your target price.</p>
-      <form onSubmit={handleSubmit} className="kl-alert-form-fields">
-        <div className="kl-alert-input-group">
-          <label className="kl-alert-label">Email</label>
-          <input
-            type="email"
-            className="kl-alert-input"
-            placeholder="your@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="kl-alert-input-group">
-          <label className="kl-alert-label">Target Price ($)</label>
-          <input
-            type="number"
-            className="kl-alert-input"
-            placeholder="Target price"
-            value={targetPrice}
-            onChange={(e) => setTargetPrice(e.target.value)}
-            min="1"
-            step="1"
-            required
-          />
-        </div>
-        {status === 'error' && <p className="kl-alert-error">{errorMsg}</p>}
-        <button type="submit" className="kl-btn kl-btn-primary kl-alert-submit" disabled={status === 'loading'}>
-          {status === 'loading' ? 'Setting Alert...' : 'Notify Me'}
-        </button>
-      </form>
-      <p className="kl-alert-form-note">Free — up to 5 alerts per email. We check prices every 15 minutes.</p>
-    </div>
-  );
-};
-
-// ============================================
 // Product Detail Page (Updated)
 // ============================================
 const ProductDetailPage = () => {
   const { route, navigate, wishlist, toggleWishlist } = useApp();
+  const { getProductById, getRelatedProducts } = window.KicksListData;
 
   const productId = parseInt(route.params.id);
-  const [product, setProduct] = useState(null);
-  const [relatedProducts, setRelatedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+  const product = getProductById(productId);
+  const relatedProducts = getRelatedProducts(productId, 4);
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -1414,52 +995,25 @@ const ProductDetailPage = () => {
 
   const isWishlisted = wishlist.includes(productId);
 
-  // Fetch product + related from API
   useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setNotFound(false);
     setSelectedImage(0);
+  }, [productId]);
 
-    klFetch(`${API_BASE}/api/products/${productId}`)
-      .then(r => {
-        if (!r.ok) throw new Error('Not found');
-        return r.json();
-      })
-      .then(data => {
-        if (cancelled) return;
-        setProduct(data.product);
-        setLoading(false);
-        // Update page meta for SEO
-        const p = data.product;
-        updatePageMeta(
-          `${p.name} | KicksList`,
-          `Shop ${p.name} from ${p.brand}. Compare prices from StockX, GOAT, and other trusted retailers.${p.retail ? ` Retail: $${p.retail}.` : ''}`,
-          p.images?.[0] || null
-        );
-        trackEvent('view_item', {
-          item_id: p.id,
-          item_name: p.name,
-          item_brand: p.brand,
-          item_category: p.category,
-          price: p.retail
-        });
-      })
-      .catch(() => {
-        if (!cancelled) { setNotFound(true); setLoading(false); }
+  useEffect(() => {
+    if (product) {
+      trackEvent('view_item', {
+        item_id: product.id,
+        item_name: product.name,
+        item_brand: product.brand,
+        item_category: product.category,
+        price: product.retail
       });
-
-    klFetch(`${API_BASE}/api/products/${productId}/related`)
-      .then(r => r.json())
-      .then(data => { if (!cancelled) setRelatedProducts(data.products || []); })
-      .catch(() => {});
-
-    return () => { cancelled = true; };
+    }
   }, [productId]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (!lightboxOpen || !product) return;
+      if (!lightboxOpen) return;
       if (e.key === 'Escape') setLightboxOpen(false);
       if (e.key === 'ArrowRight') setSelectedImage((prev) => (prev + 1) % product.images.length);
       if (e.key === 'ArrowLeft') setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length);
@@ -1468,15 +1022,7 @@ const ProductDetailPage = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [lightboxOpen, product?.images?.length]);
 
-  if (loading) {
-    return (
-      <main className="kl-product-detail" style={{ padding: '4rem 2rem' }}>
-        <LoadingGrid count={1} />
-      </main>
-    );
-  }
-
-  if (notFound || !product) {
+  if (!product) {
     return (
       <main className="kl-error-page">
         <h1>Product Not Found</h1>
@@ -1567,12 +1113,6 @@ const ProductDetailPage = () => {
           {/* Vendor Comparison Table */}
           <VendorComparisonTable product={product} />
 
-          {/* Price History Chart */}
-          <PriceHistoryChart product={product} />
-
-          {/* Price Alert Form */}
-          <PriceAlertForm product={product} />
-
           <div className="kl-wishlist-action">
             <button className={`kl-wishlist-btn-large ${isWishlisted ? 'active' : ''}`} onClick={() => toggleWishlist(productId)}>
               <svg viewBox="0 0 24 24" fill={isWishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5">
@@ -1653,14 +1193,7 @@ const ProductDetailPage = () => {
 // ============================================
 const AboutPage = () => {
   const { navigate } = useApp();
-  const [productCount, setProductCount] = useState(0);
-
-  useEffect(() => {
-    klFetch(`${API_BASE}/api/products?limit=1`)
-      .then(r => r.json())
-      .then(data => setProductCount(data.total || 0))
-      .catch(() => {});
-  }, []);
+  const { products } = window.KicksListData;
 
   return (
     <main className="kl-about-page">
@@ -1710,7 +1243,7 @@ const AboutPage = () => {
 
       <section className="kl-about-stats">
         <div className="kl-about-stat"><span>14</span><p>Verified Vendors</p></div>
-        <div className="kl-about-stat"><span>{productCount ? productCount.toLocaleString() : '150,000+'}</span><p>Sneakers Listed</p></div>
+        <div className="kl-about-stat"><span>{products.length.toLocaleString()}</span><p>Sneakers Listed</p></div>
         <div className="kl-about-stat"><span>30+</span><p>Brands</p></div>
         <div className="kl-about-stat"><span>100%</span><p>Authentic Sources</p></div>
       </section>
@@ -1730,18 +1263,7 @@ const AboutPage = () => {
 // ============================================
 const BrandsPage = () => {
   const { navigate } = useApp();
-  const [brandCounts, setBrandCounts] = useState({});
-
-  useEffect(() => {
-    klFetch(`${API_BASE}/api/categories`)
-      .then(r => r.json())
-      .then(data => {
-        const counts = {};
-        (data.categories || []).forEach(c => { counts[c.name.toLowerCase()] = c.count; });
-        setBrandCounts(counts);
-      })
-      .catch(() => {});
-  }, []);
+  const { getProductsByCategory } = window.KicksListData;
 
   const brandsInfo = {
     jordan: {
@@ -1829,7 +1351,8 @@ const BrandsPage = () => {
 
       <section className="kl-brands-grid">
         {brandIds.map((brandId, idx) => {
-          const productCount = brandCounts[brandId] || 0;
+          const products = getProductsByCategory(brandId);
+          const productCount = products.length;
           const info = brandsInfo[brandId];
           const brandNameMap = { 'new-balance': 'New Balance', 'puma': 'Puma', 'reebok': 'Reebok', 'ugg': 'UGG', 'crocs': 'Crocs' };
           const brandName = brandNameMap[brandId] || brandId.charAt(0).toUpperCase() + brandId.slice(1);
@@ -2386,187 +1909,6 @@ const FAQPage = () => {
 };
 
 // ============================================
-// Alerts Management Page
-// ============================================
-const AlertsPage = () => {
-  const { navigate } = useApp();
-  const [email, setEmail] = useState(() => localStorage.getItem('kickslist-alert-email') || '');
-  const [alerts, setAlerts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [looked, setLooked] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(null);
-
-  const fetchAlerts = async (e) => {
-    if (e) e.preventDefault();
-    if (!email.trim()) return;
-
-    setLoading(true);
-    setLooked(false);
-
-    try {
-      const res = await klFetch(`${API_BASE}/api/price-alerts/guest?email=${encodeURIComponent(email.trim())}`);
-      const data = await res.json();
-      setAlerts(data.alerts || []);
-      localStorage.setItem('kickslist-alert-email', email.trim());
-    } catch (err) {
-      console.error('Failed to fetch alerts:', err);
-      setAlerts([]);
-    }
-
-    setLoading(false);
-    setLooked(true);
-  };
-
-  const deleteAlert = async (alertId) => {
-    setDeleteLoading(alertId);
-    try {
-      const res = await klFetch(`${API_BASE}/api/price-alerts/guest/${alertId}?email=${encodeURIComponent(email.trim())}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        setAlerts((prev) => prev.filter((a) => a.id !== alertId));
-        trackEvent('delete_price_alert', { alert_id: alertId });
-      }
-    } catch (err) {
-      console.error('Failed to delete alert:', err);
-    }
-    setDeleteLoading(null);
-  };
-
-  // Auto-fetch if email is saved
-  useEffect(() => {
-    if (email.trim()) {
-      fetchAlerts();
-    }
-  }, []);
-
-  const activeAlerts = alerts.filter((a) => !a.isTriggered);
-  const triggeredAlerts = alerts.filter((a) => a.isTriggered);
-
-  return (
-    <main className="kl-alerts-page">
-      <div className="kl-alerts-container">
-        <nav className="kl-breadcrumb">
-          <a href="#/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
-          <span className="kl-breadcrumb-sep">/</span>
-          <span className="kl-breadcrumb-current">Price Alerts</span>
-        </nav>
-
-        <h1 className="kl-alerts-title">Your Price Alerts</h1>
-        <p className="kl-alerts-subtitle">Track sneaker prices and get notified when they drop.</p>
-
-        <form onSubmit={fetchAlerts} className="kl-alerts-lookup">
-          <input
-            type="email"
-            className="kl-alert-input"
-            placeholder="Enter your email to view alerts"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <button type="submit" className="kl-btn kl-btn-primary" disabled={loading}>
-            {loading ? 'Loading...' : 'View My Alerts'}
-          </button>
-        </form>
-
-        {looked && alerts.length === 0 && (
-          <div className="kl-alerts-empty">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" style={{ width: 48, height: 48, color: '#a8a29e' }}>
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
-            <h2>No alerts found</h2>
-            <p>You don't have any price alerts yet. Set one from any product page.</p>
-            <button className="kl-btn kl-btn-primary" onClick={() => navigate('/shop')}>Browse Sneakers</button>
-          </div>
-        )}
-
-        {activeAlerts.length > 0 && (
-          <div className="kl-alerts-section">
-            <h2 className="kl-alerts-section-title">Active Alerts ({activeAlerts.length})</h2>
-            <div className="kl-alerts-grid">
-              {activeAlerts.map((alert) => (
-                <div key={alert.id} className="kl-alert-card">
-                  <a href={`#/product/${alert.product.id}`} className="kl-alert-card-image" onClick={(e) => { e.preventDefault(); navigate(`/product/${alert.product.id}`); }}>
-                    <img
-                      src={alert.product.images?.[0] || 'https://via.placeholder.com/200x200/f5f4f2/a8a29e?text=No+Image'}
-                      alt={alert.product.name}
-                      onError={(e) => { e.target.src = 'https://via.placeholder.com/200x200/f5f4f2/a8a29e?text=No+Image'; }}
-                    />
-                  </a>
-                  <div className="kl-alert-card-info">
-                    <h3 className="kl-alert-card-name">
-                      <a href={`#/product/${alert.product.id}`} onClick={(e) => { e.preventDefault(); navigate(`/product/${alert.product.id}`); }}>
-                        {alert.product.name}
-                      </a>
-                    </h3>
-                    <p className="kl-alert-card-brand">{alert.product.brand}</p>
-                    <div className="kl-alert-card-prices">
-                      <span className="kl-alert-card-target">Target: ${Number(alert.targetPrice).toFixed(0)}</span>
-                      {alert.product.currentLowestPrice && (
-                        <span className="kl-alert-card-current">Current: ${Number(alert.product.currentLowestPrice).toFixed(0)}</span>
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    className="kl-alert-card-delete"
-                    onClick={() => deleteAlert(alert.id)}
-                    disabled={deleteLoading === alert.id}
-                    title="Delete alert"
-                  >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 18, height: 18 }}>
-                      <polyline points="3 6 5 6 21 6"/>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                    </svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {triggeredAlerts.length > 0 && (
-          <div className="kl-alerts-section">
-            <h2 className="kl-alerts-section-title">Triggered Alerts ({triggeredAlerts.length})</h2>
-            <div className="kl-alerts-grid">
-              {triggeredAlerts.map((alert) => (
-                <div key={alert.id} className="kl-alert-card kl-alert-card-triggered">
-                  <a href={`#/product/${alert.product.id}`} className="kl-alert-card-image" onClick={(e) => { e.preventDefault(); navigate(`/product/${alert.product.id}`); }}>
-                    <img
-                      src={alert.product.images?.[0] || 'https://via.placeholder.com/200x200/f5f4f2/a8a29e?text=No+Image'}
-                      alt={alert.product.name}
-                      onError={(e) => { e.target.src = 'https://via.placeholder.com/200x200/f5f4f2/a8a29e?text=No+Image'; }}
-                    />
-                  </a>
-                  <div className="kl-alert-card-info">
-                    <h3 className="kl-alert-card-name">
-                      <a href={`#/product/${alert.product.id}`} onClick={(e) => { e.preventDefault(); navigate(`/product/${alert.product.id}`); }}>
-                        {alert.product.name}
-                      </a>
-                    </h3>
-                    <p className="kl-alert-card-brand">{alert.product.brand}</p>
-                    <div className="kl-alert-card-prices">
-                      <span className="kl-alert-card-triggered-price">Triggered at ${Number(alert.triggeredPrice).toFixed(0)}</span>
-                      <span className="kl-alert-card-target">Target was: ${Number(alert.targetPrice).toFixed(0)}</span>
-                    </div>
-                  </div>
-                  <div className="kl-alert-card-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16 }}>
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Triggered
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </main>
-  );
-};
-
-// ============================================
 // Cookie Consent Banner
 // ============================================
 const CookieConsent = () => {
@@ -2670,7 +2012,6 @@ const Footer = () => {
             <ul>
               <li><a href="#/about" onClick={(e) => { e.preventDefault(); navigate('/about'); }}>About Us</a></li>
               <li><a href="#/brands" onClick={(e) => { e.preventDefault(); navigate('/brands'); }}>Our Brands</a></li>
-              <li><a href="#/alerts" onClick={(e) => { e.preventDefault(); navigate('/alerts'); }}>Price Alerts</a></li>
               <li><a href="#/faq" onClick={(e) => { e.preventDefault(); navigate('/faq'); }}>FAQ</a></li>
               <li><a href="#/contact" onClick={(e) => { e.preventDefault(); navigate('/contact'); }}>Contact</a></li>
               <li><a href="#/affiliate-disclosure" onClick={(e) => { e.preventDefault(); navigate('/affiliate-disclosure'); }}>Affiliate Disclosure</a></li>
@@ -2725,27 +2066,9 @@ const Footer = () => {
 // ============================================
 const WishlistPage = () => {
   const { navigate, wishlist, toggleWishlist } = useApp();
-  const [wishlistProducts, setWishlistProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { getProductById } = window.KicksListData;
 
-  useEffect(() => {
-    if (wishlist.length === 0) {
-      setWishlistProducts([]);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    klFetch(`${API_BASE}/api/products/batch?ids=${wishlist.join(',')}`)
-      .then(r => r.json())
-      .then(data => {
-        setWishlistProducts(data.products || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setWishlistProducts([]);
-        setLoading(false);
-      });
-  }, [wishlist]);
+  const wishlistProducts = wishlist.map(id => getProductById(id)).filter(Boolean);
 
   const clearAll = () => {
     wishlist.forEach(id => toggleWishlist(id));
@@ -2761,15 +2084,13 @@ const WishlistPage = () => {
         </nav>
 
         <div className="kl-wishlist-header">
-          <h1>Your Wishlist{wishlist.length > 0 ? ` (${wishlist.length} item${wishlist.length !== 1 ? 's' : ''})` : ''}</h1>
-          {wishlist.length > 0 && (
+          <h1>Your Wishlist{wishlistProducts.length > 0 ? ` (${wishlistProducts.length} item${wishlistProducts.length !== 1 ? 's' : ''})` : ''}</h1>
+          {wishlistProducts.length > 0 && (
             <button className="kl-btn kl-btn-outline kl-wishlist-clear" onClick={clearAll}>Clear All</button>
           )}
         </div>
 
-        {loading ? (
-          <LoadingGrid count={wishlist.length || 4} />
-        ) : wishlistProducts.length > 0 ? (
+        {wishlistProducts.length > 0 ? (
           <div className="kl-product-grid kl-wishlist-grid">
             {wishlistProducts.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
@@ -2822,12 +2143,13 @@ const updatePageMeta = (title, description, image = null) => {
 
 const App = () => {
   const { route } = useApp();
+  const { getProductById, categories } = window.KicksListData;
 
   // Update page title based on route
   useEffect(() => {
     const baseTitle = 'KicksList';
     let title = baseTitle;
-    let description = 'Compare prices on 150,000+ sneakers from Jordan, Nike, Adidas, Yeezy, New Balance, and more.';
+    let description = 'Compare prices on 20,000+ sneakers from Jordan, Nike, Adidas, Yeezy, New Balance, and more.';
     let image = null;
 
     switch (route.page) {
@@ -2835,19 +2157,24 @@ const App = () => {
         title = `${baseTitle} | Discover & Shop Authentic Sneakers`;
         break;
       case 'product':
-        // Product page meta is updated after the product loads via ProductDetailPage
-        title = `Loading... | ${baseTitle}`;
+        const product = getProductById(route.params.id);
+        if (product) {
+          title = `${product.name} | ${baseTitle}`;
+          description = `Shop ${product.name} from ${product.brand}. Compare prices from StockX, GOAT, and other trusted retailers. Retail: $${product.retail}.`;
+          image = product.images?.[0] || null;
+        }
         break;
       case 'shop':
         if (route.params.category) {
-          title = `${route.params.category} Sneakers | ${baseTitle}`;
-          description = `Browse ${route.params.category} sneakers. Compare prices from trusted retailers.`;
+          const cat = categories.find(c => c.id === route.params.category);
+          title = `${cat?.name || route.params.category} Sneakers | ${baseTitle}`;
+          description = `Browse ${cat?.count || ''} ${cat?.name || route.params.category} sneakers. Compare prices from trusted retailers.`;
         } else if (route.params.q) {
           title = `Search: ${route.params.q} | ${baseTitle}`;
           description = `Search results for "${route.params.q}" on KicksList. Find the best prices on authentic sneakers.`;
         } else {
           title = `Shop All Sneakers | ${baseTitle}`;
-          description = `Browse 150,000+ sneakers from Jordan, Nike, Adidas, Yeezy, and more. Compare prices from trusted retailers.`;
+          description = `Browse 20,000+ sneakers from Jordan, Nike, Adidas, Yeezy, and more. Compare prices from trusted retailers.`;
         }
         break;
       case 'brands':
@@ -2881,10 +2208,6 @@ const App = () => {
       case 'faq':
         title = `FAQ | ${baseTitle}`;
         description = `Frequently asked questions about KicksList — how it works, how we make money, data privacy, and more.`;
-        break;
-      case 'alerts':
-        title = `Price Alerts | ${baseTitle}`;
-        description = `Set price alerts on your favorite sneakers and get notified by email when prices drop. Free, no account required.`;
         break;
       default:
         title = `${baseTitle} | Discover & Shop Authentic Sneakers`;
@@ -2930,9 +2253,6 @@ const App = () => {
     case 'faq':
       PageComponent = FAQPage;
       break;
-    case 'alerts':
-      PageComponent = AlertsPage;
-      break;
     default:
       PageComponent = Homepage;
   }
@@ -2948,43 +2268,12 @@ const App = () => {
 };
 
 // ============================================
-// Error Boundary — never show a blank page; surface the error instead
-// ============================================
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { error: null };
-  }
-  static getDerivedStateFromError(error) {
-    return { error };
-  }
-  componentDidCatch(error, info) {
-    console.error('KicksList crashed:', error, info);
-  }
-  render() {
-    if (this.state.error) {
-      const msg = (this.state.error && this.state.error.message) || String(this.state.error);
-      return (
-        <div style={{ maxWidth: '640px', margin: '80px auto', padding: '24px', fontFamily: 'system-ui, sans-serif', color: '#1a1917' }}>
-          <h2 style={{ marginBottom: '12px' }}>Something went wrong loading KicksList.</h2>
-          <p style={{ color: '#666', marginBottom: '16px' }}>Please refresh the page. If it keeps happening, the detail below helps pinpoint it:</p>
-          <pre style={{ color: '#b91c1c', background: '#fef2f2', padding: '12px', borderRadius: '8px', fontSize: '13px', whiteSpace: 'pre-wrap', overflowX: 'auto' }}>{msg}</pre>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
-// ============================================
 // Root
 // ============================================
 const Root = () => (
-  <ErrorBoundary>
-    <AppProvider>
-      <App />
-    </AppProvider>
-  </ErrorBoundary>
+  <AppProvider>
+    <App />
+  </AppProvider>
 );
 
 // Render
