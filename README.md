@@ -4,6 +4,8 @@
 
 🔗 **Live:** [kickslist.net](https://kickslist.net)
 
+[![Build](https://github.com/Spencer4792/kickslist/actions/workflows/build.yml/badge.svg)](https://github.com/Spencer4792/kickslist/actions/workflows/build.yml)
+
 KicksList lets you explore a catalog of 20,000+ sneakers across 100+ brands, see retail pricing, and jump straight to where to buy — at retailers like Nike, Foot Locker, and Finish Line, or resale marketplaces like StockX and GOAT. It’s built as a fully static single-page app: the entire catalog ships with the site, so it loads instantly and has no server to maintain or break.
 
 ![KicksList screenshot](docs/screenshot.png)

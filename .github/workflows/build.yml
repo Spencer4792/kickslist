@@ -1,0 +1,34 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build (compile JSX → plain JS)
+        run: npm run build
+
+      - name: Verify build output is valid
+        run: |
+          test -s docs/app/main.js
+          grep -q "React.createElement" docs/app/main.js
+          if grep -q "jsx-runtime" docs/app/main.js; then
+            echo "::error::Build emitted modern JSX runtime imports, which break in the browser. Expected classic React.createElement output."
+            exit 1
+          fi
+          echo "Build output is valid (classic React.createElement, no ESM imports)."
