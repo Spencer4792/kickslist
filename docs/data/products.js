@@ -242031,9 +242031,9 @@ function generateVendorPrices(product) {
     let directUrl;
     switch(vendor.id) {
       case 'stockx': directUrl = `https://stockx.com/search?s=${searchTerm}`; break;
-      case 'goat': directUrl = `https://goat.com/search?query=${searchTerm}`; break;
+      case 'goat': directUrl = `https://www.google.com/search?q=${searchTerm}+goat`; break;
       case 'ebay': directUrl = `https://ebay.com/sch/i.html?_nkw=${searchTerm}`; break;
-      case 'flightclub': directUrl = `https://flightclub.com/search?q=${searchTerm}`; break;
+      case 'flightclub': directUrl = `https://www.google.com/search?q=${searchTerm}+flight+club`; break;
       default: directUrl = `${vendor.url}/search?q=${searchTerm}`;
     }
     const url = buildAffiliateUrl(vendor, directUrl);

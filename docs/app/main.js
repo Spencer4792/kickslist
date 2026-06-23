@@ -326,7 +326,7 @@ const VendorComparisonTable = ({
     className: "kl-comparison-title"
   }, /*#__PURE__*/React.createElement("span", null, "Resale Marketplaces"), /*#__PURE__*/React.createElement("span", {
     className: "kl-comparison-subtitle"
-  }, "Authenticated · Live market prices")), /*#__PURE__*/React.createElement("div", {
+  }, "Authenticated marketplaces")), /*#__PURE__*/React.createElement("div", {
     className: "kl-comparison-table"
   }, resaleVendors.map(vendorPrice => /*#__PURE__*/React.createElement(VendorRow, {
     key: vendorPrice.vendorId,
@@ -638,7 +638,7 @@ const ProductCard = ({
       e.stopPropagation();
       navigate(`/product/${product.id}`);
     }
-  }, "Compare Live Prices →")));
+  }, "View Details →")));
 };
 
 // ============================================
@@ -974,7 +974,7 @@ const Homepage = () => {
     r: "10"
   }), /*#__PURE__*/React.createElement("polyline", {
     points: "12 6 12 12 16 14"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", null, "Compare Live Prices"), /*#__PURE__*/React.createElement("p", null, "Direct links to StockX, GOAT & more"))), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", null, "Where to Buy"), /*#__PURE__*/React.createElement("p", null, "Direct links to StockX, GOAT & more"))), /*#__PURE__*/React.createElement("div", {
     className: "kl-trust-item"
   }, /*#__PURE__*/React.createElement("svg", {
     viewBox: "0 0 24 24",
@@ -1660,11 +1660,11 @@ const AboutPage = () => {
     className: "kl-about-step"
   }, /*#__PURE__*/React.createElement("span", {
     className: "kl-about-step-num"
-  }, "1"), /*#__PURE__*/React.createElement("h3", null, "We Aggregate Prices"), /*#__PURE__*/React.createElement("p", null, "KicksList pulls live pricing data from 14+ verified retailers and resale marketplaces so you never have to tab-hop again.")), /*#__PURE__*/React.createElement("div", {
+  }, "1"), /*#__PURE__*/React.createElement("h3", null, "We Bring It All Together"), /*#__PURE__*/React.createElement("p", null, "KicksList gathers 20,000+ sneakers from across the web into one place, with retail pricing and direct links to trusted retailers and resale marketplaces — so you never have to tab-hop again.")), /*#__PURE__*/React.createElement("div", {
     className: "kl-about-step"
   }, /*#__PURE__*/React.createElement("span", {
     className: "kl-about-step-num"
-  }, "2"), /*#__PURE__*/React.createElement("h3", null, "You Compare Side-by-Side"), /*#__PURE__*/React.createElement("p", null, "Browse every option in one place — retail and resale, new and pre-owned — and pick the best deal for you.")), /*#__PURE__*/React.createElement("div", {
+  }, "2"), /*#__PURE__*/React.createElement("h3", null, "You Discover & Decide"), /*#__PURE__*/React.createElement("p", null, "Browse, search, and filter across top retailers and resale marketplaces — all in one place — to find exactly what you're after.")), /*#__PURE__*/React.createElement("div", {
     className: "kl-about-step"
   }, /*#__PURE__*/React.createElement("span", {
     className: "kl-about-step-num"
@@ -1674,7 +1674,7 @@ const AboutPage = () => {
     className: "kl-about-value"
   }, /*#__PURE__*/React.createElement("span", {
     className: "kl-about-value-num"
-  }, "01"), /*#__PURE__*/React.createElement("h3", null, "Compare Prices Instantly"), /*#__PURE__*/React.createElement("p", null, "See what StockX, GOAT, Nike, Foot Locker, and 10 other vendors are charging — all on one page. No more guessing who has the best deal.")), /*#__PURE__*/React.createElement("div", {
+  }, "01"), /*#__PURE__*/React.createElement("h3", null, "Everything in One Place"), /*#__PURE__*/React.createElement("p", null, "See retail pricing and jump straight to StockX, GOAT, Nike, Foot Locker, and more — without endless tab-hopping across a dozen sites.")), /*#__PURE__*/React.createElement("div", {
     className: "kl-about-value"
   }, /*#__PURE__*/React.createElement("span", {
     className: "kl-about-value-num"
@@ -2158,7 +2158,7 @@ const FAQPage = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const faqs = [{
     q: 'What is KicksList?',
-    a: 'KicksList is a free sneaker discovery and price comparison platform. We aggregate pricing and product information from 14+ trusted retailers and resale marketplaces so you can find the best deal on authentic sneakers — all in one place.'
+    a: 'KicksList is a free sneaker discovery platform. We bring together 20,000+ sneakers with retail pricing and direct links to trusted retailers and resale marketplaces, so you can find authentic sneakers — and where to buy them — all in one place.'
   }, {
     q: 'How does KicksList make money?',
     a: 'We participate in affiliate marketing programs through networks like Impact, CJ Affiliate, and Rakuten. When you click a link on our site and make a purchase from a retailer, we may earn a small commission. This never costs you anything extra — the retailer pays us, not you.'
@@ -2286,39 +2286,7 @@ const Footer = () => {
       e.preventDefault();
       navigate('/');
     }
-  }, "KicksList"), /*#__PURE__*/React.createElement("p", null, "Discover and shop authentic sneakers from trusted retailers and marketplaces."), /*#__PURE__*/React.createElement("div", {
-    className: "kl-footer-socials"
-  }, /*#__PURE__*/React.createElement("a", {
-    href: "https://twitter.com/kickslist",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    "aria-label": "Twitter"
-  }, /*#__PURE__*/React.createElement("svg", {
-    viewBox: "0 0 24 24",
-    fill: "currentColor"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
-  }))), /*#__PURE__*/React.createElement("a", {
-    href: "https://instagram.com/kickslist",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    "aria-label": "Instagram"
-  }, /*#__PURE__*/React.createElement("svg", {
-    viewBox: "0 0 24 24",
-    fill: "currentColor"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C16.67.014 16.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
-  }))), /*#__PURE__*/React.createElement("a", {
-    href: "https://tiktok.com/@kickslist",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    "aria-label": "TikTok"
-  }, /*#__PURE__*/React.createElement("svg", {
-    viewBox: "0 0 24 24",
-    fill: "currentColor"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.48V13.4a8.16 8.16 0 005.58 2.2v-3.45a4.85 4.85 0 01-3.77-1.69V6.69h3.77z"
-  }))))), /*#__PURE__*/React.createElement("div", {
+  }, "KicksList"), /*#__PURE__*/React.createElement("p", null, "Discover and shop authentic sneakers from trusted retailers and marketplaces.")), /*#__PURE__*/React.createElement("div", {
     className: "kl-footer-links"
   }, /*#__PURE__*/React.createElement("div", {
     className: "kl-footer-col"
@@ -2582,7 +2550,7 @@ const App = () => {
   useEffect(() => {
     const baseTitle = 'KicksList';
     let title = baseTitle;
-    let description = 'Compare prices on 20,000+ sneakers from Jordan, Nike, Adidas, Yeezy, New Balance, and more.';
+    let description = 'Discover 20,000+ sneakers from Jordan, Nike, Adidas, Yeezy, New Balance, and more — with retail prices and where to buy.';
     let image = null;
     switch (route.page) {
       case 'home':
